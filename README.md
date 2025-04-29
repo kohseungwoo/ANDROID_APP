@@ -1,3 +1,7 @@
+# https://oblador.github.io/react-native-vector-icons/
+# import FontAwesome from 'react-native-vector-icons/FontAwesome';
+# <Octicons name="home" size={20} color="#808080" />
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started

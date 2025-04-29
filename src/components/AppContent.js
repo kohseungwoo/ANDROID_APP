@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import login from '../pages/login/SignInScreen';
 import paymentMenu from '../pages/payment/PaymentMenuScreen';
+import trxList from '../pages/trxboard/TrxListScreen';
 import trxDetail from '../pages/trxboard/TrxDetailScreen';
 import Orientation from 'react-native-orientation-locker';
 import TabNavigator from '../components/TabNavigator'; // 분리된 탭 파일
@@ -26,6 +27,7 @@ const AppContent = () => {
                 <Stack.Screen name="LOGIN" component={login} />
                 <Stack.Screen name="MAIN" component={TabNavigator} />
                 <Stack.Screen name="PAYMENTMENU" component={paymentMenu} />
+                <Stack.Screen name="TRXLIST" component={trxList} />
                 <Stack.Screen name="TRXDETAIL" component={trxDetail} />
             </Stack.Navigator>
         </NavigationContainer>

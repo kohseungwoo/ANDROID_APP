@@ -101,7 +101,7 @@ const TabNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="결제현황"
+                    name="결제내역"
                     component={trxList}
                     options={{
                         unmountOnBlur: true,
@@ -112,7 +112,7 @@ const TabNavigator = () => {
                                         ? require('../assets/animation/trxList.json')
                                         : require('../assets/animation/trxListDefault.json')
                                 }
-                                label="결제현황"
+                                label="결제내역"
                                 props={props}
                                 focused={props?.accessibilityState?.selected}
                                 key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋
