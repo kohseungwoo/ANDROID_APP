@@ -6,15 +6,37 @@ export default StyleSheet.create({
     },
     main: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#fdfdfd',
+        padding: 15,
+        backgroundColor: '#f7f7f7',
     },
     scrollViewContent: {
         paddingBottom: 50,
     },
+    merchantContainer:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingBottom:25,
+    },
+    merchantNick:{
+        marginLeft: 8,
+        fontSize: 14,
+    },
+    grayText:{
+        color: '#888'
+    },
+    badge: {
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 5,
+        backgroundColor : 'rgba(230,22,22,0.67)',
+    },
+    badgeText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 10,
+    },
     card: {
         top: 1,
-        borderWidth: 0.1,
         height: 140,
         width: '99%',
         alignSelf: 'center',
@@ -29,8 +51,12 @@ export default StyleSheet.create({
     },
     cardTitle: {
         fontSize: 14,
+        fontWeight:'bold',
         color: '#000000',
-        marginBottom: 0,
+    },
+    cardDate: {
+        fontSize: 12,
+        color: '#808080',
     },
     amountRow: {
         flexDirection: 'row',
@@ -77,10 +103,10 @@ export default StyleSheet.create({
         borderColor: 'transparent', // 버튼 테두리 색상
         borderRadius: 5, // 둥근 모서리
         textAlign: 'center', // 텍스트 가운데 정렬
-        color: '#000000', // 텍스트 색상
+        color: '#fff', // 텍스트 색상
         fontSize: 14, // 텍스트 크기
         fontWeight: 'bold', // 텍스트 두께
-        backgroundColor: '#f6f6f6', // 배경색은 투명으로 설정
+        backgroundColor: '#253e6d', // 배경색은 투명으로 설정
     },
     label: {
         fontSize: 18,
@@ -96,7 +122,7 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom: 10,
+        paddingBottom: 5,
     },
     headerLeft: {
         flexDirection: 'row',
@@ -115,7 +141,7 @@ export default StyleSheet.create({
     },
     hideText: {
         fontSize: 14,
-        color: '#1689cc',
+        color: '#2680eb',
         marginLeft: 12,
     },
     reloadIcon: {
@@ -152,34 +178,51 @@ export default StyleSheet.create({
         color: '#808080',
     },
     paymentTitle: {
-        fontSize: 16,
+        top: -15,
+        fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 10,
-        color: '#1b1b1b',
+        color: '#000000',
     },
-    // styles.js에서 수정해야 할 부분
     paymentIconRow: {
+        top: 0,
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',  // 여러 아이콘이 고르게 배치될 수 있게
-        marginBottom: 30,
+        flexWrap: 'wrap',       // 혹시 아이콘이 많아질 때 줄바꿈 지원
+        justifyContent: 'space-between',
+        backgroundColor:'#fff',
+        marginBottom:20,
+    },
+    paymentIconLabel: {
+        marginTop: 6,
+        fontSize: 12,
+        color: '#333',
     },
     paymentIconBox: {
-        flexDirection: 'row',
+        width: '25%',          // 화면 너비의 25%씩 차지 → 한 줄에 4개
         alignItems: 'center',
-        width: '48%',  // 두 아이템을 한 줄에 두 개씩 배치
-        padding: 5,
-        borderWidth: 0.1,
-        borderRadius: 1,
-        backgroundColor: '#fff',
-        marginBottom: 10,
-        position: 'relative',  // 아이콘을 우측에 고정하기 위한 설정
+        paddingVertical: 10,
+    },
+    footerContainer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 15,
+        right: 15,
+        height: 40,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#eaeaea',
+        borderRadius: 8,
     },
 
-    paymentIconLabel: {
-        paddingLeft: 5,
-        marginRight: 10,  // 텍스트와 아이콘 사이의 간격
-        fontSize: 12,  // 텍스트 크기
-        flex: 1,  // 텍스트가 왼쪽에 꽉 차도록 설정
+    footerButton: {
+        fontSize: 14,
+        fontWeight:'bold',
+        marginHorizontal: 20,
+        color: '#000',
+    },
+    footerSeparator: {
+        fontSize: 12,
+        color: '#808080',
     },
 });

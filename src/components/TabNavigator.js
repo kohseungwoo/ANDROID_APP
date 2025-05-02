@@ -122,7 +122,7 @@ const TabNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="더보기"
+                    name="전체"
                     component={more}
                     options={{
                         unmountOnBlur: true,
@@ -133,7 +133,7 @@ const TabNavigator = () => {
                                         ? require('../assets/animation/seeMore.json')
                                         : require('../assets/animation/seeMoreDefault.json')
                                 }
-                                label="더보기"
+                                label="전체"
                                 props={props}
                                 focused={props?.accessibilityState?.selected}
                                 key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋

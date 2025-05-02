@@ -1,13 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, Dimensions, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 import FORMAT from '../utils/FormatUtils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인
 import moment from 'moment'; // 날짜
+import 'moment/locale/ko';
+
+const { height } = Dimensions.get('window');
+
 
 const MainV2 = () => {
+    moment.locale('ko');
+
     const navigation = useNavigation();
     const [showTransactions, setShowTransactions] = useState(true); //최근거래내역 숨김,보기
     const [isAmountHidden, setIsAmountHidden] = useState(false); // 금액 숨김,보기
@@ -45,7 +51,7 @@ const MainV2 = () => {
     };
 
     // 날짜 변수 선언
-    const today = moment().format('M/D일');
+    const today = moment().format('M.D(dd)');
     const currentMonth = moment().format('M월');
 
     const dailyAmount = 1234;
@@ -53,204 +59,245 @@ const MainV2 = () => {
     const totalCount = 5; // 최대 5건
 
     const transactions = [
-        { id: '1', date: '2025/04/17 12:32:11', type: '승인', amount: 1000 },
-        { id: '2', date: '2025/04/17 11:12:54', type: '취소', amount: 5400 },
-        { id: '3', date: '2025/04/16 09:01:33', type: '승인', amount: 12000 },
-        { id: '4', date: '2025/04/15 20:44:20', type: '승인', amount: 7650 },
-        { id: '5', date: '2025/04/15 18:22:17', type: '취소', amount: 30000 },
-        { id: '6', date: '2025/04/14 18:20:10', type: '취소', amount: 100 },
+        { id: '1', day: '20250417', time:'123211', type: '승인', amount: 1000 },
+        { id: '2', day: '20250417', time:'111254', type: '취소', amount: 5400 },
+        { id: '3', day: '20250416', time:'090133', type: '승인', amount: 12000 },
+        { id: '4', day: '20250415', time:'204420', type: '승인', amount: 7650 },
+        { id: '5', day: '20250415', time:'192217', type: '취소', amount: 30000 },
+        { id: '6', day: '20250414', time:'192016', type: '취소', amount: 1004 },
+        { id: '7', day: '20250414', time:'182011', type: '승인', amount: 1200 },
+        { id: '8', day: '20250414', time:'175022', type: '승인', amount: 15500 },
+        { id: '9', day: '20250414', time:'164030', type: '취소', amount: 22100 },
+        { id: '10', day: '20250414', time:'153050', type: '취소', amount: 6600 },
     ];
 
-    const parseDate = (str) => {
-        return new Date(str.replace(/\/| /g, (m) => (m === '/' ? '-' : 'T')));
+    const appMok = {
+        type: 'APP', // or '상점'
+        id: 'appId',
+        name: '앱상호명',
     };
 
-    const handleApiCall = () => {
-        navigation.navigate("DASHBOARD");
+    const parseDate = (item) => {
+        const dateStr = `${item.day}${item.time}`; // 20250417123211
+        return moment(dateStr, 'YYYYMMDDHHmmss');
     };
+
 
     return (
-        <ScrollView style={styles.main} contentContainerStyle={styles.scrollViewContent}>
-            <Swiper
-                style={styles.wrapper}
-                showsButtons={false}
-                loop={false}
-                dotStyle={{
-                    backgroundColor: 'transparent',
-                    width: 15,
-                    height: 3,
-                    borderRadius: 5,
-                    borderColor: '#ccc',
-                    borderWidth: 1,
-                }}
-                activeDotStyle={{
-                    backgroundColor: '#006bf1',
-                    width: 15,
-                    height: 3,
-                    borderRadius: 5,
-                }}
-                paginationStyle={{
-                    bottom: 40,
-                }}
-            >
-                {/* 금일 거래금액 카드 */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Text style={styles.cardTitle}>{today} 거래금액</Text>
-                    </View>
-                    <View style={styles.amountRow}>
-                        <View style={styles.amountWrapperLeft}>
-                            <Animated.View
-                                style={{
-                                    opacity: amountOpacity,
-                                    transform: [{ translateY: amountTranslate }],
-                                }}
-                            >
-                                <Text
-                                    style={[
-                                        styles.amount,
-                                        dailyAmount < 0 && styles.cancelAmount,
-                                        isAmountHidden && styles.hiddenDash, // 금액 숨김 상태일 때 별표 처리
-                                    ]}
-                                    adjustsFontSizeToFit
-                                    numberOfLines={1}
-                                >
-                                    {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(dailyAmount)}
-                                </Text>
-                            </Animated.View>
-                            <Text style={styles.currencyText}>원</Text>
-                        </View>
-                        <TouchableOpacity onPress={toggleAmountHidden}>
-                            <Text style={styles.hideAmountText}>
-                                {isAmountHidden ? '금액보기' : '금액숨김'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
-                            <Text style={styles.buttonStyle}>당일 결제내역</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* 금월 거래금액 카드 */}
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Text style={styles.cardTitle}>{currentMonth} 거래금액</Text>
-                    </View>
-                    <View style={styles.amountRow}>
-                        <View style={styles.amountWrapperLeft}>
-                            <Animated.View
-                                style={{
-                                    opacity: amountOpacity,
-                                    transform: [{ translateY: amountTranslate }],
-                                }}
-                            >
-                            <Text
-                                style={[styles.amount, monthlyAmount < 0 && styles.cancelAmount]}
-                                adjustsFontSizeToFit
-                                numberOfLines={1}
-                            >
-                                {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(monthlyAmount)}
-                            </Text>
-                            </Animated.View>
-                            <Text style={styles.currencyText}>원</Text>
-                        </View>
-                        <TouchableOpacity onPress={toggleAmountHidden}>
-                            <Text style={styles.hideAmountText}>
-                                {isAmountHidden ? '금액보기' : '금액숨김'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
-                            <Text style={styles.buttonStyle}>당월 결제내역</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Swiper>
-
-            {/* 결제수단 영역*/}
-            {/*<Text style={styles.paymentTitle}>결제수단</Text>*/}
-            <View style={styles.paymentIconRow}>
-                <TouchableOpacity style={styles.paymentIconBox}>
-                    <Text style={styles.paymentIconLabel}>신용카드</Text>
-                    <Ionicons name="card" size={22} color="#1689cc" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.paymentIconBox}>
-                    <Text style={styles.paymentIconLabel}>Apple Pay</Text>
-                    <Ionicons name="logo-apple" size={22} color="#000" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.paymentIconBox}>
-                    <Text style={styles.paymentIconLabel}>Google Pay</Text>
-                    <Ionicons name="logo-google" size={22} color="#34A853" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.paymentIconBox}>
-                    <Text style={styles.paymentIconLabel}>현금</Text>
-                    <Ionicons name="cash" size={22} color="#28a745" />
-                </TouchableOpacity>
-            </View>
-
-
-
-
-
-            {/* 최근 거래내역 */}
-            <View style={styles.transactionBox}>
-                <View style={styles.transactionHeader}>
-                    <View style={styles.headerLeft}>
-                        <Text style={styles.label}>최근 거래내역</Text>
-                        <Text style={styles.countText}> (최대 {totalCount}건)</Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
-                            <Text style={styles.nextBtn}> &gt; </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.headerIcons}>
-                        <TouchableOpacity onPress={handleApiCall}>
-                            <Ionicons name="reload" size={20} style={styles.reloadIcon} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setShowTransactions(!showTransactions)}>
-                            <Text style={styles.hideText}>
-                                {showTransactions ? '숨김' : '보기'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {showTransactions && (
-                    <FlatList
-                        data={transactions
-                            .slice()
-                            .sort((a, b) => parseDate(b.date) - parseDate(a.date))
-                            .slice(0, totalCount)}
-                        keyExtractor={(item) => item.id}
-                        scrollEnabled={false}
-                        renderItem={({ item }) => (
-                            <View style={styles.transactionRow}>
-                                <View style={styles.transactionTextContainer}>
-                                    <Text style={styles.transactionText}>
-                                        {item.date}
-                                    </Text>
-                                    <Text>
-                                        <Text
-                                            style={[
-                                                styles.transactionAmount,
-                                                item.type === '취소' && styles.cancelAmount,
-                                            ]}
-                                        >
-                                            {item.type === '취소' ? '-' : ''}
-                                            {FORMAT.formatKRW(item.amount)}
-                                        </Text>
-                                    </Text>
-                                </View>
-                                <View style={styles.rowDivider} />
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+                {/* ✅ Scrollable Content */}
+                <ScrollView
+                    style={styles.main}
+                    contentContainerStyle={[styles.scrollViewContent, { paddingBottom: 80 }]} // 하단 고정 footer 가리지 않도록
+                >
+                    {/* ================ 기존 콘텐츠 시작 ================ */}
+                    <View style={styles.merchantContainer}>
+                        {appMok.type === 'APP' && (
+                            <View style={styles.badge}>
+                                <Text style={styles.badgeText}>매장</Text>
                             </View>
                         )}
-                    />
-                )}
+                        <Text style={styles.merchantNick}>
+                            {appMok.name} <Text style={styles.grayText}>({appMok.id})</Text>
+                        </Text>
+                    </View>
+
+                    <View style={styles.paymentIconRow}>
+                        <TouchableOpacity style={styles.paymentIconBox}>
+                            <Ionicons name="card" size={22} color="#2680eb" />
+                            <Text style={styles.paymentIconLabel}>카드결제</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.paymentIconBox}>
+                            <Ionicons name="chatbox-outline" size={22} color="#ff9900" />
+                            <Text style={styles.paymentIconLabel}>SMS결제</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.paymentIconBox}>
+                            <Ionicons name="link-outline" size={22} color="#00bcd4" />
+                            <Text style={styles.paymentIconLabel}>링크결제</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.paymentIconBox}>
+                            <Ionicons name="qr-code-outline" size={22} color="#28a745" />
+                            <Text style={styles.paymentIconLabel}>QR 결제</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Swiper
+                        style={styles.wrapper}
+                        showsButtons={false}
+                        loop={false}
+                        dotStyle={{
+                            backgroundColor: 'transparent',
+                            width: 15,
+                            height: 3,
+                            borderRadius: 5,
+                            borderColor: '#ccc',
+                            borderWidth: 1,
+                        }}
+                        activeDotStyle={{
+                            backgroundColor: '#253e6d',
+                            width: 15,
+                            height: 3,
+                            borderRadius: 5,
+                        }}
+                        paginationStyle={{
+                            bottom: 40,
+                        }}
+                    >
+                        {/* 일 매출 카드 */}
+                        <View style={styles.card}>
+                            <View style={styles.cardHeader}>
+                                <Text style={styles.cardTitle}>
+                                    일 매출 <Text style={styles.cardDate}>{today}</Text>
+                                </Text>
+                            </View>
+                            <View style={styles.amountRow}>
+                                <View style={styles.amountWrapperLeft}>
+                                    <Animated.View
+                                        style={{
+                                            opacity: amountOpacity,
+                                            transform: [{ translateY: amountTranslate }],
+                                        }}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.amount,
+                                                dailyAmount < 0 && styles.cancelAmount,
+                                                isAmountHidden && styles.hiddenDash,
+                                            ]}
+                                            adjustsFontSizeToFit
+                                            numberOfLines={1}
+                                        >
+                                            {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(dailyAmount)}
+                                        </Text>
+                                    </Animated.View>
+                                    <Text style={styles.currencyText}>원</Text>
+                                </View>
+                                <TouchableOpacity onPress={toggleAmountHidden}>
+                                    <Text style={styles.hideAmountText}>
+                                        {isAmountHidden ? '금액보기' : '금액숨김'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                                <Text style={styles.buttonStyle}>결제내역</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* 월 매출 카드 */}
+                        <View style={styles.card}>
+                            <Text style={styles.cardTitle}>
+                                월 매출 <Text style={styles.cardDate}>{currentMonth}</Text>
+                            </Text>
+                            <View style={styles.amountRow}>
+                                <View style={styles.amountWrapperLeft}>
+                                    <Animated.View
+                                        style={{
+                                            opacity: amountOpacity,
+                                            transform: [{ translateY: amountTranslate }],
+                                        }}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.amount,
+                                                monthlyAmount < 0 && styles.cancelAmount,
+                                            ]}
+                                            adjustsFontSizeToFit
+                                            numberOfLines={1}
+                                        >
+                                            {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(monthlyAmount)}
+                                        </Text>
+                                    </Animated.View>
+                                    <Text style={styles.currencyText}>원</Text>
+                                </View>
+                                <TouchableOpacity onPress={toggleAmountHidden}>
+                                    <Text style={styles.hideAmountText}>
+                                        {isAmountHidden ? '금액보기' : '금액숨김'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                                <Text style={styles.buttonStyle}>결제내역</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Swiper>
+
+                    {/* 최근 거래내역 */}
+                    <View style={styles.transactionBox}>
+                        <View style={styles.transactionHeader}>
+                            <View style={styles.headerLeft}>
+                                <Text style={styles.label}>최근 거래내역</Text>
+                                <Text style={styles.countText}> (최대 {totalCount}건)</Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                                    <Text style={styles.nextBtn}> &gt; </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.headerIcons}>
+                                <TouchableOpacity onPress={() => navigation.navigate("DASHBOARD")}>
+                                    <Ionicons name="reload" size={20} style={styles.reloadIcon} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setShowTransactions(!showTransactions)}>
+                                    <Text style={styles.hideText}>
+                                        {showTransactions ? '숨김' : '보기'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {showTransactions && (
+                            <FlatList
+                                data={transactions
+                                    .slice()
+                                    .sort((a, b) => parseDate(b) - parseDate(a))
+                                    .slice(0, totalCount)}
+                                keyExtractor={(item) => item.id}
+                                scrollEnabled={false}
+                                renderItem={({ item }) => (
+                                    <View style={styles.transactionRow}>
+                                        <View style={styles.transactionTextContainer}>
+                                            <Text style={styles.transactionText}>
+                                                {parseDate(item).format('YYYY-MM-DD  HH:mm:ss')}
+                                            </Text>
+                                            <Text>
+                                                <Text
+                                                    style={[
+                                                        styles.transactionAmount,
+                                                        item.type === '취소' && styles.cancelAmount,
+                                                    ]}
+                                                >
+                                                    {item.type === '취소' ? '-' : ''}
+                                                    {FORMAT.formatKRW(item.amount)}
+                                                </Text>
+                                            </Text>
+                                        </View>
+                                        <View style={styles.rowDivider} />
+                                    </View>
+                                )}
+                            />
+                        )}
+                    </View>
+
+                    {/* ================ 기존 콘텐츠 끝 ================ */}
+                </ScrollView>
+
+                {/* ✅ Footer는 ScrollView 바깥에 고정됨 */}
+                <View style={styles.footerContainer}>
+                    <TouchableOpacity>
+                        <Text style={styles.footerButton}>FAQ</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.footerSeparator}>|</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.footerButton}>공지사항</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.footerSeparator}>|</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.footerButton}>고객센터</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </ScrollView>
+        </SafeAreaView>
     );
+
 };
 
 export default MainV2;
