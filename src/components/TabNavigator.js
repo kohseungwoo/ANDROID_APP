@@ -1,11 +1,11 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useFocusEffect} from '@react-navigation/native';
-import {BackHandler} from 'react-native';
+import {BackHandler, Keyboard} from 'react-native';
 
 import TabButton from '../components/TabButton';
 import dashboard from '../pages/dashboard/DashboardScreen';
-import payment from '../pages/payment/PaymentScreen';
+import payment from '../pages/payment/PaymentScreenV2';
 import trxList from '../pages/trxboard/TrxListScreen';
 import more from '../pages/more/MoreScreen';
 import ExitModal from './modal/ExitModal';
@@ -15,6 +15,7 @@ const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
     const [exitVisible, setExitVisible] = useState(false);
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -27,6 +28,21 @@ const TabNavigator = () => {
             return () => sub.remove();
         }, [])
     );
+
+    // 키보드 상태 감지
+    useEffect(() => {
+        const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true);
+        });
+        const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, []);
 
     const handleExit = () => {
         setExitVisible(false);
@@ -44,7 +60,9 @@ const TabNavigator = () => {
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     headerShown: false,
-                    tabBarStyle: {
+                    tabBarStyle: keyboardVisible
+                        ? { display: 'none' } // 키보드 올라오면 숨김
+                        : {
                         backgroundColor: '#fff',
                         paddingTop: 8,
                         height: 50,

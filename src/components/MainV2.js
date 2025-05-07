@@ -56,7 +56,7 @@ const MainV2 = () => {
 
     const dailyAmount = 1234;
     const monthlyAmount = 55123943;
-    const totalCount = 5; // 최대 5건
+    const totalCount = 10; // 최대 5건
 
     const transactions = [
         { id: '1', day: '20250417', time:'123211', type: '승인', amount: 1000 },

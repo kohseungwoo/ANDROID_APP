@@ -115,7 +115,6 @@ export default StyleSheet.create({
     transactionBox: {
         backgroundColor: '#fff',
         borderRadius: 12,
-        borderWidth: 0.1,
         padding: 12,
     },
     transactionHeader: {

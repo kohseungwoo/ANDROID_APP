@@ -1,9 +1,9 @@
 import React from 'react';
 import {Alert, ScrollView, Text, TextInput, TouchableOpacity} from 'react-native';
-import styles from '../../assets/styles/KeyInStyle';
+import styles from '../../assets/styles/KeyInV1Style';
 
 
-const KeyInScreen = ({
+const KeyInScreenV1 = ({
      cardNumber, setCardNumber, expiry, setExpiry, birth, setBirth, password, setPassword,
      buyerName, setBuyerName, phone, setPhone, productName, setProductName, amount, setAmount}) => {
 
@@ -77,4 +77,4 @@ const KeyInScreen = ({
     );
 };
 
-export default KeyInScreen;
+export default KeyInScreenV1;

@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {ScrollView, useWindowDimensions, View} from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
-import KeyInScreen from './KeyInScreen';
+import KeyInScreenV1 from './KeyInScreenV1';
 import styles from '../../assets/styles/PaymentStyle';
+import {useFocusEffect} from '@react-navigation/native';
 
-const PaymentScreen = () => {
+const PaymentScreenV1 = () => {
     const layout = useWindowDimensions();
     const isLandscape = layout.width > layout.height;
     const horizontalPadding = isLandscape ? 100 : 0;
@@ -18,7 +19,7 @@ const PaymentScreen = () => {
     const [productName, setProductName] = useState('');
     const [amount, setAmount] = useState('');
 
-    const handleRefresh = () => {
+    const resetForm = () => {
         setCardNumber('');
         setExpiry('');
         setBirth('');
@@ -28,6 +29,13 @@ const PaymentScreen = () => {
         setProductName('');
         setAmount('');
     };
+
+    // 컴포넌트가 포커스를 받을 때 상태 초기화
+    useFocusEffect(
+        useCallback(() => {
+            resetForm();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
@@ -40,8 +48,8 @@ const PaymentScreen = () => {
                     ]}
                 >
                     <View style={styles.innerWrapper}>
-                        <HeaderSub title="카드 결제" onRefresh={handleRefresh} />
-                        <KeyInScreen
+                        <HeaderSub title="카드 결제" onRefresh={resetForm} />
+                        <KeyInScreenV1
                             cardNumber={cardNumber}
                             setCardNumber={setCardNumber}
                             expiry={expiry}
@@ -66,4 +74,4 @@ const PaymentScreen = () => {
     );
 };
 
-export default PaymentScreen;
+export default PaymentScreenV1;
