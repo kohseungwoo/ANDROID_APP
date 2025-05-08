@@ -1,25 +1,18 @@
 // AppContent.js
-import React, {useEffect} from 'react';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import login from '../pages/login/SignInScreen';
 import paymentMenu from '../pages/payment/PaymentMenuScreen';
-import trxList from '../pages/trxboard/TrxListScreen';
 import trxDetail from '../pages/trxboard/TrxDetailScreen';
-import Orientation from 'react-native-orientation-locker';
-import TabNavigator from '../components/TabNavigator'; // 분리된 탭 파일
+import TabNavigator from '../components/TabNavigator';
+import usePortraitLock from './hooks/UnlockHooks'; // 분리된 탭 파일
 
 const Stack = createStackNavigator();
 
 const AppContent = () => {
-    useEffect(() => {
-        // 앱을 처음 시작할 때 세로 모드로 고정
-        Orientation.lockToPortrait();  // 세로 모드 고정
-        return () => {
-            Orientation.unlockAllOrientations();  // 화면을 원래대로 되돌리기
-        };
-    }, []);
+    usePortraitLock();
 
     return (
         <NavigationContainer>
@@ -27,7 +20,6 @@ const AppContent = () => {
                 <Stack.Screen name="LOGIN" component={login} />
                 <Stack.Screen name="MAIN" component={TabNavigator} />
                 <Stack.Screen name="PAYMENTMENU" component={paymentMenu} />
-                <Stack.Screen name="TRXLIST" component={trxList} />
                 <Stack.Screen name="TRXDETAIL" component={trxDetail} />
             </Stack.Navigator>
         </NavigationContainer>

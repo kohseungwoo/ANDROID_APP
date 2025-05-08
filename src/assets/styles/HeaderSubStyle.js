@@ -3,12 +3,16 @@ import {StyleSheet} from 'react-native';
 export default StyleSheet.create({
     header: {
         height: 60,
-        backgroundColor: '#fff',
-        borderBottomWidth: 0.2,
-        borderBottomColor: '#ddd',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
+        backgroundColor: '#fff',
+        marginBottom: 0.8,
+        elevation: 5,  // 높여서 그림자 효과 강조
+        shadowColor: '#000', // 그림자 색상
+        shadowOpacity: 0.3, // 그림자의 투명도
+        shadowRadius: 8, // 그림자의 흐림 정도 (큰 값일수록 흐려짐)
+        shadowOffset: { width: 0, height: 5 }, // 그림자 위치 (높이값을 더 크게 하면 그림자 위치가 더 아래로 내려가게 됨)
     },
     backButton: {
         position: 'absolute',

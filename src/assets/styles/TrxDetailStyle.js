@@ -21,7 +21,7 @@ export default StyleSheet.create({
     hashTitle: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#1689cc',
+        color: '#2680eb',
         marginBottom: 2,
     },
     mchtName: {
@@ -30,9 +30,9 @@ export default StyleSheet.create({
         marginBottom: 12,
     },
     thickDivider: {
-        borderBottomWidth: 1,
-        borderColor: '#ccc',
-        marginBottom: 12,
+        borderBottomWidth: 0.8,
+        borderColor: '#808080',
+        marginBottom: 20,
     },
     row: {
         flexDirection: 'row',
@@ -57,18 +57,13 @@ export default StyleSheet.create({
     },
     lightDivider: {
         borderBottomWidth: 0.5,
-        borderColor: '#ccc',
+        borderColor: '#808080',
         opacity: 0.5,
         marginVertical: 10,
     },
     footer: {
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 5,
-        paddingBottom: 5,
-        borderTopWidth: 0.5,
-        borderTopColor: '#ccc',
-        backgroundColor: '#fff',
+        paddingHorizontal : 20,
+        paddingVertical : 20,
     },
     button: {
         backgroundColor: '#253e6d',

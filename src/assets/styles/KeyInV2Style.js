@@ -2,34 +2,32 @@ import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     container: { padding: 20, backgroundColor: '#fff', flex: 1 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    title: { fontSize: 20, fontWeight: 'bold' },
-    button: { padding: 5, borderRadius: 5, backgroundColor:'#fff', borderWidth:0.5 },
-    buttonText: { color: '#000', fontSize: 12 },
-    separator: { height: 1, backgroundColor: '#000', marginVertical: 5 },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    button: {
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        // backgroundColor: '#253e6d',
+        borderWidth: 0.3,
+    },
+    buttonText: {
+        // color: '#fff',
+        color: '#000',
+        fontSize: 11,
+        fontWeight:'bold',
+    },
+    separator: { height: 1.3, backgroundColor: '#000', marginVertical: 5 },
     cardTitle: { marginTop: 50, fontSize: 20, fontWeight: 'bold' },
-    // inputGroup: { marginTop: 10, marginLeft:10, marginRight:10},
-    // label: { fontWeight: '600', marginTop: 10 },
-    // input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8, marginTop: 5 },
-    // cardNumberRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 },
-    // cardInput: {
-    //     flex: 1,
-    //     borderWidth: 1,
-    //     borderColor: '#ccc',
-    //     borderRadius: 5,
-    //     padding: 8,
-    //     marginRight: 2,
-    //     marginLeft: 2,
-    //     textAlign: 'center'
-    // },
     expiryRow: { flexDirection: 'row', alignItems: 'center', marginTop: 5 },
-    // expiryInput: {
-    //     width: '100%',
-    //     borderWidth: 1,
-    //     borderColor: '#ccc',
-    //     borderRadius: 5,
-    //     padding: 8,
-    // },
+
     hintText: {
         fontSize: 12,
         color: '#999',
@@ -67,23 +65,6 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    // expiryInputRow: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    // },
-    // pickerWrapper: {
-    //     height: 40,
-    //     borderWidth: 1,
-    //     borderColor: '#ccc',
-    //     borderRadius: 5,
-    //     overflow: 'hidden',
-    //     justifyContent: 'center',
-    //     marginLeft:20,
-    // },
-    // picker: {
-    //     height: 55,
-    //     width: '100%',
-    // },
     rowContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -126,8 +107,8 @@ export default StyleSheet.create({
         borderRadius: 5,
     },
     activeBtn: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
+        backgroundColor: '#253e6d',
+        borderColor: '#253e6d',
     },
     activeBtnText: {
         color: '#fff',

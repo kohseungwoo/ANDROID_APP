@@ -86,7 +86,7 @@ export default StyleSheet.create({
     },
     hideText: {
         fontSize: 14,
-        color: '#1689cc',
+        color: '#2680eb',
         marginLeft: 12,
     },
     reloadIcon: {

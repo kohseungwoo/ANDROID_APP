@@ -1,13 +1,19 @@
 import React from 'react';
-import {ScrollView, useWindowDimensions, View} from 'react-native';
+import {RefreshControl, ScrollView, useWindowDimensions, View} from 'react-native';
 import Main from '../../components/MainV2';
 import Header from '../../components/Header';
 import styles from '../../assets/styles/DashboardStyle';
+import refreshHooks from '../../components/hooks/RefreshHooks';
 
 const DashboardScreen = () => {
     const layout = useWindowDimensions();
     const isLandscape = layout.width > layout.height;
     const horizontalPadding = isLandscape ? 100 : 0;
+
+    // 드래그 새로고침
+    const { refreshing, onRefresh } = refreshHooks(() => {
+        // 여기에 API 호출 등 로직 작성
+    });
 
     return (
         <View style={styles.container}>
@@ -18,6 +24,9 @@ const DashboardScreen = () => {
                         styles.contentContainer,
                         isLandscape && { paddingHorizontal: horizontalPadding },
                     ]}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                 >
                     <View style={styles.innerWrapper}>
                         <Main />

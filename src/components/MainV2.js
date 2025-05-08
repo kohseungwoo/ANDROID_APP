@@ -1,29 +1,31 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Dimensions, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {Animated, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {moveScreen} from './hooks/ScreenHooks';
 import Swiper from 'react-native-swiper';
 import FORMAT from '../utils/FormatUtils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인
 import moment from 'moment'; // 날짜
 import 'moment/locale/ko';
-
-const { height } = Dimensions.get('window');
-
+import ErrorModal from './modal/ErrorModal';
 
 const MainV2 = () => {
     moment.locale('ko');
 
     const navigation = useNavigation();
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [defaultMessage, setDefaultMessage] = useState(false);
+    const [errMessage, setErrMessage] = useState('');
     const [showTransactions, setShowTransactions] = useState(true); //최근거래내역 숨김,보기
     const [isAmountHidden, setIsAmountHidden] = useState(false); // 금액 숨김,보기
     const amountOpacity = useRef(new Animated.Value(0)).current; // 시작 opacity 0
     const amountTranslate = useRef(new Animated.Value(-10)).current; // 시작 translateY -10
 
     // 금액 애니메이션을 설정하는 함수
-    const runAmountAnimation = () => {
-        amountOpacity.setValue(0); // 애니메이션 시작 시 opacity를 0으로 초기화
-        amountTranslate.setValue(-10); // 애니메이션 시작 시 translateY를 -10으로 초기화
+    const runAmountAnimation = useCallback(() => {
+        amountOpacity.setValue(0);
+        amountTranslate.setValue(-10);
 
         Animated.parallel([
             Animated.timing(amountOpacity, {
@@ -37,18 +39,40 @@ const MainV2 = () => {
                 useNativeDriver: true,
             }),
         ]).start();
-    };
+    }, [amountOpacity, amountTranslate]);
 
-    // 컴포넌트가 마운트 될 때 애니메이션 실행
-    useEffect(() => {
-        runAmountAnimation();
-    },[]); // 빈 배열로 설정하여 컴포넌트가 처음 렌더링될 때만 실행
+    useFocusEffect(
+        useCallback(() => {
+            runAmountAnimation();
+        }, [runAmountAnimation])
+    );
 
     // 금액 숨김/보기 토글
     const toggleAmountHidden = () => {
         setIsAmountHidden(prev => !prev);
         runAmountAnimation(); // 버튼 클릭 시에도 애니메이션 실행
     };
+
+    // 결제수단 클릭 이벤트
+    const handlePaymentPress = (type) => {
+        console.log(type);
+        switch (type) {
+            case 'CARD'     :
+                moveScreen(navigation, "MAIN", "결제"); break;
+            case 'TRXLIST'  :
+                moveScreen(navigation, "MAIN", "결제내역"); break;
+            case 'SMS': case 'LINK': case 'QR':
+                setErrMessage(`${type} 서비스는 준비중입니다.`);
+                setAlertVisible(true);
+                setDefaultMessage(false);
+                break;
+            default:
+                // setErrMessage(''); // 메시지 바꾸고 싶으면 입력
+                setAlertVisible(true);
+                setDefaultMessage(true);
+        }
+    };
+
 
     // 날짜 변수 선언
     const today = moment().format('M.D(dd)');
@@ -84,9 +108,16 @@ const MainV2 = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <>
+            <ErrorModal
+                visible={alertVisible}
+                message={errMessage}
+                onConfirm={() => setAlertVisible(false)}
+                defaultMessage={defaultMessage}
+            />
+
+            <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
-                {/* ✅ Scrollable Content */}
                 <ScrollView
                     style={styles.main}
                     contentContainerStyle={[styles.scrollViewContent, { paddingBottom: 80 }]} // 하단 고정 footer 가리지 않도록
@@ -104,19 +135,34 @@ const MainV2 = () => {
                     </View>
 
                     <View style={styles.paymentIconRow}>
-                        <TouchableOpacity style={styles.paymentIconBox}>
+                        <TouchableOpacity
+                            style={styles.paymentIconBox}
+                            onPress={() => handlePaymentPress('CARD')}
+                        >
                             <Ionicons name="card" size={22} color="#2680eb" />
                             <Text style={styles.paymentIconLabel}>카드결제</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.paymentIconBox}>
+
+                        <TouchableOpacity
+                            style={styles.paymentIconBox}
+                            onPress={() => handlePaymentPress('SMS')}
+                        >
                             <Ionicons name="chatbox-outline" size={22} color="#ff9900" />
                             <Text style={styles.paymentIconLabel}>SMS결제</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.paymentIconBox}>
+
+                        <TouchableOpacity
+                            style={styles.paymentIconBox}
+                            onPress={() => handlePaymentPress('LINK')}
+                        >
                             <Ionicons name="link-outline" size={22} color="#00bcd4" />
                             <Text style={styles.paymentIconLabel}>링크결제</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.paymentIconBox}>
+
+                        <TouchableOpacity
+                            style={styles.paymentIconBox}
+                            onPress={() => handlePaymentPress('QR')}
+                        >
                             <Ionicons name="qr-code-outline" size={22} color="#28a745" />
                             <Text style={styles.paymentIconLabel}>QR 결제</Text>
                         </TouchableOpacity>
@@ -179,7 +225,7 @@ const MainV2 = () => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                            <TouchableOpacity onPress={() => handlePaymentPress('TRXLIST')}>
                                 <Text style={styles.buttonStyle}>결제내역</Text>
                             </TouchableOpacity>
                         </View>
@@ -216,7 +262,7 @@ const MainV2 = () => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                            <TouchableOpacity onPress={() => handlePaymentPress('TRXLIST')}>
                                 <Text style={styles.buttonStyle}>결제내역</Text>
                             </TouchableOpacity>
                         </View>
@@ -228,12 +274,12 @@ const MainV2 = () => {
                             <View style={styles.headerLeft}>
                                 <Text style={styles.label}>최근 거래내역</Text>
                                 <Text style={styles.countText}> (최대 {totalCount}건)</Text>
-                                <TouchableOpacity onPress={() => navigation.navigate('TRXLIST')}>
+                                <TouchableOpacity onPress={() => handlePaymentPress('TRXLIST')}>
                                     <Text style={styles.nextBtn}> &gt; </Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.headerIcons}>
-                                <TouchableOpacity onPress={() => navigation.navigate("DASHBOARD")}>
+                                <TouchableOpacity>
                                     <Ionicons name="reload" size={20} style={styles.reloadIcon} />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setShowTransactions(!showTransactions)}>
@@ -280,7 +326,7 @@ const MainV2 = () => {
                     {/* ================ 기존 콘텐츠 끝 ================ */}
                 </ScrollView>
 
-                {/* ✅ Footer는 ScrollView 바깥에 고정됨 */}
+                {/* Footer는 ScrollView 바깥에 고정됨 */}
                 <View style={styles.footerContainer}>
                     <TouchableOpacity>
                         <Text style={styles.footerButton}>FAQ</Text>
@@ -296,6 +342,8 @@ const MainV2 = () => {
                 </View>
             </View>
         </SafeAreaView>
+
+        </>
     );
 
 };

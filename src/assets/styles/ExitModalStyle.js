@@ -37,7 +37,7 @@ export default StyleSheet.create({
         backgroundColor: '#e0e0e0',
     },
     confirmButton: {
-        backgroundColor: '#2f50bd',
+        backgroundColor: '#2680eb',
     },
     cancelText: {
         color: '#606060',

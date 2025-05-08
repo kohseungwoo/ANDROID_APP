@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import Orientation from 'react-native-orientation-locker';  // Orientation 임포트
+import React from 'react';
+import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import FORMAT from '../../utils/FormatUtils';
 import styles from '../../assets/styles/TrxDetailStyle';
 
@@ -12,15 +11,6 @@ const TrxDetailScreen = () => {
 
     const transactionStatus = item.amount > 0 ? "승인" : "승인취소";
 
-    useEffect(() => {
-        // 화면을 세로 모드로 고정
-        Orientation.lockToPortrait();
-
-        // 화면을 떠날 때 회전 제한을 해제
-        return () => {
-            Orientation.unlockAllOrientations();
-        };
-    }, []);
 
     return (
         <SafeAreaView style={styles.safeContainer}>
@@ -112,7 +102,7 @@ const TrxDetailScreen = () => {
 
                 {/* 하단 고정 확인 버튼 */}
                 <View style={styles.footer}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TRXLIST')}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
                         <Text style={styles.buttonText}>확인</Text>
                     </TouchableOpacity>
                 </View>

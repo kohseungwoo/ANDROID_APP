@@ -8,12 +8,15 @@ import dashboard from '../pages/dashboard/DashboardScreen';
 import payment from '../pages/payment/PaymentScreenV2';
 import trxList from '../pages/trxboard/TrxListScreen';
 import more from '../pages/more/MoreScreen';
-import ExitModal from './modal/ExitModal';
+import ConfirmModal from './modal/ConfirmModal';
+import usePortraitLock from './hooks/UnlockHooks';
 
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+    usePortraitLock();
+
     const [exitVisible, setExitVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -51,10 +54,11 @@ const TabNavigator = () => {
 
     return (
         <>
-            <ExitModal
+            <ConfirmModal
                 visible={exitVisible}
                 onCancel={() => setExitVisible(false)}
                 onConfirm={handleExit}
+                message={"앱을 종료 하시겠습니까?"}
             />
 
             <Tab.Navigator

@@ -2,23 +2,25 @@ import React from 'react';
 import {Modal, Text, TouchableOpacity, View} from 'react-native';
 import styles from '../../assets/styles/ExitModalStyle';
 
+const ErrorModal = ({ visible, onCancel, onConfirm, message, defaultMessage = false }) => {
+    const displayMessage = message || '일시적인 시스템 오류입니다.';
+    const fullMessage = defaultMessage
+        ? `${displayMessage}\n관리자에게 문의하시기 바랍니다.`
+        : displayMessage;
 
-const ExitModal = ({ visible, onCancel, onConfirm }) => {
     return (
         <Modal
             transparent
             animationType="fade"
             visible={visible}
+            boolean={defaultMessage}
         >
             <View style={styles.backdrop}>
                 <View style={styles.modalBox}>
-                    <Text style={styles.message}>앱을 종료 하시겠습니까?</Text>
+                    <Text style={styles.message}>{fullMessage}</Text>
                     <View style={styles.buttonRow}>
-                        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onCancel}>
-                            <Text style={styles.cancelText}>취소</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
-                            <Text style={styles.confirmText}>종료</Text>
+                            <Text style={styles.confirmText}>확인</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -28,4 +30,4 @@ const ExitModal = ({ visible, onCancel, onConfirm }) => {
 };
 
 
-export default ExitModal;
+export default ErrorModal;

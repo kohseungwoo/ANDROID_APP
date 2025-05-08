@@ -6,6 +6,15 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <!-- 내비게이션 바 색상(투명) -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:datePickerDialogTheme">@style/CustomDatePickerTheme</item>
     </style>
 
+    <style name="CustomDatePickerTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="colorPrimary">#253e6d</item> <!-- 헤더 배경색 -->
+        <item name="colorOnPrimary">#FFFFFF</item> <!-- 텍스트 색상 -->
+        <item name="colorControlActivated">#253e6d</item> <!-- 선택된 포커스 날짜 색상  -->
+        <item name="colorSurface">#FFFFFF</item> <!-- 달력 텍스트 색상 -->
+        <item name="colorAccent">#253e6d</item> <!-- 취소/확인 텍스트 -->
+    </style>
 </resources>

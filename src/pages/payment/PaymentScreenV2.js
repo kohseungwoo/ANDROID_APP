@@ -1,9 +1,10 @@
-import React, {useCallback, useState} from 'react';
-import {ScrollView, useWindowDimensions, View} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, RefreshControl, useWindowDimensions, View } from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
 import KeyInScreenV2 from './KeyInScreenV2';
 import styles from '../../assets/styles/PaymentStyle';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import refreshHooks from '../../components/hooks/RefreshHooks';
 
 const PaymentScreenV2 = () => {
     const layout = useWindowDimensions();
@@ -81,6 +82,12 @@ const PaymentScreenV2 = () => {
         }, [])
     );
 
+    // 드래그 새로고침
+    const { refreshing, onRefresh } = refreshHooks(() => {
+        // 여기에 API 호출 등 로직 작성
+        resetForm();  // 새로고침 시 폼을 초기화
+    });
+
     return (
         <View style={styles.container}>
             <View style={styles.flex_1}>
@@ -90,9 +97,12 @@ const PaymentScreenV2 = () => {
                         styles.contentContainer,
                         isLandscape && { paddingHorizontal: horizontalPadding },
                     ]}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                 >
                     <View style={styles.innerWrapper}>
-                        <HeaderSub title="카드 결제" onRefresh={resetForm} />
+                        <HeaderSub title="카드 결제" onRefresh={onRefresh} />
                         <KeyInScreenV2
                             productName={productName} setProductName={setProductName}
                             amount={amount} setAmount={setAmount}
