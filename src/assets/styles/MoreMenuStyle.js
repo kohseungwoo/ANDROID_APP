@@ -4,51 +4,42 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        minHeight : 400,
+        padding: 20,
     },
-    userBox: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderColor: '#eee',
-        paddingTop:15,
-        paddingBottom:15,
-    },
-    userRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    leftPart: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    rightPart: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    nick: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        marginRight: 6,
-    },
-    logout: {
-        marginLeft: 6,
-        color: '#adadad',
-        fontSize: 14,
-    },
-    menuGrid: {
-        paddingTop: 20,
-        paddingHorizontal: 10,
-    },
-    menuItem: {
-        width: '100%', // 더 넓은 너비로 텍스트 여유 공간 확보
-        alignItems: 'center',
+    headerBox: {
         marginBottom: 20,
     },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    logoutText: {
+        marginLeft: 6,
+        fontSize: 14,
+        color: '#000',
+    },
+    userInfo: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    section: {
+        marginTop: 10,
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginBottom: 12,
+        color: '#888',
+    },
+    menuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+    },
     menuLabel: {
-        marginTop: 8,
-        fontSize: 12,
-        color: '#333',
+        fontSize: 16,
+        color: '#000',
     },
 });

@@ -55,12 +55,11 @@ const MainV2 = () => {
 
     // 결제수단 클릭 이벤트
     const handlePaymentPress = (type) => {
-        console.log(type);
         switch (type) {
             case 'CARD'     :
-                moveScreen(navigation, "MAIN", "결제"); break;
+                moveScreen(navigation, "PAYMENT"); break;
             case 'TRXLIST'  :
-                moveScreen(navigation, "MAIN", "결제내역"); break;
+                moveScreen(navigation, "TRXLIST"); break;
             case 'SMS': case 'LINK': case 'QR':
                 setErrMessage(`${type} 서비스는 준비중입니다.`);
                 setAlertVisible(true);
@@ -78,8 +77,8 @@ const MainV2 = () => {
     const today = moment().format('M.D(dd)');
     const currentMonth = moment().format('M월');
 
-    const dailyAmount = 1234;
-    const monthlyAmount = 55123943;
+    const dailyAmount = 6748264;
+    const monthlyAmount = 155123943;
     const totalCount = 10; // 최대 5건
 
     const transactions = [

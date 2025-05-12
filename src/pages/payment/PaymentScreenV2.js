@@ -1,15 +1,17 @@
-import React, { useCallback, useState } from 'react';
-import { ScrollView, RefreshControl, useWindowDimensions, View } from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {RefreshControl, ScrollView, useWindowDimensions, View} from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
 import KeyInScreenV2 from './KeyInScreenV2';
 import styles from '../../assets/styles/PaymentStyle';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import refreshHooks from '../../components/hooks/RefreshHooks';
 
 const PaymentScreenV2 = () => {
     const layout = useWindowDimensions();
     const isLandscape = layout.width > layout.height;
     const horizontalPadding = isLandscape ? 100 : 0;
+
+    const [appId, setAppId] = useState('');
 
     // 상품 정보
     const [productName, setProductName] = useState('');
@@ -47,6 +49,7 @@ const PaymentScreenV2 = () => {
 
     // 초기화 함수
     const resetForm = () => {
+        setAppId('');
         setProductName('');
         setAmount('');
         setBuyerName('');
@@ -102,8 +105,9 @@ const PaymentScreenV2 = () => {
                     }
                 >
                     <View style={styles.innerWrapper}>
-                        <HeaderSub title="카드 결제" onRefresh={onRefresh} />
+                        <HeaderSub title="카드 결제" onRefresh={resetForm} />
                         <KeyInScreenV2
+                            appId={appId} setAppId={setAppId}
                             productName={productName} setProductName={setProductName}
                             amount={amount} setAmount={setAmount}
                             buyerName={buyerName} setBuyerName={setBuyerName}

@@ -2,7 +2,7 @@ import React from 'react';
 import {Alert, ScrollView, Text, TextInput, TouchableOpacity} from 'react-native';
 import styles from '../../assets/styles/KeyInV1Style';
 
-
+/* V2 마이그레이션 before 버전 */
 const KeyInScreenV1 = ({
      cardNumber, setCardNumber, expiry, setExpiry, birth, setBirth, password, setPassword,
      buyerName, setBuyerName, phone, setPhone, productName, setProductName, amount, setAmount}) => {

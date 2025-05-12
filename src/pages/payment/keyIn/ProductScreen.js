@@ -1,0 +1,157 @@
+import React, {useState} from 'react';
+import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import styles from '../../../assets/styles/ProductStyle';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ErrorModal from '../../../components/modal/ErrorModal';
+import {useNavigation} from '@react-navigation/native';
+
+const ProductScreen = ({ formData, setFormData }) => {
+    const navigation = useNavigation();
+
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [errMessage, setErrMessage] = useState('');
+
+    const formatAmount = (value) => {
+        const numeric = value.replace(/[^0-9]/g, '');
+        return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    const onlyNumber = (value) => {
+        return value.replace(/[^0-9]/g, '');
+    };
+
+    const removeSpecial = (value) => {
+        return value.replace(/[^a-zA-Z0-9]/g, '');
+    };
+
+    const nextBtn = () =>{
+        formData.productName = 'test';
+        formData.amount = 1004;
+        formData.buyerName = '홍길동';
+        formData.phoneNo = '01000000000';
+        const { productName, amount, buyerName, phoneNo } = formData;
+        if (!productName) {
+            setErrMessage('상품명을 올바르게 입력해주세요..');
+            setAlertVisible(true);
+            return;
+        }
+
+        if (!amount) {
+            setErrMessage('판매금액을 올바르게 입력해주세요.');
+            setAlertVisible(true);
+            return;
+        }
+
+        if (!buyerName) {
+            setErrMessage('구매자명을 올바르게 입력해주세요..');
+            setAlertVisible(true);
+            return;
+        }
+
+        if (!phoneNo) {
+            setErrMessage('휴대폰을 올바르게 입력해주세요.');
+            setAlertVisible(true);
+            return;
+        }
+
+        navigation.navigate('REGULAR');
+    };
+
+    return (
+        <>
+            <ErrorModal
+                visible={alertVisible}
+                message={errMessage}
+                onConfirm={() => setAlertVisible(false)}
+            />
+
+            <ScrollView
+                style={styles.container}
+                contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]} // 키보드 위 공간 확보
+                keyboardShouldPersistTaps="handled"
+            >
+                {/* 헤더 및 입력 필드들 */}
+                <View style={styles.header}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginRight: 6 }} />
+                        <Text style={styles.title}>결제정보</Text>
+                    </View>
+                </View>
+                <View style={styles.separator} />
+
+                <View style={styles.inputGroup}>
+                    <Text style={styles.label}>상품명</Text>
+                    <TextInput style={styles.input}
+                               placeholder="상품명을 입력하세요."
+                               maxLength={64}
+                               value={formData.productName} onChangeText={(text) => {
+                                setFormData({
+                                    ...formData,
+                                    productName: text,
+                                });
+                            }}
+                    />
+
+                    <Text style={styles.label}>판매금액</Text>
+                    <TextInput style={styles.input}
+                               keyboardType="number-pad"
+                               placeholder="0"
+                               maxLength={13}
+                               value={formData.amount} onChangeText={(text) => {
+                                setFormData({
+                                    ...formData,
+                                    amount: formatAmount(text),
+                                });
+                            }}
+                    />
+
+                    <Text style={styles.label}>구매자명</Text>
+                    <TextInput style={styles.input}
+                               placeholder="구매자명을 입력하세요."
+                               maxLength={12}
+                               value={formData.buyerName} onChangeText={(text) => {
+                                setFormData({
+                                    ...formData,
+                                    buyerName: removeSpecial(text),
+                                });
+                            }}
+                    />
+
+                    <Text style={styles.label}>휴대폰</Text>
+                    <TextInput style={styles.input}
+                               placeholder="'-' 없이 입력하세요."
+                               maxLength={16}
+                               value={formData.phoneNo} onChangeText={(text) => {
+                                setFormData({
+                                    ...formData,
+                                    phoneNo: onlyNumber(text),
+                                });
+                            }}
+                    />
+
+                    <View style={styles.optionalLabelRow}>
+                        <Text style={styles.label}>메모</Text>
+                        <Text style={styles.optionalText}>(선택)</Text>
+                    </View>
+                    <TextInput style={styles.input}
+                               maxLength={200}
+                               value={formData.udf1} onChangeText={(text) => {
+                                   setFormData({
+                                    ...formData,
+                                    udf1: text,
+                                });
+                            }}
+                   />
+                </View>
+
+                <View style={styles.footerContainer}>
+                    <TouchableOpacity style={styles.fullWidthTouchable} onPress={nextBtn}>
+                        <Text style={styles.footerButton}>다음</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </>
+    );
+};
+
+export default ProductScreen;

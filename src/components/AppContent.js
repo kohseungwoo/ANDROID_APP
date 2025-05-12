@@ -7,7 +7,7 @@ import login from '../pages/login/SignInScreen';
 import paymentMenu from '../pages/payment/PaymentMenuScreen';
 import trxDetail from '../pages/trxboard/TrxDetailScreen';
 import TabNavigator from '../components/TabNavigator';
-import usePortraitLock from './hooks/UnlockHooks'; // 분리된 탭 파일
+import usePortraitLock from './hooks/UnlockHooks';
 
 const Stack = createStackNavigator();
 

@@ -1,21 +1,37 @@
 import React, {useCallback} from 'react';
-import {Alert, Linking, Text, TouchableOpacity, View} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import Octicons from 'react-native-vector-icons/Octicons';
+import {Alert, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {FlashList} from '@shopify/flash-list';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/MoreMenuStyle';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const userId = 'USERID123';
 
 const menuItems = [
-    { label: '결제화면TEST', icon: 'credit-card', iconComponent: FontAwesome, route: 'PAYMENTMENU' },
-    { label: '공지사항', key: 'notice', icon: 'bullhorn', iconComponent: FontAwesome },
-    { label: 'FAQ', key: 'notice', icon: 'note', iconComponent: Octicons },
-    { label: '고객센터', key: 'contact', icon: 'phone-call', iconComponent: Feather },
-    { label: '버전정보', key: 'version', icon: 'info', iconComponent: Feather },
+    {
+        label: '공지사항',
+        key: 'notice',
+        icon: 'megaphone-outline',
+        iconComponent: Ionicons,
+    },
+    {
+        label: 'FAQ',
+        key: 'notice',
+        icon: 'help-circle-outline',
+        iconComponent: Ionicons,
+    },
+    {
+        label: '고객센터',
+        key: 'contact',
+        icon: 'call-outline',
+        iconComponent: Ionicons,
+    },
+    {
+        label: '버전정보',
+        key: 'version',
+        icon: 'information-circle-outline',
+        iconComponent: Ionicons,
+    },
 ];
 
 const MoreMenuScreen = () => {
@@ -37,44 +53,40 @@ const MoreMenuScreen = () => {
         }
     }, [navigation]);
 
-    const renderItem = useCallback(({ item }) => {
-        const Icon = item.iconComponent;
-        return (
-            <TouchableOpacity
-                key={item.label}
-                style={styles.menuItem}
-                onPress={() => handlePress(item)}
-            >
-                <Icon name={item.icon} size={18} color="#333" />
-                <Text style={styles.menuLabel}>{item.label}</Text>
-            </TouchableOpacity>
-        );
-    }, [handlePress]);
-
     return (
-        <View style={styles.container}>
-            <View style={styles.userBox}>
-                <View style={styles.userRow}>
-                    <View style={styles.leftPart}>
-                        <Text style={styles.nick}>연전호떡({userId})</Text>
-                        <MaterialIcons name="arrow-forward-ios" size={12} color="#adadad" />
-                    </View>
-                    <TouchableOpacity style={styles.rightPart} onPress={() => console.log('로그아웃')}>
-                        <MaterialIcons name="logout" size={16} color="#adadad" style={{ marginLeft: 4 }} />
-                        <Text style={styles.logout}>로그아웃</Text>
-                    </TouchableOpacity>
-                </View>
+        <ScrollView style={styles.container}>
+            {/* 상단: 로그아웃 버튼 + 유저 정보 */}
+            <View style={styles.headerBox}>
+                <TouchableOpacity
+                    onPress={() => console.log('로그아웃')}
+                    style={styles.logoutButton}
+                >
+                    <MaterialIcons name="logout" size={18} color="#000" />
+                    <Text style={styles.logoutText}>로그아웃</Text>
+                </TouchableOpacity>
+
+                {/*<Text style={styles.userInfo}>연전호떡 ({userId})</Text>*/}
             </View>
 
-            <FlashList
-                data={menuItems}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.label}
-                estimatedItemSize={60}
-                numColumns={4}
-                contentContainerStyle={styles.menuGrid}
-            />
-        </View>
+            {/* 메뉴 섹션 */}
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>설정 메뉴</Text>
+
+                {menuItems.map((item) => {
+                    const Icon = item.iconComponent;
+                    return (
+                        <TouchableOpacity
+                            key={item.label}
+                            style={styles.menuItem}
+                            onPress={() => handlePress(item)}
+                        >
+                            <Icon name={item.icon} size={18} color="#333" style={{ marginRight: 12 }} />
+                            <Text style={styles.menuLabel}>{item.label}</Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+        </ScrollView>
     );
 };
 

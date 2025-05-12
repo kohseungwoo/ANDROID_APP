@@ -1,5 +1,6 @@
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
+    Alert,
     Animated,
     Modal,
     Platform,
@@ -15,7 +16,7 @@ import HeaderSub from '../../components/HeaderSub';
 import FORMAT from '../../utils/FormatUtils';
 import styles from '../../assets/styles/TrxListStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import refreshHooks from '../../components/hooks/RefreshHooks';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -76,16 +77,50 @@ const TrxListScreen = () => {
     };
 
     const handleSearch = () => {
-        const from = formatDate(fromDateObj).replace(/\./g, '-');
-        const to = formatDate(toDateObj).replace(/\./g, '-');
+        let from = fromDateObj;
+        let to = toDateObj;
+
+        // to가 from보다 작으면 to를 from으로 설정
+        if (to < from) {
+            to = from;
+            setToDateObj(from); // 상태 업데이트
+        }
+
+        const fromFormatted = formatDate(from).replace(/\./g, '-');
+        const toFormatted = formatDate(to).replace(/\./g, '-');
 
         const filteredList = dummyTransactions.filter(
-            item => item.date >= from && item.date <= to
+            item => item.date >= fromFormatted && item.date <= toFormatted
         );
         setFiltered(filteredList);
     };
 
-    const { refreshing, onRefresh } = refreshHooks(handleSearch);
+    const refresh = () => {
+        const now = new Date();
+        setFromDateObj(now);
+        setToDateObj(now);
+
+        const formattedNow = formatDate(now).replace(/\./g, '-');
+
+        const filteredList = dummyTransactions.filter(
+            item => item.date === formattedNow
+        );
+
+        setFiltered(filteredList);
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            const today = new Date();
+            setFromDateObj(today);
+            setToDateObj(today);
+
+            handleSearch();
+            setShowDetails(false);
+        }, [])
+    );
+
+    const { refreshing, onRefresh } = refreshHooks(refresh);
 
     return (
         <View style={styles.flex_1}>
@@ -94,7 +129,7 @@ const TrxListScreen = () => {
                 contentContainerStyle={styles.contentContainer}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
-                <HeaderSub title="결제 현황" onRefresh={handleSearch} />
+                <HeaderSub title="결제 현황" onRefresh={refresh} />
 
                 <View style={styles.searchSection}>
                     <View style={styles.dateInputRow}>

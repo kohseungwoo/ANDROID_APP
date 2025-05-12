@@ -2,6 +2,9 @@ import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     container: { padding: 20, backgroundColor: '#fff', flex: 1 },
+    contentContainer: {
+        flexGrow: 1,
+    },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -12,17 +15,15 @@ export default StyleSheet.create({
         fontWeight: 'bold',
     },
     button: {
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        // backgroundColor: '#253e6d',
-        borderWidth: 0.3,
+        backgroundColor: '#253e6d',
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
     },
     buttonText: {
-        // color: '#fff',
-        color: '#000',
-        fontSize: 11,
+        color: '#fff',
         fontWeight:'bold',
+        textAlign:'center',
     },
     separator: { height: 1.3, backgroundColor: '#000', marginVertical: 5 },
     cardTitle: { marginTop: 50, fontSize: 20, fontWeight: 'bold' },
@@ -150,16 +151,16 @@ export default StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 4,
         paddingHorizontal: 10,
-        paddingTop: 14,
-        paddingBottom: 14,
+        paddingTop: 12,
+        paddingBottom: 12,
         marginBottom:12,
     },
 
     footerContainer: {
         position: 'absolute',
-        bottom: 30,
-        left: 15,
-        right: 15,
+        bottom: 40,
+        left: 0,
+        right: 0,
         height: 40,
         borderRadius: 8,
         backgroundColor: '#253e6d',

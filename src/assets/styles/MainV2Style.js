@@ -96,8 +96,8 @@ export default StyleSheet.create({
         textDecorationLine: 'underline',
     },
     buttonStyle: {
-        marginTop:10,
-        paddingVertical: 5, // 위 아래 여백
+        marginTop:20,
+        paddingVertical: 6, // 위 아래 여백
         paddingHorizontal: 5, // 좌 우 여백
         borderWidth: 1,
         borderColor: 'transparent', // 버튼 테두리 색상

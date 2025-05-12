@@ -1,41 +1,67 @@
 import React, {useState} from 'react';
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
 import styles from '../../assets/styles/KeyInV2Style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../components/modal/ErrorModal';
 
+/* 단일 화면에서의 모든 처리 */
 const KeyInScreenV2 = ({
-           productName, setProductName,
-           amount, setAmount,
-           buyerName, setBuyerName,
-           cardType, setCardType,
-           installment, setInstallment,
+       appId, setAppId,
+       productName, setProductName,
+       amount, setAmount,
+       buyerName, setBuyerName,
+       cardType, setCardType,
+       installment, setInstallment,
 
-           personalCardNumber1, setPersonalCardNumber1,
-           personalCardNumber2, setPersonalCardNumber2,
-           personalCardNumber3, setPersonalCardNumber3,
-           personalCardNumber4, setPersonalCardNumber4,
-           personalExpiry, setPersonalExpiry,
-           personalPassword, setPersonalPassword,
-           dob, setDob,
+       personalCardNumber1, setPersonalCardNumber1,
+       personalCardNumber2, setPersonalCardNumber2,
+       personalCardNumber3, setPersonalCardNumber3,
+       personalCardNumber4, setPersonalCardNumber4,
+       personalExpiry, setPersonalExpiry,
+       personalPassword, setPersonalPassword,
+       dob, setDob,
 
-           corpCardNumber1, setCorpCardNumber1,
-           corpCardNumber2, setCorpCardNumber2,
-           corpCardNumber3, setCorpCardNumber3,
-           corpCardNumber4, setCorpCardNumber4,
-           corpExpiry, setCorpExpiry,
-           corpPassword, setCorpPassword,
-           brn, setBrn,
+       corpCardNumber1, setCorpCardNumber1,
+       corpCardNumber2, setCorpCardNumber2,
+       corpCardNumber3, setCorpCardNumber3,
+       corpCardNumber4, setCorpCardNumber4,
+       corpExpiry, setCorpExpiry,
+       corpPassword, setCorpPassword,
+       brn, setBrn,
 
-           phone, setPhone,
-           email, setEmail,
-           udf1, setUdf1,
-           udf2, setUdf2,
-       }) => {
+       phone, setPhone,
+       email, setEmail,
+       udf1, setUdf1,
+       udf2, setUdf2,
+   }) => {
 
     const [alertVisible, setAlertVisible] = useState(false);
     const [errMessage, setErrMessage] = useState('');
+    const appIdx = [
+        { appId: 'demo_kovan', status : 'active'},
+        { appId: 'demo_galaxia', status : 'active'},
+        { appId: 'TESTNHC', status : 'active'},
+        { appId: '1047159555', status : 'active'},
+        { appId: '1047155125', status : 'active'},
+        { appId: '1023231456', status : 'active'},
+        { appId: '2422153566', status : 'active'},
+    ];
+
+    const filteredAppIdx = appIdx
+        .filter(item => item.status === 'active')  // Filter out inactive items
+        .map(item => ({
+            label: item.appId, // Use appId as the label
+            value: item.appId, // Use appId as the value
+        }));
+
+
+    const [installmentIdx, setInstallmentIdx] = useState(
+        Array.from({ length: 12 }, (_, i) => ({
+            label: `${i + 1}개월`,
+            value: `${i + 1}`,
+        }))
+    );
 
     const getInstallment = () => {
         setErrMessage('준비중');
@@ -64,11 +90,11 @@ const KeyInScreenV2 = ({
             />
 
             <View style={styles.container}>
-                {/* 1~3. 상단 타이틀 + 버튼 + 구분선 */}
+                {/* 상단 타이틀 + 버튼 + 구분선 */}
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginRight: 6 }} />
-                        <Text style={styles.title}>결제정보</Text>
+                        <Text style={styles.title}>2</Text>
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={getInstallment}>
@@ -78,8 +104,43 @@ const KeyInScreenV2 = ({
 
                 <View style={styles.separator} />
 
-                {/* 4~6. 상품명, 판매금액, 구매자 */}
+                {/* 상품명, 판매금액, 구매자 */}
                 <View style={styles.inputGroup}>
+                    {/* APPID 선택 */}
+                    {/*<View style={styles.row}>*/}
+                    {/*    <Text style={styles.label}>앱ID</Text>*/}
+                    {/*    <View style={styles.pickerWrapper}>*/}
+                    {/*        <RNPickerSelect*/}
+                    {/*            onValueChange={(value) => setAppId(value)}*/}
+                    {/*            value={appId}*/}
+                    {/*            items={filteredAppIdx}*/}
+                    {/*            placeholder={{ label: '앱ID를 선택해주세요.', value: ''}}*/}
+                    {/*            style={{*/}
+                    {/*                inputIOS: {*/}
+                    {/*                    fontSize: 16,*/}
+                    {/*                    paddingVertical: 12,*/}
+                    {/*                    paddingHorizontal: 10,*/}
+                    {/*                    borderWidth: 1,*/}
+                    {/*                    borderColor: 'gray',*/}
+                    {/*                    borderRadius: 4,*/}
+                    {/*                    color: 'black',*/}
+                    {/*                    paddingRight: 30, // to ensure the text is not behind the icon*/}
+                    {/*                },*/}
+                    {/*                inputAndroid: {*/}
+                    {/*                    fontSize: 16,*/}
+                    {/*                    paddingHorizontal: 10,*/}
+                    {/*                    paddingVertical: 10,*/}
+                    {/*                    borderWidth: 0.5,*/}
+                    {/*                    borderColor: 'purple',*/}
+                    {/*                    borderRadius: 8,*/}
+                    {/*                    color: 'black',*/}
+                    {/*                    paddingRight: 30,*/}
+                    {/*                },*/}
+                    {/*            }}*/}
+                    {/*        />*/}
+                    {/*    </View>*/}
+                    {/*</View>*/}
+
                     <Text style={styles.label}>상품명</Text>
                     <TextInput style={styles.input} value={productName} placeholder="상품명을 입력하세요."  maxLength={64} onChangeText={(text) => setProductName(removeSpecial(text))} />
 
@@ -104,16 +165,28 @@ const KeyInScreenV2 = ({
                     <View style={styles.row}>
                         <Text style={styles.label}>할부 개월</Text>
                         <View style={styles.pickerWrapper}>
-                            <Picker
-                                style={styles.picker}
-                                selectedValue={installment}
-                                onValueChange={setInstallment}
-                            >
-                                <Picker.Item label="일시불" value="0" />
-                                {[...Array(36)].map((_, i) => (
-                                    <Picker.Item key={i + 1} label={`${i + 1}개월`} value={`${i + 1}`} />
-                                ))}
-                            </Picker>
+                            <RNPickerSelect
+                                onValueChange={(value) => setInstallment(value)}
+                                value={installment}
+                                items={installmentIdx}
+                                placeholder={{ label: '일시불', value: 0}}
+                                style={{
+                                    inputIOS: {
+                                        fontSize: 16,
+                                        paddingVertical: 12,
+                                        paddingHorizontal: 10,
+                                        borderWidth: 1,
+                                        borderColor: 'gray',
+                                        borderRadius: 4,
+                                        color: 'black',
+                                    },
+                                    inputAndroid: {
+                                        color: 'black',
+                                    },
+                                }}
+                            />
+                            {/*<Text style={{paddingLeft:10}}>{installment == 0 ? '일시불' : installment + '개월'}</Text>*/}
+                            {/*</RNPickerSelect>*/}
                         </View>
                     </View>
 
@@ -305,13 +378,14 @@ const KeyInScreenV2 = ({
                                placeholder="임의필드를 입력하세요." maxLength={200}/>
                 </View>
 
-
-
-
+                <View style={styles.footerContainer}>
+                    <TouchableOpacity style={styles.fullWidthTouchable}>
+                        <Text style={styles.footerButton}>다음</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </>
     );
-
-}
+};
 
 export default KeyInScreenV2;

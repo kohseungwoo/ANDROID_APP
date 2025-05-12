@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useFocusEffect} from '@react-navigation/native';
+import {CommonActions, useFocusEffect} from '@react-navigation/native';
 import {BackHandler, Keyboard} from 'react-native';
 
 import TabButton from '../components/TabButton';
 import dashboard from '../pages/dashboard/DashboardScreen';
-import payment from '../pages/payment/PaymentScreenV2';
+import payment from '../pages/payment/PaymentScreenV3';
 import trxList from '../pages/trxboard/TrxListScreen';
 import more from '../pages/more/MoreScreen';
 import ConfirmModal from './modal/ConfirmModal';
@@ -81,7 +81,7 @@ const TabNavigator = () => {
                 })}
             >
                 <Tab.Screen
-                    name="메인"
+                    name="MAIN"
                     component={dashboard}
                     options={{
                         unmountOnBlur: true,
@@ -102,7 +102,7 @@ const TabNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="결제"
+                    name="PAYMENT"
                     component={payment}
                     options={{
                         unmountOnBlur: true,
@@ -120,10 +120,23 @@ const TabNavigator = () => {
                             />
                         ),
                     }}
+                    listeners={({ navigation }) => ({
+                        tabPress: (e) => {
+                            const state = navigation.getState();
+                            const currentRoute = state.routes[state.index];
+                            if (currentRoute.name === 'PAYMENT') {
+                                // PAYMENT 탭이 이미 활성화된 경우 → navigation 차단
+                                e.preventDefault();
+                            }
+                        },
+                    })}
+
+
+
                 />
 
                 <Tab.Screen
-                    name="결제내역"
+                    name="TRXLIST"
                     component={trxList}
                     options={{
                         unmountOnBlur: true,
@@ -144,7 +157,7 @@ const TabNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="전체"
+                    name="MORE"
                     component={more}
                     options={{
                         unmountOnBlur: true,
