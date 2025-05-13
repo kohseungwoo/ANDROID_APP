@@ -1,69 +1,103 @@
-// import React, {useCallback} from 'react';
-// import {createStackNavigator} from '@react-navigation/stack';
-// import Product from './keyIn/ProductScreen';
-// import Regular from './keyIn/RegularScreen';
-// import {useFocusEffect, useNavigation, useNavigationState} from '@react-navigation/native';
-//
-//
-// // AppContent (Stack)
-// // └── MAIN (TabNavigator)
-// //     └── PAYMENT (Tab.Screen)
-// //         └── PaymentScreenV3 (화면 내부에서 <KeyInScreenV3 /> 직접 렌더링)
-// //             └── KeyInScreenV3
-// //                 └── PRODUCT
-// //                     └── REGULAR
-//
-// const Stack = createStackNavigator();
-// const KeyInScreenV3 = ({ formData, setFormData }) => {
-//
-//     return (
-//         <Tab.Navigator>
-//             <Tab.Screen name="PRODUCT" component={Product} options={{ title: '상품' }} />
-//             <Tab.Screen name="REGULAR" component={Regular} options={{ title: '일반결제' }} />
-//         </Tab.Navigator>
-//         // <Product
-//         //             formData={formData}
-//         //             setFormData={setFormData}
-//         //         />
-//         // <Stack.Navigator
-//         //     initialRouteName ="PRODUCT"
-//         //     screenOptions={{ headerShown: false }}
-//         // >
-//         //     <Stack.Screen name="PRODUCT">
-//         //         {(props) => (
-//         //             <Product
-//         //                 {...props}
-//         //                 formData={formData}
-//         //                 setFormData={setFormData}
-//         //             />
-//         //         )}
-//         //     </Stack.Screen>
-//         //     <Stack.Screen name="REGULAR">
-//         //         {(props) => (
-//         //             <Regular
-//         //                 {...props}
-//         //                 formData={formData}
-//         //                 setFormData={setFormData}
-//         //             />
-//         //         )}
-//         //     </Stack.Screen>
-//         // </Stack.Navigator>
-//     );
-// };
-//
-// export default KeyInScreenV3;
-
-
-import React from 'react';
-import { View } from 'react-native';
-import KeyInTabNavigator from '../../components/KeyInTabNavigator';
+import React, {useCallback, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import ProductScreen from './keyIn/ProductScreen';
+import RegularScreen from './keyIn/RegularScreen';
+import styles from '../../assets/styles/HeaderSubStyle';
+import {Text, TouchableOpacity, View} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const KeyInScreenV3 = ({ formData, setFormData }) => {
-    return (
-        <View style={{ flex: 1 }}>
-            <KeyInTabNavigator formData={formData} setFormData={setFormData} />
+    const [step, setStep] = useState('PRODUCT');
+
+    const resetFormData = () => {
+        setFormData({
+            productName: '',
+            amount: '',
+            buyerName: '',
+            phoneNo: '',
+            udf1: '',
+            cardType: 'personal',
+        });
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            setStep('PRODUCT');     // step 초기화
+            resetFormData();        // 데이터 초기화
+        }, [])
+    );
+
+    const next = () => {
+        switch (step) {
+            case 'PRODUCT': setStep('REGULAR'); break;
+            case 'REGULAR': setStep('COMPLETE'); break;
+            default: console.warn('No next step from', step); break;
+        }
+    };
+
+    const prev = () => {
+        switch (step) {
+            case 'REGULAR' : setStep('PRODUCT'); break;
+            default:
+                console.warn('No previous step from', step);
+                break;
+        }
+    };
+
+    const renderHeader = (title, onRefresh) => (
+        <View style={styles.header}>
+            {step === "REGULAR" && (
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => setStep('PRODUCT')}
+                    hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
+                >
+                    <AntDesign name="arrowleft" size={20} color="#808080" />
+                </TouchableOpacity>
+            )}
+            <Text style={styles.title}>{title}</Text>
+
+            <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={onRefresh}
+                hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
+            >
+                <AntDesign name="reload1" size={20} color="#808080" />
+            </TouchableOpacity>
         </View>
     );
+
+
+
+    switch (step) {
+        case 'PRODUCT': {
+            return (
+                <View style={{ flex: 1 }}>
+                    {renderHeader("신용카드 수기결제", () => resetFormData())}
+                    <ProductScreen
+                        formData={formData}
+                        setFormData={setFormData}
+                        onNext={next}
+                    />
+                </View>
+            );
+        }
+        case 'REGULAR':{
+            return (
+                <View style={{ flex: 1 }}>
+                    {renderHeader("신용카드 수기결제", () => resetFormData())}
+                    <RegularScreen
+                        formData={formData}
+                        setFormData={setFormData}
+                        onNext={next}
+                        onBack={prev}
+                    />
+                </View>
+            );
+        }
+        default:
+            return null;
+    }
 };
 
 export default KeyInScreenV3;

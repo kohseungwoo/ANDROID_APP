@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {RefreshControl, ScrollView, useWindowDimensions, View} from 'react-native';
+import {RefreshControl, ScrollView, View} from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
 import KeyInScreenV2 from './KeyInScreenV2';
 import styles from '../../assets/styles/PaymentStyle';
@@ -7,10 +7,6 @@ import {useFocusEffect} from '@react-navigation/native';
 import refreshHooks from '../../components/hooks/RefreshHooks';
 
 const PaymentScreenV2 = () => {
-    const layout = useWindowDimensions();
-    const isLandscape = layout.width > layout.height;
-    const horizontalPadding = isLandscape ? 100 : 0;
-
     const [appId, setAppId] = useState('');
 
     // 상품 정보
@@ -96,10 +92,7 @@ const PaymentScreenV2 = () => {
             <View style={styles.flex_1}>
                 <ScrollView
                     style={styles.container}
-                    contentContainerStyle={[
-                        styles.contentContainer,
-                        isLandscape && { paddingHorizontal: horizontalPadding },
-                    ]}
+                    contentContainerStyle={styles.contentContainer}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }

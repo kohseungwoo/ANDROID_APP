@@ -1,3 +1,5 @@
+# react-native log-android 로그보기
+
 # https://oblador.github.io/react-native-vector-icons/
 # import FontAwesome from 'react-native-vector-icons/FontAwesome';
 # <Octicons name="home" size={20} color="#808080" />

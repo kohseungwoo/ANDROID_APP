@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
     wrapper: {
-        height: 200, // 슬라이더 높이
+        height: 205, // 슬라이더 높이
     },
     main: {
         flex: 1,
@@ -10,7 +10,7 @@ export default StyleSheet.create({
         backgroundColor: '#f7f7f7',
     },
     scrollViewContent: {
-        paddingBottom: 50,
+        paddingBottom: 60,
     },
     merchantContainer:{
         flexDirection: 'row',
@@ -37,7 +37,7 @@ export default StyleSheet.create({
     },
     card: {
         top: 1,
-        height: 140,
+        height: 180,
         width: '99%',
         alignSelf: 'center',
         backgroundColor: '#fff',
@@ -50,15 +50,16 @@ export default StyleSheet.create({
         marginBottom: 8,
     },
     cardTitle: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight:'bold',
         color: '#000000',
     },
     cardDate: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#808080',
     },
     amountRow: {
+        paddingTop:10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center', // 금액과 원 텍스트 수평, 세로로 정렬
@@ -75,7 +76,7 @@ export default StyleSheet.create({
         marginBottom: 8,
     },
     amount: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
         color: '#1b1b1b',
         lineHeight: 22, // 텍스트의 높이를 정확히 맞춰줌
@@ -91,12 +92,14 @@ export default StyleSheet.create({
         paddingLeft: 5, // '원'과 금액 간격 조정
     },
     hideAmountText: {
-        fontSize: 12,
-        color: '#888',
+        fontSize: 14,
+        color: '#808080',
         textDecorationLine: 'underline',
     },
     buttonStyle: {
-        marginTop:20,
+        height: 45,
+        marginTop:14,
+        paddingTop:8,
         paddingVertical: 6, // 위 아래 여백
         paddingHorizontal: 5, // 좌 우 여백
         borderWidth: 1,
@@ -104,24 +107,24 @@ export default StyleSheet.create({
         borderRadius: 5, // 둥근 모서리
         textAlign: 'center', // 텍스트 가운데 정렬
         color: '#fff', // 텍스트 색상
-        fontSize: 14, // 텍스트 크기
+        fontSize: 18, // 텍스트 크기
         fontWeight: 'bold', // 텍스트 두께
         backgroundColor: '#253e6d', // 배경색은 투명으로 설정
     },
     label: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     transactionBox: {
         backgroundColor: '#fff',
         borderRadius: 12,
-        padding: 12,
+        padding: 18,
     },
     transactionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom: 5,
+        paddingBottom: 10,
     },
     headerLeft: {
         flexDirection: 'row',
@@ -136,6 +139,7 @@ export default StyleSheet.create({
         fontSize: 15,
         color: '#808080',
         marginLeft: 4,
+        paddingTop:5,
         fontWeight: 'bold',
     },
     hideText: {
@@ -156,11 +160,11 @@ export default StyleSheet.create({
         alignItems: 'flex-start',
     },
     transactionText: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#444',
     },
     transactionAmount: {
-        fontSize: 13,
+        fontSize: 14,
         fontWeight: 'bold',
     },
     cancelAmount: {
@@ -173,8 +177,9 @@ export default StyleSheet.create({
         marginTop: 8,
     },
     countText: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#808080',
+        paddingTop:5,
     },
     paymentTitle: {
         top: -15,
@@ -190,10 +195,14 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor:'#fff',
         marginBottom:20,
+        borderRadius: 8,
+        height:90,
+        paddingTop: 5,
     },
     paymentIconLabel: {
         marginTop: 6,
-        fontSize: 12,
+        fontSize: 13,
+        fontWeight:'500',
         color: '#333',
     },
     paymentIconBox: {
@@ -203,7 +212,7 @@ export default StyleSheet.create({
     },
     footerContainer: {
         position: 'absolute',
-        bottom: 30,
+        bottom: 20,
         left: 15,
         right: 15,
         height: 40,

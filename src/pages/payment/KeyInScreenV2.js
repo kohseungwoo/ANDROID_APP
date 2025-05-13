@@ -94,7 +94,7 @@ const KeyInScreenV2 = ({
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginRight: 6 }} />
-                        <Text style={styles.title}>2</Text>
+                        <Text style={styles.title}>결제정보</Text>
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={getInstallment}>
@@ -104,7 +104,7 @@ const KeyInScreenV2 = ({
 
                 <View style={styles.separator} />
 
-                {/* 상품명, 판매금액, 구매자 */}
+                {/* 상품명, 결제금액, 구매자 */}
                 <View style={styles.inputGroup}>
                     {/* APPID 선택 */}
                     {/*<View style={styles.row}>*/}
@@ -144,7 +144,7 @@ const KeyInScreenV2 = ({
                     <Text style={styles.label}>상품명</Text>
                     <TextInput style={styles.input} value={productName} placeholder="상품명을 입력하세요."  maxLength={64} onChangeText={(text) => setProductName(removeSpecial(text))} />
 
-                    <Text style={styles.label}>판매금액</Text>
+                    <Text style={styles.label}>결제금액</Text>
                     <TextInput style={styles.input} keyboardType="number-pad" value={amount} onChangeText={(text) => {
                         setAmount(formatAmount(text));
                     }} placeholder="0" maxLength={13} />
@@ -214,7 +214,8 @@ const KeyInScreenV2 = ({
                         <>
                             {/* 카드번호 4칸 */}
                             <View style={styles.cardNumberRow}>
-                                <TextInput style={styles.cardInput} maxLength={4} keyboardType="number-pad" value={personalCardNumber1} onChangeText={(text) => {
+                                <TextInput style={styles.cardInput} maxLength={4} keyboardType="number-pad"
+                                           value={personalCardNumber1} onChangeText={(text) => {
                                     setPersonalCardNumber1(onlyNumber(text));
                                 }}/>
 
@@ -237,7 +238,8 @@ const KeyInScreenV2 = ({
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.label}>유효기간 (MM/YY)</Text>
                                     <View style={styles.expiryInputRow}>
-                                        <TextInput style={styles.expiryInput} keyboardType="number-pad" value={personalExpiry} onChangeText={(text) => {
+                                        <TextInput style={styles.expiryInput} keyboardType="number-pad"
+                                                   value={personalExpiry} onChangeText={(text) => {
                                             setPersonalExpiry(onlyNumber(text));
                                         }} placeholder="MM/YY" maxLength={4} />
                                     </View>
@@ -247,7 +249,10 @@ const KeyInScreenV2 = ({
                                 <View style={{ flex: 1 }}>
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
                                     <View style={styles.expiryInputRow}>
-                                        <TextInput style={[styles.expiryInput, {marginLeft:20}]} keyboardType="number-pad" secureTextEntry value={personalPassword} onChangeText={(text) => {
+                                        <TextInput style={[styles.expiryInput, {marginLeft:20}]}
+                                                   keyboardType="number-pad"
+                                                   secureTextEntry
+                                                   value={personalPassword} onChangeText={(text) => {
                                             setPersonalPassword(onlyNumber(text));
                                         }} placeholder="**" maxLength={2} />
 
@@ -272,7 +277,8 @@ const KeyInScreenV2 = ({
                         <>
                             {/* 카드번호 4칸 */}
                             <View style={styles.cardNumberRow}>
-                                <TextInput style={styles.cardInput} maxLength={4} keyboardType="number-pad" value={corpCardNumber1} onChangeText={(text) => {
+                                <TextInput style={styles.cardInput} maxLength={4}
+                                           keyboardType="number-pad" value={corpCardNumber1} onChangeText={(text) => {
                                     setCorpCardNumber1(onlyNumber(text));
                                 }}/>
 
@@ -295,7 +301,9 @@ const KeyInScreenV2 = ({
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.label}>유효기간 (MM/YY)</Text>
                                     <View style={styles.expiryInputRow}>
-                                        <TextInput style={styles.expiryInput} keyboardType="number-pad" value={corpExpiry} onChangeText={(text) => {
+                                        <TextInput style={styles.expiryInput}
+                                                   keyboardType="number-pad"
+                                                   value={corpExpiry} onChangeText={(text) => {
                                             setCorpExpiry(onlyNumber(text));
                                         }} placeholder="MM/YY" maxLength={4} />
                                     </View>
@@ -305,7 +313,10 @@ const KeyInScreenV2 = ({
                                 <View style={{ flex: 1 }}>
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
                                     <View style={styles.expiryInputRow}>
-                                        <TextInput style={[styles.expiryInput, {marginLeft:20}]} keyboardType="number-pad" secureTextEntry value={corpPassword} onChangeText={(text) => {
+                                        <TextInput style={[styles.expiryInput, {marginLeft:20}]}
+                                                   keyboardType="number-pad"
+                                                   secureTextEntry
+                                                   value={corpPassword} onChangeText={(text) => {
                                             setCorpPassword(onlyNumber(text));
                                         }} placeholder="**" maxLength={2} />
 

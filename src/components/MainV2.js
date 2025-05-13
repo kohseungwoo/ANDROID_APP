@@ -119,7 +119,7 @@ const MainV2 = () => {
             <View style={{ flex: 1 }}>
                 <ScrollView
                     style={styles.main}
-                    contentContainerStyle={[styles.scrollViewContent, { paddingBottom: 80 }]} // 하단 고정 footer 가리지 않도록
+                    contentContainerStyle={styles.scrollViewContent}
                 >
                     {/* ================ 기존 콘텐츠 시작 ================ */}
                     <View style={styles.merchantContainer}>
@@ -138,7 +138,7 @@ const MainV2 = () => {
                             style={styles.paymentIconBox}
                             onPress={() => handlePaymentPress('CARD')}
                         >
-                            <Ionicons name="card" size={22} color="#2680eb" />
+                            <Ionicons name="card" size={30} color="#2680eb" />
                             <Text style={styles.paymentIconLabel}>카드결제</Text>
                         </TouchableOpacity>
 
@@ -146,7 +146,7 @@ const MainV2 = () => {
                             style={styles.paymentIconBox}
                             onPress={() => handlePaymentPress('SMS')}
                         >
-                            <Ionicons name="chatbox-outline" size={22} color="#ff9900" />
+                            <Ionicons name="chatbox-outline" size={30} color="#ff9900" />
                             <Text style={styles.paymentIconLabel}>SMS결제</Text>
                         </TouchableOpacity>
 
@@ -154,7 +154,7 @@ const MainV2 = () => {
                             style={styles.paymentIconBox}
                             onPress={() => handlePaymentPress('LINK')}
                         >
-                            <Ionicons name="link-outline" size={22} color="#00bcd4" />
+                            <Ionicons name="link-outline" size={30} color="#00bcd4" />
                             <Text style={styles.paymentIconLabel}>링크결제</Text>
                         </TouchableOpacity>
 
@@ -162,7 +162,7 @@ const MainV2 = () => {
                             style={styles.paymentIconBox}
                             onPress={() => handlePaymentPress('QR')}
                         >
-                            <Ionicons name="qr-code-outline" size={22} color="#28a745" />
+                            <Ionicons name="qr-code-outline" size={30} color="#28a745" />
                             <Text style={styles.paymentIconLabel}>QR 결제</Text>
                         </TouchableOpacity>
                     </View>
@@ -279,7 +279,7 @@ const MainV2 = () => {
                             </View>
                             <View style={styles.headerIcons}>
                                 <TouchableOpacity>
-                                    <Ionicons name="reload" size={20} style={styles.reloadIcon} />
+                                    <Ionicons name="reload" size={24} style={styles.reloadIcon} />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setShowTransactions(!showTransactions)}>
                                     <Text style={styles.hideText}>

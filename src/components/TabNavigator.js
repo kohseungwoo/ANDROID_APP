@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {CommonActions, useFocusEffect} from '@react-navigation/native';
-import {BackHandler, Keyboard} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {Alert, BackHandler, Keyboard} from 'react-native';
 
 import TabButton from '../components/TabButton';
 import dashboard from '../pages/dashboard/DashboardScreen';
@@ -19,6 +19,37 @@ const TabNavigator = () => {
 
     const [exitVisible, setExitVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
+    const [focusedTab, setFocusedTab] = useState('MAIN');  // focused 상태 관리
+    const tabScreens = [
+        {
+            name: 'MAIN',
+            nameKr : '메인',
+            component: dashboard,
+            animationSelected: require('../assets/animation/home.json'),
+            animationDefault: require('../assets/animation/homeDefault.json'),
+        },
+        {
+            name: 'PAYMENT',
+            nameKr : '결제',
+            component: payment,
+            animationSelected: require('../assets/animation/card.json'),
+            animationDefault: require('../assets/animation/cardDefault.json'),
+        },
+        {
+            name: 'TRXLIST',
+            nameKr : '결제내역',
+            component: trxList,
+            animationSelected: require('../assets/animation/trxList.json'),
+            animationDefault: require('../assets/animation/trxListDefault.json'),
+        },
+        {
+            name: 'MORE',
+            nameKr : '전체',
+            component: more,
+            animationSelected: require('../assets/animation/seeMore.json'),
+            animationDefault: require('../assets/animation/seeMoreDefault.json'),
+        },
+    ];
 
     useFocusEffect(
         useCallback(() => {
@@ -47,6 +78,25 @@ const TabNavigator = () => {
         };
     }, []);
 
+    /* TAB 이동 자동 동기화 처리 */
+    const navigation = useNavigation();
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            const state = navigation.getState();
+
+            // 현재 활성화된 루트 탭을 추적
+            const tabState = state.routes[state.index]?.state;
+            const currentTab = tabState
+                ? tabState.routes[tabState.index]?.name  // Tab 내부 탭 이름
+                : state.routes[state.index]?.name;        // 기본 루트 이름
+
+            setFocusedTab(currentTab);
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+
     const handleExit = () => {
         setExitVisible(false);
         BackHandler.exitApp();
@@ -68,9 +118,9 @@ const TabNavigator = () => {
                         ? { display: 'none' } // 키보드 올라오면 숨김
                         : {
                         backgroundColor: '#fff',
-                        paddingTop: 8,
-                        height: 50,
-                        paddingBottom: 5,
+                        paddingTop: 10,
+                        height: 55,
+                        paddingBottom: 0,
                         borderTopWidth: 0,
                         elevation: 10,  // 높여서 그림자 효과 강조
                         shadowColor: '#000', // 그림자 색상
@@ -80,102 +130,37 @@ const TabNavigator = () => {
                     },
                 })}
             >
-                <Tab.Screen
-                    name="MAIN"
-                    component={dashboard}
-                    options={{
-                        unmountOnBlur: true,
-                        tabBarButton: (props) => (
-                            <TabButton
-                                animation={
-                                    props?.accessibilityState?.selected
-                                        ? require('../assets/animation/home.json')
-                                        : require('../assets/animation/homeDefault.json')
+                {tabScreens.map((screen) => (
+                    <Tab.Screen
+                        name={screen.name}
+                        component={screen.component}
+                        options={{
+                            unmountOnBlur: true,
+                            tabBarButton: (props) => {
+                                const isFocused = focusedTab === screen.name;
+                                return (
+                                    <TabButton
+                                        animation={isFocused ? screen.animationSelected : screen.animationDefault}
+                                        label={screen.nameKr}
+                                        props={props}
+                                        focused={isFocused}
+                                    />
+                                );
+                            },
+                        }}
+                        listeners={({ navigation }) => ({
+                            tabPress: (e) => {
+                                const state = navigation.getState();
+                                const currentRoute = state.routes[state.index];
+                                if (currentRoute.name === screen.name) {
+                                    // 탭이 이미 활성화된 경우 → navigation 차단
+                                    e.preventDefault();
                                 }
-                                label="메인"
-                                props={props}
-                                focused={props?.accessibilityState?.selected}
-                                key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋
-                            />
-                        ),
-                    }}
-                />
-
-                <Tab.Screen
-                    name="PAYMENT"
-                    component={payment}
-                    options={{
-                        unmountOnBlur: true,
-                        tabBarButton: (props) => (
-                            <TabButton
-                                animation={
-                                    props?.accessibilityState?.selected
-                                        ? require('../assets/animation/card.json')
-                                        : require('../assets/animation/cardDefault.json')
-                                }
-                                label="결제"
-                                props={props}
-                                focused={props?.accessibilityState?.selected}
-                                key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋
-                            />
-                        ),
-                    }}
-                    listeners={({ navigation }) => ({
-                        tabPress: (e) => {
-                            const state = navigation.getState();
-                            const currentRoute = state.routes[state.index];
-                            if (currentRoute.name === 'PAYMENT') {
-                                // PAYMENT 탭이 이미 활성화된 경우 → navigation 차단
-                                e.preventDefault();
-                            }
-                        },
-                    })}
-
-
-
-                />
-
-                <Tab.Screen
-                    name="TRXLIST"
-                    component={trxList}
-                    options={{
-                        unmountOnBlur: true,
-                        tabBarButton: (props) => (
-                            <TabButton
-                                animation={
-                                    props?.accessibilityState?.selected
-                                        ? require('../assets/animation/trxList.json')
-                                        : require('../assets/animation/trxListDefault.json')
-                                }
-                                label="결제내역"
-                                props={props}
-                                focused={props?.accessibilityState?.selected}
-                                key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋
-                            />
-                        ),
-                    }}
-                />
-
-                <Tab.Screen
-                    name="MORE"
-                    component={more}
-                    options={{
-                        unmountOnBlur: true,
-                        tabBarButton: (props) => (
-                            <TabButton
-                                animation={
-                                    props?.accessibilityState?.selected
-                                        ? require('../assets/animation/seeMore.json')
-                                        : require('../assets/animation/seeMoreDefault.json')
-                                }
-                                label="전체"
-                                props={props}
-                                focused={props?.accessibilityState?.selected}
-                                key={props?.accessibilityState?.selected ? 'focused' : 'unfocused'} // 상태 변화 시 애니메이션 리셋
-                            />
-                        ),
-                    }}
-                />
+                                setFocusedTab(screen.name);  // 선택된 탭 업데이트
+                            },
+                        })}
+                    />
+                ))}
             </Tab.Navigator>
         </>
     );

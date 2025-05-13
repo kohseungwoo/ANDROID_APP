@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
-    container: { padding: 20, backgroundColor: '#fff', flex: 1 },
+    container: {  height :640, padding: 20, backgroundColor: '#fff', flex: 1 },
     contentContainer: {
         flexGrow: 1,
     },
@@ -9,24 +9,30 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingTop: 5,
     },
     title: {
-        fontSize: 20,
+        fontSize: 23,
         fontWeight: 'bold',
+        paddingTop:8,
     },
     button: {
-        backgroundColor: '#253e6d',
-        paddingVertical: 10,
-        borderRadius: 8,
-        alignItems: 'center',
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        // backgroundColor: '#253e6d',
+        borderWidth: 0.3,
+        marginTop:10,
     },
     buttonText: {
-        color: '#fff',
+        color: '#000',
+        fontSize: 12,
         fontWeight:'bold',
         textAlign:'center',
+        paddingHorizontal:5
     },
     separator: { height: 1.3, backgroundColor: '#000', marginVertical: 5 },
-    cardTitle: { marginTop: 50, fontSize: 20, fontWeight: 'bold' },
+    cardTitle: { fontSize: 20, fontWeight: 'bold' },
     expiryRow: { flexDirection: 'row', alignItems: 'center', marginTop: 5 },
 
     hintText: {
@@ -74,11 +80,10 @@ export default StyleSheet.create({
     },
 
     inputGroup: { marginVertical: 10, marginHorizontal: 5},
-    label: { marginBottom: 5, marginTop: 8, fontSize:16},
+    label: { marginBottom: 10, marginTop: 8, fontSize:16, fontWeight:'500'},
     row: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
         justifyContent: 'space-between',
     },
     pickerWrapper: {
@@ -89,7 +94,6 @@ export default StyleSheet.create({
         borderRadius: 5,
         // overflow: 'hidden',
         justifyContent: 'center',
-        marginLeft:20,
     },
     picker: {
         height: 55,
@@ -97,7 +101,6 @@ export default StyleSheet.create({
     },
     buttonGroup: {
         flexDirection: 'row',
-        top:12,
     },
     toggleBtn: {
         paddingHorizontal:10,
@@ -106,6 +109,7 @@ export default StyleSheet.create({
         borderColor: '#ccc',
         marginLeft: 8,
         borderRadius: 5,
+        marginBottom:10,
     },
     activeBtn: {
         backgroundColor: '#253e6d',
@@ -117,8 +121,6 @@ export default StyleSheet.create({
     cardNumberRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 5,
-        marginBottom: 15,
     },
     cardInput: {
         flex: 1,
@@ -127,24 +129,25 @@ export default StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 4,
         paddingHorizontal: 10,
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingTop: 12,
+        paddingBottom: 12,
+        marginBottom:12,
         textAlign: 'center',
     },
-    expiryInputRow: {
+    InputRow: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    expiryInput: {
+    rowInput: {
         flex: 1,
         borderWidth: 0.5,
         borderColor: '#ccc',
         borderRadius: 4,
         padding: 8,
-        marginHorizontal: 2,
         paddingHorizontal: 10,
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginBottom: 6,
     },
     input: {
         borderWidth: 0.5,
@@ -154,14 +157,24 @@ export default StyleSheet.create({
         paddingTop: 12,
         paddingBottom: 12,
         marginBottom:12,
+        fontSize:16,
+    },
+
+    installmentInput: {
+        borderWidth: 0.5,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        height:50,
+        marginBottom:20,
+        justifyContent: 'center',
     },
 
     footerContainer: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 10,
         left: 0,
         right: 0,
-        height: 40,
+        height: 50,
         borderRadius: 8,
         backgroundColor: '#253e6d',
     },
@@ -173,10 +186,10 @@ export default StyleSheet.create({
     footerButton: {
         height:'100%',
         borderRadius: 8,
-        fontSize: 14,
+        fontSize: 18,
         fontWeight:'bold',
         textAlign:'center',
-        paddingTop: 8,
+        paddingTop: 12,
         color: '#fff',
     },
 });

@@ -1,18 +1,20 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
-    container: { padding: 20, backgroundColor: '#fff', flex: 1 },
+    container: {  height :700, padding: 20, backgroundColor: '#fff', flex: 1 },
     contentContainer: {
         flexGrow: 1,
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        paddingTop: 5,
     },
     title: {
-        fontSize: 20,
+        fontSize: 23,
         fontWeight: 'bold',
+        paddingTop:8,
     },
     button: {
         backgroundColor: '#253e6d',
@@ -74,7 +76,7 @@ export default StyleSheet.create({
     },
 
     inputGroup: { marginVertical: 10, marginHorizontal: 5},
-    label: { marginBottom: 5, marginTop: 8, fontSize:16},
+    label: { marginBottom: 10, marginTop: 8, fontSize:16, fontWeight:'500'},
     row: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -154,14 +156,15 @@ export default StyleSheet.create({
         paddingTop: 12,
         paddingBottom: 12,
         marginBottom:12,
+        fontSize:16,
     },
 
     footerContainer: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 10,
         left: 0,
         right: 0,
-        height: 40,
+        height: 50,
         borderRadius: 8,
         backgroundColor: '#253e6d',
     },
@@ -173,10 +176,10 @@ export default StyleSheet.create({
     footerButton: {
         height:'100%',
         borderRadius: 8,
-        fontSize: 14,
+        fontSize: 18,
         fontWeight:'bold',
         textAlign:'center',
-        paddingTop: 8,
+        paddingTop: 12,
         color: '#fff',
     },
 });

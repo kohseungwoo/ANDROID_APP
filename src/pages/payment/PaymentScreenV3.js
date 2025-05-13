@@ -55,7 +55,6 @@ const PaymentScreenV3 = () => {
                     }
                 >
                     <View style={styles.innerWrapper}>
-                        <HeaderSub title="신용카드 수기결제" onRefresh={resetForm}/>
                         <KeyInScreenV3 formData={formData} setFormData={setFormData}/>
                     </View>
                 </ScrollView>

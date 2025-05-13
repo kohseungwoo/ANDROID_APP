@@ -1,15 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {ScrollView, useWindowDimensions, View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
 import KeyInScreenV1 from './KeyInScreenV1';
 import styles from '../../assets/styles/PaymentStyle';
 import {useFocusEffect} from '@react-navigation/native';
 
 const PaymentScreenV1 = () => {
-    const layout = useWindowDimensions();
-    const isLandscape = layout.width > layout.height;
-    const horizontalPadding = isLandscape ? 100 : 0;
-
     const [cardNumber, setCardNumber] = useState('');
     const [expiry, setExpiry] = useState('');
     const [birth, setBirth] = useState('');
@@ -42,10 +38,7 @@ const PaymentScreenV1 = () => {
             <View style={styles.flex_1}>
                 <ScrollView
                     style={styles.container}
-                    contentContainerStyle={[
-                        styles.contentContainer,
-                        isLandscape && { paddingHorizontal: horizontalPadding },
-                    ]}
+                    contentContainerStyle={styles.contentContainer}
                 >
                     <View style={styles.innerWrapper}>
                         <HeaderSub title="카드 결제" onRefresh={resetForm} />

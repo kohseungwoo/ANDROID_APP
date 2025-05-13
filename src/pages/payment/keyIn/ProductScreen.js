@@ -3,11 +3,8 @@ import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/ErrorModal';
-import {useNavigation} from '@react-navigation/native';
 
-const ProductScreen = ({ formData, setFormData }) => {
-    const navigation = useNavigation();
-
+const ProductScreen = ({ formData, setFormData, onNext }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [errMessage, setErrMessage] = useState('');
 
@@ -37,7 +34,7 @@ const ProductScreen = ({ formData, setFormData }) => {
         }
 
         if (!amount) {
-            setErrMessage('판매금액을 올바르게 입력해주세요.');
+            setErrMessage('결제금액을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
@@ -54,7 +51,7 @@ const ProductScreen = ({ formData, setFormData }) => {
             return;
         }
 
-        navigation.navigate('REGULAR');
+        onNext();
     };
 
     return (
@@ -67,15 +64,13 @@ const ProductScreen = ({ formData, setFormData }) => {
 
             <ScrollView
                 style={styles.container}
-                contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]} // 키보드 위 공간 확보
+                contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
                 keyboardShouldPersistTaps="handled"
             >
                 {/* 헤더 및 입력 필드들 */}
                 <View style={styles.header}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginRight: 6 }} />
-                        <Text style={styles.title}>결제정보</Text>
-                    </View>
+                    <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:6, marginRight: 6 }} />
+                    <Text style={styles.title}>결제정보</Text>
                 </View>
                 <View style={styles.separator} />
 
@@ -92,7 +87,7 @@ const ProductScreen = ({ formData, setFormData }) => {
                             }}
                     />
 
-                    <Text style={styles.label}>판매금액</Text>
+                    <Text style={styles.label}>결제금액</Text>
                     <TextInput style={styles.input}
                                keyboardType="number-pad"
                                placeholder="0"
@@ -117,7 +112,7 @@ const ProductScreen = ({ formData, setFormData }) => {
                             }}
                     />
 
-                    <Text style={styles.label}>휴대폰</Text>
+                    <Text style={styles.label}>구매자 연락처</Text>
                     <TextInput style={styles.input}
                                placeholder="'-' 없이 입력하세요."
                                maxLength={16}
