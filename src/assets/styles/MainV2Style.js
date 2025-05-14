@@ -97,9 +97,9 @@ export default StyleSheet.create({
         textDecorationLine: 'underline',
     },
     buttonStyle: {
-        height: 45,
+        height: 40,
         marginTop:14,
-        paddingTop:8,
+        paddingTop:6,
         paddingVertical: 6, // 위 아래 여백
         paddingHorizontal: 5, // 좌 우 여백
         borderWidth: 1,
@@ -107,7 +107,7 @@ export default StyleSheet.create({
         borderRadius: 5, // 둥근 모서리
         textAlign: 'center', // 텍스트 가운데 정렬
         color: '#fff', // 텍스트 색상
-        fontSize: 18, // 텍스트 크기
+        fontSize: 16, // 텍스트 크기
         fontWeight: 'bold', // 텍스트 두께
         backgroundColor: '#253e6d', // 배경색은 투명으로 설정
     },

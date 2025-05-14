@@ -28,7 +28,17 @@ const SignIn = () => {
         setTimeout(() => {
             try {
                 if (username === 'admin' && password === '1234') {
-                    navigation.replace('MAIN');
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'DASHBOARD',
+                                params: {
+                                    screen: 'MAIN',
+                                },
+                            },
+                        ],
+                    });
                 } else {
                     setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
                 }

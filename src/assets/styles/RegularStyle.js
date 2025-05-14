@@ -186,7 +186,7 @@ export default StyleSheet.create({
     footerButton: {
         height:'100%',
         borderRadius: 8,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight:'bold',
         textAlign:'center',
         paddingTop: 12,

@@ -69,7 +69,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             >
                 {/* 헤더 및 입력 필드들 */}
                 <View style={styles.header}>
-                    <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:6, marginRight: 6 }} />
+                    <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
                     <Text style={styles.title}>결제정보</Text>
                 </View>
                 <View style={styles.separator} />

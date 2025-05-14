@@ -44,17 +44,18 @@ export default StyleSheet.create({
     },
     searchButton: {
         backgroundColor: '#253e6d',
-        paddingVertical: 10,
+        paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
     },
     searchButtonText: {
         color: '#fff',
+        fontSize: 16,
         fontWeight: 'bold',
     },
     dateRangeText: {
         paddingLeft: 20,
-        fontSize: 12,
+        fontSize: 14,
         color: '#333',
         fontWeight: 'bold',
     },
@@ -121,8 +122,8 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingTop: 15,
+        paddingBottom: 15,
         paddingRight: 20,
     },
     dropdownContainer: {
@@ -130,9 +131,11 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
     dropdownText: {
-        fontSize: 13,
-        color: '#333',
+        fontSize: 14,
+        color: '#000',
+        fontWeight:'bold',
         marginRight: 4,
+
     },
     dropdownArrow: {
         fontSize: 8,

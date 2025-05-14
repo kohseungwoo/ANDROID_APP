@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BackHandler, Keyboard} from 'react-native';
 
 import TabButton from '../components/TabButton';
@@ -11,6 +11,7 @@ import more from '../pages/more/MoreScreen';
 import ConfirmModal from './modal/ConfirmModal';
 import usePortraitLock from './hooks/UnlockHooks';
 
+
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -18,32 +19,32 @@ const TabNavigator = () => {
 
     const [exitVisible, setExitVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
-
+    const [focusedTab, setFocusedTab] = useState('MAIN');  // focused 상태 관리
     const tabScreens = [
         {
             name: 'MAIN',
-            nameKr: '메인',
+            nameKr : '메인',
             component: dashboard,
             animationSelected: require('../assets/animation/home.json'),
             animationDefault: require('../assets/animation/homeDefault.json'),
         },
         {
             name: 'PAYMENT',
-            nameKr: '결제',
+            nameKr : '결제',
             component: payment,
             animationSelected: require('../assets/animation/card.json'),
             animationDefault: require('../assets/animation/cardDefault.json'),
         },
         {
             name: 'TRXLIST',
-            nameKr: '결제내역',
+            nameKr : '결제내역',
             component: trxList,
             animationSelected: require('../assets/animation/trxList.json'),
             animationDefault: require('../assets/animation/trxListDefault.json'),
         },
         {
             name: 'MORE',
-            nameKr: '더보기',
+            nameKr : '전체',
             component: more,
             animationSelected: require('../assets/animation/seeMore.json'),
             animationDefault: require('../assets/animation/seeMoreDefault.json'),
@@ -77,6 +78,25 @@ const TabNavigator = () => {
         };
     }, []);
 
+    /* TAB 이동 자동 동기화 처리 */
+    const navigation = useNavigation();
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            const state = navigation.getState();
+
+            // 현재 활성화된 루트 탭을 추적
+            const tabState = state.routes[state.index]?.state;
+            const currentTab = tabState
+                ? tabState.routes[tabState.index]?.name  // Tab 내부 탭 이름
+                : state.routes[state.index]?.name;        // 기본 루트 이름
+
+            setFocusedTab(currentTab);
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+
     const handleExit = () => {
         setExitVisible(false);
         BackHandler.exitApp();
@@ -88,26 +108,26 @@ const TabNavigator = () => {
                 visible={exitVisible}
                 onCancel={() => setExitVisible(false)}
                 onConfirm={handleExit}
-                message={'앱을 종료 하시겠습니까?'}
+                message={"앱을 종료 하시겠습니까?"}
             />
 
-            <Tab.Navigator
+            <Tab.Navigator initialRouteName = "MAIN"
                 screenOptions={({ route }) => ({
                     headerShown: false,
                     tabBarStyle: keyboardVisible
                         ? { display: 'none' } // 키보드 올라오면 숨김
                         : {
-                            backgroundColor: '#fff',
-                            paddingTop: 8,
-                            height: 50,
-                            paddingBottom: 5,
-                            borderTopWidth: 0,
-                            elevation: 10,  // 높여서 그림자 효과 강조
-                            shadowColor: '#000', // 그림자 색상
-                            shadowOpacity: 0.3, // 그림자의 투명도
-                            shadowRadius: 8, // 그림자의 흐림 정도 (큰 값일수록 흐려짐)
-                            shadowOffset: { width: 0, height: 5 }, // 그림자 위치 (높이값을 더 크게 하면 그림자 위치가 더 아래로 내려가게 됨)
-                        },
+                        backgroundColor: '#fff',
+                        paddingTop: 10,
+                        height: 55,
+                        paddingBottom: 0,
+                        borderTopWidth: 0,
+                        elevation: 10,  // 높여서 그림자 효과 강조
+                        shadowColor: '#000', // 그림자 색상
+                        shadowOpacity: 0.3, // 그림자의 투명도
+                        shadowRadius: 8, // 그림자의 흐림 정도 (큰 값일수록 흐려짐)
+                        shadowOffset: { width: 0, height: 5 }, // 그림자 위치 (높이값을 더 크게 하면 그림자 위치가 더 아래로 내려가게 됨)
+                    },
                 })}
             >
                 {tabScreens.map((screen) => (
@@ -118,7 +138,8 @@ const TabNavigator = () => {
                         options={{
                             unmountOnBlur: true,
                             tabBarButton: (props) => {
-                                const isFocused = props?.['aria-selected'];
+                                console.log(props.accessibilityState);
+                                const isFocused = focusedTab === screen.name;
                                 return (
                                     <TabButton
                                         animation={isFocused ? screen.animationSelected : screen.animationDefault}
@@ -137,6 +158,7 @@ const TabNavigator = () => {
                                     // 탭이 이미 활성화된 경우 → navigation 차단
                                     e.preventDefault();
                                 }
+                                // setFocusedTab(screen.name);  // 선택된 탭 업데이트
                             },
                         })}
                     />

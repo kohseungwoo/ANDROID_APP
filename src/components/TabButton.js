@@ -5,7 +5,11 @@ import LottieView from 'lottie-react-native';
 const TabButton = ({ focused, props, label, animation }) => {
     const animationRef = useRef(null);
     useEffect(() => {
-        animationRef.current?.play();
+        if(focused){
+            animationRef.current?.play();
+        }else{
+            animationRef.current?.reset();
+        }
     }, [focused]);
 
     return (
@@ -14,7 +18,7 @@ const TabButton = ({ focused, props, label, animation }) => {
                 ref={animationRef}
                 source={animation}
                 loop={false}
-                autoPlay={focused}
+                autoPlay={false}
                 style={{ width: 25, height: 25 }}
             />
             <Text style={{

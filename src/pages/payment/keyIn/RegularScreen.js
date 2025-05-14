@@ -56,7 +56,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
 
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:6, marginRight: 6 }} />
+                        <Ionicons name="card-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
                         <Text style={styles.title}>카드정보</Text>
                     </View>
 

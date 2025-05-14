@@ -18,7 +18,7 @@ const AppContent = () => {
         <NavigationContainer>
             <Stack.Navigator initialRouteName="LOGIN" screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="LOGIN" component={login} />
-                <Stack.Screen name="MAIN" component={TabNavigator} />
+                <Stack.Screen name="DASHBOARD" component={TabNavigator} />
                 <Stack.Screen name="PAYMENTMENU" component={paymentMenu} />
                 <Stack.Screen name="TRXDETAIL" component={trxDetail} />
             </Stack.Navigator>
