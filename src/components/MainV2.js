@@ -328,11 +328,11 @@ const MainV2 = () => {
                 {/* Footer는 ScrollView 바깥에 고정됨 */}
                 <View style={styles.footerContainer}>
                     <TouchableOpacity>
-                        <Text style={styles.footerButton}>FAQ</Text>
+                        <Text style={styles.footerButton}>공지사항</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
                     <TouchableOpacity>
-                        <Text style={styles.footerButton}>공지사항</Text>
+                        <Text style={styles.footerButton}>FAQ</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
                     <TouchableOpacity>

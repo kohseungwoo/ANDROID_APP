@@ -98,9 +98,9 @@ const TabNavigator = () => {
                         ? { display: 'none' } // 키보드 올라오면 숨김
                         : {
                             backgroundColor: '#fff',
-                            paddingTop: 8,
-                            height: 50,
-                            paddingBottom: 5,
+                            paddingTop: 10,
+                            height: 60,
+                            paddingBottom: 0,
                             borderTopWidth: 0,
                             elevation: 10,  // 높여서 그림자 효과 강조
                             shadowColor: '#000', // 그림자 색상

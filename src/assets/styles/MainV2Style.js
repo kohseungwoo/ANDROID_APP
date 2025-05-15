@@ -97,9 +97,9 @@ export default StyleSheet.create({
         textDecorationLine: 'underline',
     },
     buttonStyle: {
-        height: 40,
+        height: 42,
         marginTop:14,
-        paddingTop:6,
+        paddingTop:8,
         paddingVertical: 6, // 위 아래 여백
         paddingHorizontal: 5, // 좌 우 여백
         borderWidth: 1,
@@ -136,7 +136,7 @@ export default StyleSheet.create({
         gap: 10,
     },
     nextBtn: {
-        fontSize: 15,
+        fontSize: 18,
         color: '#808080',
         marginLeft: 4,
         paddingTop:5,

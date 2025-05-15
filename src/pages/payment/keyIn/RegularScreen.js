@@ -3,18 +3,42 @@ import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RNPickerSelect from 'react-native-picker-select';
 import styles from '../../../assets/styles/RegularStyle';
-import ErrorModal from '../../../components/modal/ErrorModal';
+import NointModal from '../../../components/modal/NointModal';
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const [alertVisible, setAlertVisible] = useState(false);
-    const [errMessage, setErrMessage] = useState('');
+    const [nointText, setNointMessage] = useState('');
 
     const onlyNumber = (value) => {
         return value.replace(/[^0-9]/g, '');
     };
 
     const getInstallment = () => {
-        setErrMessage('준비중');
+        setNointMessage(`
+            <h3>2025년 5월 카드사 무이자 할부 안내</h3>
+            <p><strong>1. 적용 기간 :</strong><br/> 2025년 5월 1일 ~ 2025년 5월 31일</p>
+            <p><strong>2. 무이자 할부 프로모션 (카드사 부담)</strong><br/>
+            ▷ 현대카드 : 2~3개월<br/>
+            ▷ 국민카드 : 2~3개월<br/>
+            ▷ 삼성카드 : 2~5개월<br/>
+            ▷ 신한카드 : 2~5개월<br/>
+            ▷ 롯데카드 : 2~5개월<br/>
+            ▷ 비씨카드 : 2~6개월<br/>
+            ▷ 우리카드 : 2~6개월<br/>
+            ▷ NH농협카드 : 2~6개월<br/>
+            </p>
+            <p><strong>3. 유의사항</strong><br/>
+            <p>※ 5만원 이상 할부 결제 시 적용 (단, 현대 1만원 이상 할부 결제 시 적용)</p>  
+            <p>※ 업종 무이자 제외 대상 : 법인/체크/선불/기프트/하이브리드/은행계열카드</p>  
+            <p>- 은행계열카드 : BC카드 마크가 없는 Non-BC카드 (ex. 제주, 광주, 전북카드 등)</p>  
+            <p>- 수협카드는 BC 회원사 전환으로 업종 무이자 적용 가능 (단, 부분무이자는 적용 불가)</p>  
+            <p>※ 제외 업종 : 제세공과금, 등록금, 우편요금, 상품권, 도시가스요금</p>  
+            <p>※ 삼성카드 : 병원, 약국, 제약 업종 제외</p>  
+            <p>※ 현대카드 : 제약 업종 제외</p>  
+            <p>※ 농협카드 : 의약품, 도서, 손해보험, 면세점 업종 제외</p>  
+            <p>※ 신용카드사 정책 변경에 따라 변동 될 수 있음</p>  
+            <p>※ 하나카드 할부 불가</p>
+            `);
         setAlertVisible(true);
     };
 
@@ -26,7 +50,8 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     );
 
     const resetCardForm = () => {
-        const keepKeys = ['productName','amount','buyerName','phoneNo','udf1','cardType'];
+        const keepKeys = ['productName','amount','buyerName','phoneNo'];
+
         setFormData(prev => {
             const newForm = {};
 
@@ -42,9 +67,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
 
     return (
         <>
-            <ErrorModal
+            <NointModal
                 visible={alertVisible}
-                message={errMessage}
+                message={nointText}
                 onConfirm={() => setAlertVisible(false)}
             />
 
@@ -147,9 +172,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <RNPickerSelect
                                     onValueChange={(text) => setFormData({
                                         ...formData,
-                                        installment: text,
+                                        personalInstallment: text,
                                     })}
-                                    value={formData.installment}
+                                    value={formData.personalInstallment}
                                     items={installmentIdx}
                                     placeholder={{ label: '일시불', value: 0}}
                                     style={{
@@ -281,9 +306,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <RNPickerSelect
                                     onValueChange={(text) => setFormData({
                                         ...formData,
-                                        installment: text,
+                                        corpInstallment: text,
                                     })}
-                                    value={formData.installment}
+                                    value={formData.corpInstallment}
                                     items={installmentIdx}
                                     placeholder={{ label: '일시불', value: 0}}
                                     style={{

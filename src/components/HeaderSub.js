@@ -20,7 +20,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
     // 탭네비 뒤로가기
     const showBackButton = !['DASHBOARD', 'PAYMENT', 'TRXLIST'].includes(currentRouteName?.toUpperCase());
-    const showReloadButton = !['DASHBOARD', 'MORE'].includes(currentRouteName?.toUpperCase());
+    const showReloadButton = !['DASHBOARD', 'MORE', 'NOTICE'].includes(currentRouteName?.toUpperCase());
 
     return (
         <View style={styles.header}>

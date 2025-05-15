@@ -21,7 +21,8 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         return value.replace(/[^a-zA-Z0-9]/g, '');
     };
 
-    const nextBtn = () =>{
+    const confirmBtn = () =>{
+        formData.cardType = 'personal'; // 고정
         formData.productName = 'test';
         formData.amount = 1004;
         formData.buyerName = '홍길동';
@@ -124,23 +125,23 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                             }}
                     />
 
-                    <View style={styles.optionalLabelRow}>
-                        <Text style={styles.label}>메모</Text>
-                        <Text style={styles.optionalText}>(선택)</Text>
-                    </View>
-                    <TextInput style={styles.input}
-                               maxLength={200}
-                               value={formData.udf1} onChangeText={(text) => {
-                                   setFormData({
-                                    ...formData,
-                                    udf1: text,
-                                });
-                            }}
-                   />
+                   {/* <View style={styles.optionalLabelRow}>*/}
+                   {/*     <Text style={styles.label}>메모</Text>*/}
+                   {/*     <Text style={styles.optionalText}>(선택)</Text>*/}
+                   {/* </View>*/}
+                   {/* <TextInput style={styles.input}*/}
+                   {/*            maxLength={200}*/}
+                   {/*            value={formData.udf1} onChangeText={(text) => {*/}
+                   {/*                setFormData({*/}
+                   {/*                 ...formData,*/}
+                   {/*                 udf1: text,*/}
+                   {/*             });*/}
+                   {/*         }}*/}
+                   {/*/>*/}
                 </View>
 
                 <View style={styles.footerContainer}>
-                    <TouchableOpacity style={styles.fullWidthTouchable} onPress={nextBtn}>
+                    <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                         <Text style={styles.footerButton}>다음</Text>
                     </TouchableOpacity>
                 </View>

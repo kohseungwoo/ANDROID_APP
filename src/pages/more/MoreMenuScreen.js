@@ -1,35 +1,41 @@
 import React, {useCallback} from 'react';
-import {Alert, Linking, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/MoreMenuStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-const userId = 'USERID123';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {moveParamScreen} from '../../components/hooks/ScreenHooks';
 
 const menuItems = [
     {
         label: '공지사항',
         key: 'notice',
-        icon: 'megaphone-outline',
-        iconComponent: Ionicons,
+        icon: 'announcement',            // MaterialIcons
+        color: '#e67e22',
+        iconComponent: MaterialIcons,
     },
     {
         label: 'FAQ',
-        key: 'notice',
-        icon: 'help-circle-outline',
-        iconComponent: Ionicons,
+        key: 'faq',
+        icon: 'question-circle',         // FontAwesome5
+        color: '#3498db',
+        iconComponent: FontAwesome5,
     },
     {
         label: '고객센터',
         key: 'contact',
-        icon: 'call-outline',
-        iconComponent: Ionicons,
+        icon: 'phone-call',              // Feather
+        color: '#27ae60',
+        iconComponent: Feather,
     },
     {
         label: '버전정보',
         key: 'version',
-        icon: 'information-circle-outline',
+        icon: 'information-circle-outline',        // Entypo
+        color: '#000',
         iconComponent: Ionicons,
     },
 ];
@@ -42,11 +48,8 @@ const MoreMenuScreen = () => {
             case 'version':
                 Alert.alert('버전 정보', '현재 앱 버전은 v1.0.0 입니다.');
                 break;
-            case 'contact':
-                Linking.openURL('tel:0216004191');
-                break;
-            case 'notice':
-                Alert.alert('공지 사항', '준비중 입니다.');
+            case 'contact': case 'notice': case 'faq':
+                moveParamScreen(navigation, "NOTICE", { tab: item.key });
                 break;
             default:
                 navigation.navigate(item.route);
@@ -80,7 +83,12 @@ const MoreMenuScreen = () => {
                             style={styles.menuItem}
                             onPress={() => handlePress(item)}
                         >
-                            <Icon name={item.icon} size={18} color="#333" style={{ marginRight: 12 }} />
+                            <item.iconComponent
+                                name={item.icon}
+                                size={20}
+                                color={item.color}
+                                style={{ marginRight: 12 }}
+                            />
                             <Text style={styles.menuLabel}>{item.label}</Text>
                         </TouchableOpacity>
                     );

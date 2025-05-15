@@ -19,7 +19,7 @@ const TabButton = ({ focused, props, label, animation }) => {
                 source={animation}
                 loop={false}
                 autoPlay={false}
-                style={{ width: 25, height: 25 }}
+                style={{ width: 28, height: 28 }}
             />
             <Text style={{
                 color: focused ? '#000' : '#808080',
