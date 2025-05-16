@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RNPickerSelect from 'react-native-picker-select';
@@ -64,6 +64,21 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         });
     };
 
+    const cardPersRef1 = useRef(null);
+    const cardPersRef2 = useRef(null);
+    const cardPersRef3 = useRef(null);
+    const cardPersRef4 = useRef(null);
+
+    const cardCorpRef1 = useRef(null);
+    const cardCorpRef2 = useRef(null);
+    const cardCorpRef3 = useRef(null);
+    const cardCorpRef4 = useRef(null);
+
+    const pwdPersRef = useRef(null);
+    const pwdCorpRef = useRef(null);
+    const dobRef = useRef(null);
+    const brnRef = useRef(null);
+
 
     return (
         <>
@@ -127,36 +142,50 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                     {formData.cardType === 'personal' && (
                         <>
                             <View style={styles.cardNumberRow}>
-                                <TextInput style={styles.cardInput}
+                                <TextInput
+                                           ref={cardPersRef1}
+                                           style={styles.cardInput}
                                            maxLength={4}
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber1}
-                                           onChangeText={(text) => setFormData({
-                                               ...formData,
-                                               personalCardNumber1: onlyNumber(text),
-                                           })}
+                                           onChangeText={(text) => {
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, personalCardNumber1: number });
+                                               if (number.length === 4) {
+                                                   cardPersRef2.current?.focus();
+                                               }
+                                           }}
                                 />
-                                <TextInput style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
+                                <TextInput ref={cardPersRef2}
+                                           style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber2}
-                                           onChangeText={(text) => setFormData({
-                                               ...formData,
-                                               personalCardNumber2: onlyNumber(text),
-                                           })}
+                                           onChangeText={(text) => {
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, personalCardNumber2: number });
+                                               if (number.length === 4) {
+                                                   cardPersRef3.current?.focus();
+                                               }
+                                           }}
                                 />
-                                <TextInput style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
+                                <TextInput ref={cardPersRef3}
+                                           style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber3}
-                                           onChangeText={(text) => setFormData({
-                                               ...formData,
-                                               personalCardNumber3: onlyNumber(text),
-                                           })}
+                                           onChangeText={(text) => {
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, personalCardNumber3: number });
+                                               if (number.length === 4) {
+                                                   cardPersRef4.current?.focus();
+                                               }
+                                           }}
                                 />
-                                <TextInput style={styles.cardInput}
+                                <TextInput ref={cardPersRef4}
+                                           style={styles.cardInput}
                                            maxLength={4}
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber4}
@@ -203,31 +232,39 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                placeholder="MM/YY"
                                                maxLength={4}
                                                value={formData.personalExpiry}
-                                               onChangeText={(text) => setFormData({
-                                                   ...formData,
-                                                   personalExpiry: onlyNumber(text),
-                                               })}
+                                               onChangeText={(text) => {
+                                                   const number = onlyNumber(text);
+                                                   setFormData({ ...formData, personalExpiry: number });
+                                                   if (number.length === 4) {
+                                                       pwdPersRef.current?.focus();
+                                                   }
+                                               }}
                                     />
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
-                                    <TextInput style={[styles.input, {marginLeft:20}]}
+                                    <TextInput ref={pwdPersRef}
+                                               style={[styles.input, {marginLeft:20}]}
                                                keyboardType="number-pad"
                                                secureTextEntry
                                                placeholder="**"
                                                maxLength={2}
                                                value={formData.personalPassword}
-                                               onChangeText={(text) => setFormData({
-                                                   ...formData,
-                                                   personalPassword: onlyNumber(text),
-                                               })}
+                                               onChangeText={(text) => {
+                                                   const number = onlyNumber(text);
+                                                   setFormData({ ...formData, personalPassword: number });
+                                                   if (number.length === 2) {
+                                                       dobRef.current?.focus();
+                                                   }
+                                               }}
                                     />
                                 </View>
                             </View>
 
 
                             <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
-                            <TextInput style={styles.input}
+                            <TextInput ref={dobRef}
+                                       style={styles.input}
                                        keyboardType="number-pad"
                                        placeholder="주민번호 앞 6자리"
                                        maxLength={6}
@@ -250,45 +287,52 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                         <>
                             {/* 카드번호 4칸 */}
                             <View style={styles.cardNumberRow}>
-                                <TextInput style={styles.cardInput}
+                                <TextInput ref={cardCorpRef1}
+                                           style={styles.cardInput}
                                            maxLength={4}
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber1}
                                            onChangeText={(text) => {
-                                               setFormData({
-                                                   ...formData,
-                                                   corpCardNumber1: onlyNumber(text),
-                                               });
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, corpCardNumber1: number });
+                                               if (number.length === 4) {
+                                                   cardCorpRef2.current?.focus();
+                                               }
                                            }}
                                     />
 
-                                <TextInput style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
+                                <TextInput ref={cardCorpRef2}
+                                           style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber2}
                                            onChangeText={(text) => {
-                                               setFormData({
-                                                   ...formData,
-                                                   corpCardNumber2: onlyNumber(text),
-                                               });
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, corpCardNumber2: number });
+                                               if (number.length === 4) {
+                                                   cardCorpRef3.current?.focus();
+                                               }
                                            }}
                                 />
 
-                                <TextInput style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
+                                <TextInput ref={cardCorpRef3}
+                                           style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber3}
                                            onChangeText={(text) => {
-                                               setFormData({
-                                                   ...formData,
-                                                   corpCardNumber3: onlyNumber(text),
-                                               });
+                                               const number = onlyNumber(text);
+                                               setFormData({ ...formData, corpCardNumber3: number });
+                                               if (number.length === 4) {
+                                                   cardCorpRef4.current?.focus();
+                                               }
                                            }}
                                 />
 
-                                <TextInput style={styles.cardInput}
+                                <TextInput ref={cardCorpRef4}
+                                           style={styles.cardInput}
                                            maxLength={4}
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber4}
@@ -337,31 +381,39 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                placeholder="MM/YY"
                                                maxLength={4}
                                                value={formData.corpExpiry}
-                                               onChangeText={(text) => setFormData({
-                                                   ...formData,
-                                                   corpExpiry: onlyNumber(text),
-                                               })}
+                                               onChangeText={(text) => {
+                                                   const number = onlyNumber(text);
+                                                   setFormData({ ...formData, corpExpiry: number });
+                                                   if (number.length === 4) {
+                                                       pwdCorpRef.current?.focus();
+                                                   }
+                                               }}
                                     />
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
-                                    <TextInput style={[styles.input, {marginLeft:20}]}
+                                    <TextInput ref={pwdCorpRef}
+                                               style={[styles.input, {marginLeft:20}]}
                                                keyboardType="number-pad"
                                                secureTextEntry
                                                placeholder="**"
                                                maxLength={2}
                                                value={formData.corpPassword}
-                                               onChangeText={(text) => setFormData({
-                                                   ...formData,
-                                                   corpPassword: onlyNumber(text),
-                                               })}
+                                               onChangeText={(text) => {
+                                                   const number = onlyNumber(text);
+                                                   setFormData({ ...formData, corpPassword: number });
+                                                   if (number.length === 2) {
+                                                       brnRef.current?.focus();
+                                                   }
+                                               }}
                                     />
                                 </View>
                             </View>
 
 
                             <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
-                            <TextInput style={styles.input}
+                            <TextInput ref={brnRef}
+                                       style={styles.input}
                                        keyboardType="number-pad"
                                        placeholder="사업자번호 10자리"
                                        maxLength={10}

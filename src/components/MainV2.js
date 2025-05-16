@@ -1,14 +1,14 @@
 import React, {useCallback, useRef, useState} from 'react';
-import {Animated, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Animated, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {moveScreen} from './hooks/ScreenHooks';
+import {moveParamScreen, moveScreen} from './hooks/ScreenHooks';
 import Swiper from 'react-native-swiper';
 import FORMAT from '../utils/FormatUtils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인
 import moment from 'moment'; // 날짜
 import 'moment/locale/ko';
-import ErrorModal from './modal/ErrorModal';
+import DefaultModal from './modal/DefaultModal';
 
 const MainV2 = () => {
     moment.locale('ko');
@@ -16,7 +16,7 @@ const MainV2 = () => {
     const navigation = useNavigation();
     const [alertVisible, setAlertVisible] = useState(false);
     const [defaultMessage, setDefaultMessage] = useState(false);
-    const [errMessage, setErrMessage] = useState('');
+    const [message, setMessage] = useState('');
     const [showTransactions, setShowTransactions] = useState(true); //최근거래내역 숨김,보기
     const [isAmountHidden, setIsAmountHidden] = useState(false); // 금액 숨김,보기
     const amountOpacity = useRef(new Animated.Value(0)).current; // 시작 opacity 0
@@ -61,12 +61,12 @@ const MainV2 = () => {
             case 'TRXLIST'  :
                 moveScreen(navigation, "TRXLIST"); break;
             case 'SMS': case 'LINK': case 'QR':
-                setErrMessage(`${type} 서비스는 준비중입니다.`);
+                setMessage(`${type} 서비스는 준비중입니다.`);
                 setAlertVisible(true);
                 setDefaultMessage(false);
                 break;
             default:
-                // setErrMessage(''); // 메시지 바꾸고 싶으면 입력
+                // setMessage(''); // 메시지 바꾸고 싶으면 입력
                 setAlertVisible(true);
                 setDefaultMessage(true);
         }
@@ -105,12 +105,24 @@ const MainV2 = () => {
         return moment(dateStr, 'YYYYMMDDHHmmss');
     };
 
+    const handlePress = useCallback((item) => {
+        switch (item.key) {
+            case 'version':
+                Alert.alert('버전 정보', '현재 앱 버전은 v1.0.0 입니다.');
+                break;
+            case 'contact': case 'notice': case 'faq':
+                moveParamScreen(navigation, "NOTICE", { tab: item.key });
+                break;
+            default:
+                navigation.navigate(item.route);
+        }
+    }, [navigation]);
 
     return (
         <>
-            <ErrorModal
+            <DefaultModal
                 visible={alertVisible}
-                message={errMessage}
+                message={message}
                 onConfirm={() => setAlertVisible(false)}
                 defaultMessage={defaultMessage}
             />
@@ -327,15 +339,15 @@ const MainV2 = () => {
 
                 {/* Footer는 ScrollView 바깥에 고정됨 */}
                 <View style={styles.footerContainer}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => handlePress({ key: 'notice' })}>
                         <Text style={styles.footerButton}>공지사항</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => handlePress({ key: 'faq' })}>
                         <Text style={styles.footerButton}>FAQ</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => handlePress({ key: 'contact' })}>
                         <Text style={styles.footerButton}>고객센터</Text>
                     </TouchableOpacity>
                 </View>

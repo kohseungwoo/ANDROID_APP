@@ -8,7 +8,7 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
     modalBox: {
-        width: '80%',
+        width: '95%',
         backgroundColor: '#fff',
         borderRadius: 12,
         paddingVertical: 25,

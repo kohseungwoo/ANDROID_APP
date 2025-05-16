@@ -3,7 +3,7 @@ import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import styles from '../../assets/styles/KeyInV2Style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ErrorModal from '../../components/modal/ErrorModal';
+import DefaultModal from '../../components/modal/DefaultModal';
 
 /* 단일 화면에서의 모든 처리 */
 const KeyInScreenV2 = ({
@@ -37,7 +37,7 @@ const KeyInScreenV2 = ({
    }) => {
 
     const [alertVisible, setAlertVisible] = useState(false);
-    const [errMessage, setErrMessage] = useState('');
+    const [message, setMessage] = useState('');
     const appIdx = [
         { appId: 'demo_kovan', status : 'active'},
         { appId: 'demo_galaxia', status : 'active'},
@@ -64,7 +64,7 @@ const KeyInScreenV2 = ({
     );
 
     const getInstallment = () => {
-        setErrMessage('준비중');
+        setMessage('준비중');
         setAlertVisible(true);
     };
 
@@ -83,9 +83,9 @@ const KeyInScreenV2 = ({
 
     return (
         <>
-            <ErrorModal
+            <DefaultModal
                 visible={alertVisible}
-                message={errMessage}
+                message={message}
                 onConfirm={() => setAlertVisible(false)}
             />
 

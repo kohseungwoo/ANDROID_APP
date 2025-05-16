@@ -2,7 +2,7 @@ import React from 'react';
 import {Modal, Text, TouchableOpacity, View} from 'react-native';
 import styles from '../../assets/styles/ExitModalStyle';
 
-const ErrorModal = ({ visible, onCancel, onConfirm, message, defaultMessage = false }) => {
+const DefaultModal = ({ visible, onCancel, onConfirm, message, defaultMessage = false }) => {
     const displayMessage = message || '일시적인 시스템 오류입니다.';
     const fullMessage = defaultMessage
         ? `${displayMessage}\n관리자에게 문의하시기 바랍니다.`
@@ -30,4 +30,4 @@ const ErrorModal = ({ visible, onCancel, onConfirm, message, defaultMessage = fa
 };
 
 
-export default ErrorModal;
+export default DefaultModal;

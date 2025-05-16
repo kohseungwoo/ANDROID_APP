@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ErrorModal from '../../../components/modal/ErrorModal';
+import ErrorModal from '../../../components/modal/DefaultModal';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
     const [alertVisible, setAlertVisible] = useState(false);
-    const [errMessage, setErrMessage] = useState('');
+    const [message, setMessage] = useState('');
 
     const formatAmount = (value) => {
         const numeric = value.replace(/[^0-9]/g, '');
@@ -29,25 +29,25 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         formData.phoneNo = '01000000000';
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {
-            setErrMessage('상품명을 올바르게 입력해주세요..');
+            setMessage('상품명을 올바르게 입력해주세요..');
             setAlertVisible(true);
             return;
         }
 
         if (!amount) {
-            setErrMessage('결제금액을 올바르게 입력해주세요.');
+            setMessage('결제금액을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
 
         if (!buyerName) {
-            setErrMessage('구매자명을 올바르게 입력해주세요..');
+            setMessage('구매자명을 올바르게 입력해주세요..');
             setAlertVisible(true);
             return;
         }
 
         if (!phoneNo) {
-            setErrMessage('휴대폰을 올바르게 입력해주세요.');
+            setMessage('휴대폰을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
@@ -59,7 +59,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         <>
             <ErrorModal
                 visible={alertVisible}
-                message={errMessage}
+                message={message}
                 onConfirm={() => setAlertVisible(false)}
             />
 

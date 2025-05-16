@@ -55,13 +55,15 @@ const TrxListScreen = () => {
 
     const horizontalPadding = isLandscape ? 100 : 0;
 
-    const groupedTotals = Object.values(
-        dummyTransactions.reduce((acc, curr) => {
-            if (!acc[curr.method]) acc[curr.method] = { method: curr.method, amount: 0 };
-            acc[curr.method].amount += curr.amount;
-            return acc;
-        }, {})
-    );
+    const groupedTotals = useMemo(() => {
+        return Object.values(
+            filtered.reduce((acc, curr) => {
+                if (!acc[curr.method]) acc[curr.method] = { method: curr.method, amount: 0 };
+                acc[curr.method].amount += curr.amount;
+                return acc;
+            }, {})
+        );
+    }, [filtered]);
 
     const handleShowDetails = () => {
         setShowDetails(prev => {
