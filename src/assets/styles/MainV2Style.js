@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
     wrapper: {
-        height: 205, // 슬라이더 높이
+        height: 210, // 슬라이더 높이
     },
     main: {
         flex: 1,
@@ -210,19 +210,18 @@ export default StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 10,
     },
-    footerContainer: {
-        position: 'absolute',
-        bottom: 20,
-        left: 15,
-        right: 15,
-        height: 40,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#eaeaea',
-        borderRadius: 8,
-    },
-
+    // footerContainer: {
+    //     position: 'absolute',
+    //     bottom: 20,
+    //     left: 0,
+    //     right: 0,
+    //     height: 40,
+    //     flexDirection: 'row',
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     backgroundColor: '#eaeaea',
+    //     borderRadius: 8,
+    // },
     footerButton: {
         fontSize: 14,
         fontWeight:'bold',
@@ -230,7 +229,23 @@ export default StyleSheet.create({
         color: '#000',
     },
     footerSeparator: {
-        fontSize: 12,
-        color: '#808080',
+        fontSize: 16,
+        color: '#333',
+    },
+    footerContainer: {
+        height: 50,
+        bottom: 20,
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: '#eaeaea',
+        borderRadius: 15,
+    },
+    footerButtonBox: {
+        flex: 1,              // 각각 1:1:1 비율
+        alignItems: 'center',
     },
 });

@@ -45,6 +45,7 @@ export default StyleSheet.create({
     scrollArea: {
         flexGrow: 1,
         marginBottom: 20,
+        width:'100%',
     },
     message: {
         fontSize: 14,

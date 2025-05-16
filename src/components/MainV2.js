@@ -339,15 +339,15 @@ const MainV2 = () => {
 
                 {/* Footer는 ScrollView 바깥에 고정됨 */}
                 <View style={styles.footerContainer}>
-                    <TouchableOpacity onPress={() => handlePress({ key: 'notice' })}>
+                    <TouchableOpacity style={styles.footerButtonBox} onPress={() => handlePress({ key: 'notice' })}>
                         <Text style={styles.footerButton}>공지사항</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
-                    <TouchableOpacity onPress={() => handlePress({ key: 'faq' })}>
+                    <TouchableOpacity style={styles.footerButtonBox} onPress={() => handlePress({ key: 'faq' })}>
                         <Text style={styles.footerButton}>FAQ</Text>
                     </TouchableOpacity>
                     <Text style={styles.footerSeparator}>|</Text>
-                    <TouchableOpacity onPress={() => handlePress({ key: 'contact' })}>
+                    <TouchableOpacity style={styles.footerButtonBox} onPress={() => handlePress({ key: 'contact' })}>
                         <Text style={styles.footerButton}>고객센터</Text>
                     </TouchableOpacity>
                 </View>

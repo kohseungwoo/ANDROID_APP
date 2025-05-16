@@ -247,7 +247,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                style={[styles.input, {marginLeft:20}]}
                                                keyboardType="number-pad"
                                                secureTextEntry
-                                               placeholder="**"
+                                               placeholder="* *"
                                                maxLength={2}
                                                value={formData.personalPassword}
                                                onChangeText={(text) => {
@@ -396,7 +396,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                style={[styles.input, {marginLeft:20}]}
                                                keyboardType="number-pad"
                                                secureTextEntry
-                                               placeholder="**"
+                                               placeholder="* *"
                                                maxLength={2}
                                                value={formData.corpPassword}
                                                onChangeText={(text) => {
