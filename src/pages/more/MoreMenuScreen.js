@@ -57,7 +57,15 @@ const MoreMenuScreen = () => {
             default:
                 navigation.navigate(item.route);
         }
-    }, [navigation]);
+    }, [navigation])
+
+    const logout = () => {
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'LOGIN' }],
+        });
+    };
+
 
     return (
         <>
@@ -72,7 +80,7 @@ const MoreMenuScreen = () => {
                 {/* 상단: 로그아웃 버튼 + 유저 정보 */}
                 <View style={styles.headerBox}>
                     <TouchableOpacity
-                        onPress={() => console.log('로그아웃')}
+                        onPress={() => logout()}
                         style={styles.logoutButton}
                     >
                         <MaterialIcons name="logout" size={18} color="#000" />

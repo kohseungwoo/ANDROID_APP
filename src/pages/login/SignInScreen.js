@@ -1,9 +1,39 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import SignIn from '../../components/SignIn';
+import {useFocusEffect} from '@react-navigation/native';
+import {BackHandler} from 'react-native';
+import ConfirmModal from '../../components/modal/ConfirmModal';
 
 const SignInScreen = () => {
+    const [exitVisible, setExitVisible] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                setExitVisible(true);
+                return true;
+            };
+
+            const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            return () => sub.remove();
+        }, [])
+    );
+
+    const handleExit = () => {
+        setExitVisible(false);
+        BackHandler.exitApp();
+    };
+
     return (
-        <SignIn />
+        <>
+            <ConfirmModal
+                visible={exitVisible}
+                onCancel={() => setExitVisible(false)}
+                onConfirm={handleExit}
+                message={'앱을 종료 하시겠습니까?'}
+            />
+            <SignIn />
+        </>
     );
 };
 
