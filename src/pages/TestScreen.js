@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const TestScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>✅ Test Screen Loaded</Text>
+            <Text style={styles.text}>✅ Te!!st Screen Loaded</Text>
         </View>
     );
 };
