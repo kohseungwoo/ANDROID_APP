@@ -103,13 +103,13 @@ export default StyleSheet.create({
         flexDirection: 'row',
     },
     toggleBtn: {
-        paddingHorizontal:10,
-        paddingVertical: 4,
+        paddingHorizontal:15,
+        paddingVertical: 6,
         borderWidth: 0.5,
         borderColor: '#ccc',
-        marginLeft: 8,
+        marginLeft: 10,
         borderRadius: 5,
-        marginBottom:10,
+        marginBottom: 5,
     },
     activeBtn: {
         backgroundColor: '#253e6d',
@@ -117,6 +117,7 @@ export default StyleSheet.create({
     },
     activeBtnText: {
         color: '#fff',
+        fontWeight:'bold',
     },
     cardNumberRow: {
         flexDirection: 'row',
