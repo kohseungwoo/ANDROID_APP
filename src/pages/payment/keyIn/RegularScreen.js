@@ -224,35 +224,31 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     }
                                     placeholder="일시불"
                                     listMode="SCROLLVIEW"
-                                    style={{
-                                        backgroundColor: '#fafafa', // 드롭다운의 기본 상자 스타일
-                                        borderWidth: 1,
-                                        borderColor: '#ccc',
-                                        borderRadius: 10,
-                                        paddingHorizontal: 15,
-                                        height: 50,
-                                    }}
-                                    dropDownStyle={{
-                                        backgroundColor: '#ffffff', // 드롭다운 목록의 스타일
-                                        borderWidth: 1,
-                                        borderColor: '#ccc',
-                                        borderRadius: 10,
-                                        marginTop: 5,
+                                    style={styles.input}
+                                    itemSeparator={true}
+                                    itemSeparatorStyle={{
+                                        backgroundColor: '#ccc',
+                                        height: 0.4,
                                     }}
                                     placeholderStyle={{
-                                        color: '#999', // Placeholder 색상
+                                        color: '#808080', // Placeholder 색상
                                         fontSize: 16,
                                     }}
                                     labelStyle={{
-                                        color: '#333', // 항목(label)의 색상
+                                        color: '#000', // 항목(label)의 색상
                                         fontSize: 16,
                                     }}
                                     selectedItemLabelStyle={{
                                         color: '#000', // 선택된 항목의 텍스트 색상
                                         fontWeight: 'bold',
+                                        fontSize: 16,
                                     }}
-                                    selectedItemStyle={{
-                                        backgroundColor: '#f2f2f2', // 선택된 항목 배경 색상
+                                    dropDownContainerStyle={{
+                                        paddingHorizontal: 3,
+                                        borderColor: '#ccc',  // 드롭다운 목록의 테두리 색상
+                                        borderWidth: 0.5,          // 드롭다운 목록의 테두리 두께
+                                        borderRadius: 0,        // 드롭다운 목록의 둥근 테두리
+                                        backgroundColor:'#fafafa'
                                     }}
                                 />
                             {/*</View>*/}
@@ -380,7 +376,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             </View>
 
                             <Text style={styles.label}>할부개월</Text>
-                            <View style={styles.installmentInput}>
+                            {/*<View style={styles.installmentInput}>*/}
                                 <DropDownPicker
                                     open={open}
                                     value={formData.corpInstallment}
@@ -395,8 +391,35 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     }
                                     placeholder="일시불"
                                     listMode="SCROLLVIEW"
+                                    style={styles.input}
+                                    itemSeparator={true}
+                                    itemSeparatorStyle={{
+                                        backgroundColor: '#ccc',
+                                        height: 0.4,
+                                    }}
+                                    placeholderStyle={{
+                                        color: '#808080', // Placeholder 색상
+                                        fontSize: 16,
+                                    }}
+                                    labelStyle={{
+                                        color: '#000', // 항목(label)의 색상
+                                        fontSize: 16,
+                                    }}
+                                    selectedItemLabelStyle={{
+                                        color: '#000', // 선택된 항목의 텍스트 색상
+                                        fontWeight: 'bold',
+                                        fontSize: 16,
+                                    }}
+                                    dropDownContainerStyle={{
+                                        paddingHorizontal: 3,
+                                        borderColor: '#ccc',  // 드롭다운 목록의 테두리 색상
+                                        borderWidth: 0.5,          // 드롭다운 목록의 테두리 두께
+                                        borderRadius: 0,        // 드롭다운 목록의 둥근 테두리
+                                        backgroundColor:'#fafafa'
+                                    }}
+
                                 />
-                            </View>
+                            {/*</View>*/}
 
 
                             <View style={styles.row}>
