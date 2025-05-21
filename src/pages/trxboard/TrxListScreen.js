@@ -126,13 +126,12 @@ const TrxListScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
         <View style={styles.flex_1}>
+            <HeaderSub title="결제 현황" onRefresh={refresh} />
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
-
-                <HeaderSub title="결제 현황" onRefresh={refresh} />
 
                 <View style={styles.searchSection}>
                     <View style={styles.dateInputRow}>
