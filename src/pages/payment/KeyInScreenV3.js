@@ -4,6 +4,7 @@ import ProductScreen from './keyIn/ProductScreen';
 import RegularScreen from './keyIn/RegularScreen';
 import styles from '../../assets/styles/HeaderSubStyle';
 import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const KeyInScreenV3 = ({ formData, setFormData }) => {
@@ -45,7 +46,6 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
     };
 
     const renderHeader = (title, onRefresh) => (
-        <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
             {step === "REGULAR" && (
                 <TouchableOpacity
@@ -66,7 +66,6 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
                 <AntDesign name="reload1" size={20} color="#808080" />
             </TouchableOpacity>
         </View>
-        </SafeAreaView>
     );
 
 
@@ -74,19 +73,19 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
     switch (step) {
         case 'PRODUCT': {
             return (
-                <View style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1 }}>
                     {renderHeader("신용카드 수기결제", () => resetFormData())}
                     <ProductScreen
                         formData={formData}
                         setFormData={setFormData}
                         onNext={next}
                     />
-                </View>
+                </SafeAreaView>
             );
         }
         case 'REGULAR':{
             return (
-                <View style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1 }}>
                     {renderHeader("신용카드 수기결제", () => resetFormData())}
                     <RegularScreen
                         formData={formData}
@@ -94,7 +93,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
                         onNext={next}
                         onBack={prev}
                     />
-                </View>
+                </SafeAreaView>
             );
         }
         default:

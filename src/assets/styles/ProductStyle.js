@@ -1,7 +1,7 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
-    container: {  height :640, padding: 20, backgroundColor: '#fff', flex: 1 },
+    container: { padding: 20, backgroundColor: '#fff', flex: 1 },
     contentContainer: {
         flexGrow: 1,
     },
@@ -161,7 +161,7 @@ export default StyleSheet.create({
 
     footerContainer: {
         height: 50,
-        marginTop: 30,
+        marginTop: 20,
     },
 
     fullWidthTouchable: {
@@ -179,7 +179,10 @@ export default StyleSheet.create({
         fontSize: 16,
         fontWeight:'bold',
         textAlign:'center',
-        paddingTop: 12,
+        paddingTop: Platform.select({
+            ios: 15,
+            android: 10,
+        }),
         color: '#fff',
     },
 });

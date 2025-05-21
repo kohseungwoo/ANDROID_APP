@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/DefaultModal';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
+    const { height: screenHeight } = Dimensions.get('window');
     const [alertVisible, setAlertVisible] = useState(false);
     const [message, setMessage] = useState('');
 
@@ -64,7 +65,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             />
 
             <ScrollView
-                style={styles.container}
+                style={[styles.container,{}]}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
                 keyboardShouldPersistTaps="handled"
             >

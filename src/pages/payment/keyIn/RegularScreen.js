@@ -88,17 +88,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 onConfirm={() => setAlertVisible(false)}
             />
 
-            <View>
-                <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                        { label: 'Football', value: 'football' },
-                        { label: 'Baseball', value: 'baseball' },
-                        { label: 'Hockey', value: 'hockey' },
-                    ]}
-                />
-            </View>
-
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
