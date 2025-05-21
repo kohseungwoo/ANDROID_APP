@@ -1,14 +1,24 @@
 import React, {useRef, useState} from 'react';
 import {Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import RNPickerSelect from 'react-native-picker-select';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const { height: screenHeight } = Dimensions.get('window');
     const [nointText, setNointMessage] = useState('');
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+
+    const [items, setItems] = useState(
+        Array.from({ length: 12 }, (_, i) => ({
+            label: `${i + 1}개월`,
+            value: `${i + 1}`,
+        }))
+    );
+
 
     const onlyNumber = (value) => {
         return value.replace(/[^0-9]/g, '');
@@ -53,6 +63,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const resetCardForm = () => {
         const keepKeys = ['productName','amount','buyerName','phoneNo'];
 
+        setOpen(false);
         setFormData(prev => {
             const newForm = {};
 
@@ -144,18 +155,18 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                         <>
                             <View style={styles.cardNumberRow}>
                                 <TextInput
-                                           ref={cardPersRef1}
-                                           style={styles.cardInput}
-                                           maxLength={4}
-                                           keyboardType="number-pad"
-                                           value={formData.personalCardNumber1}
-                                           onChangeText={(text) => {
-                                               const number = onlyNumber(text);
-                                               setFormData({ ...formData, personalCardNumber1: number });
-                                               if (number.length === 4) {
-                                                   cardPersRef2.current?.focus();
-                                               }
-                                           }}
+                                    ref={cardPersRef1}
+                                    style={styles.cardInput}
+                                    maxLength={4}
+                                    keyboardType="number-pad"
+                                    value={formData.personalCardNumber1}
+                                    onChangeText={(text) => {
+                                        const number = onlyNumber(text);
+                                        setFormData({ ...formData, personalCardNumber1: number });
+                                        if (number.length === 4) {
+                                            cardPersRef2.current?.focus();
+                                        }
+                                    }}
                                 />
                                 <TextInput ref={cardPersRef2}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
@@ -198,31 +209,53 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             </View>
 
                             <Text style={styles.label}>할부개월</Text>
-                            <View style={styles.installmentInput}>
-                                <RNPickerSelect
-                                    onValueChange={(text) => setFormData({
-                                        ...formData,
-                                        personalInstallment: text,
-                                    })}
+                            {/*<View style={styles.installmentInput}>*/}
+                                <DropDownPicker
+                                    open={open}
                                     value={formData.personalInstallment}
-                                    items={installmentIdx}
-                                    placeholder={{ label: '일시불', value: 0}}
+                                    items={items}
+                                    setOpen={setOpen}
+                                    setItems={setItems}
+                                    setValue={(callback) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            personalInstallment: callback(prev.personalInstallment),
+                                        }))
+                                    }
+                                    placeholder="일시불"
+                                    listMode="SCROLLVIEW"
                                     style={{
-                                        inputIOS: {
-                                            fontSize: 16,
-                                            paddingVertical: 12,
-                                            paddingHorizontal: 10,
-                                            borderWidth: 1,
-                                            borderColor: 'gray',
-                                            borderRadius: 4,
-                                            color: 'black',
-                                        },
-                                        inputAndroid: {
-                                            color: 'black',
-                                        },
+                                        backgroundColor: '#fafafa', // 드롭다운의 기본 상자 스타일
+                                        borderWidth: 1,
+                                        borderColor: '#ccc',
+                                        borderRadius: 10,
+                                        paddingHorizontal: 15,
+                                        height: 50,
+                                    }}
+                                    dropDownStyle={{
+                                        backgroundColor: '#ffffff', // 드롭다운 목록의 스타일
+                                        borderWidth: 1,
+                                        borderColor: '#ccc',
+                                        borderRadius: 10,
+                                        marginTop: 5,
+                                    }}
+                                    placeholderStyle={{
+                                        color: '#999', // Placeholder 색상
+                                        fontSize: 16,
+                                    }}
+                                    labelStyle={{
+                                        color: '#333', // 항목(label)의 색상
+                                        fontSize: 16,
+                                    }}
+                                    selectedItemLabelStyle={{
+                                        color: '#000', // 선택된 항목의 텍스트 색상
+                                        fontWeight: 'bold',
+                                    }}
+                                    selectedItemStyle={{
+                                        backgroundColor: '#f2f2f2', // 선택된 항목 배경 색상
                                     }}
                                 />
-                            </View>
+                            {/*</View>*/}
 
 
                             <View style={styles.row}>
@@ -300,7 +333,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                    cardCorpRef2.current?.focus();
                                                }
                                            }}
-                                    />
+                                />
 
                                 <TextInput ref={cardCorpRef2}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
@@ -348,28 +381,20 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
 
                             <Text style={styles.label}>할부개월</Text>
                             <View style={styles.installmentInput}>
-                                <RNPickerSelect
-                                    onValueChange={(text) => setFormData({
-                                        ...formData,
-                                        corpInstallment: text,
-                                    })}
+                                <DropDownPicker
+                                    open={open}
                                     value={formData.corpInstallment}
-                                    items={installmentIdx}
-                                    placeholder={{ label: '일시불', value: 0}}
-                                    style={{
-                                        inputIOS: {
-                                            fontSize: 16,
-                                            paddingVertical: 12,
-                                            paddingHorizontal: 10,
-                                            borderWidth: 1,
-                                            borderColor: 'gray',
-                                            borderRadius: 4,
-                                            color: 'black',
-                                        },
-                                        inputAndroid: {
-                                            color: 'black',
-                                        },
-                                    }}
+                                    items={items}
+                                    setOpen={setOpen}
+                                    setItems={setItems}
+                                    setValue={(callback) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            corpInstallment: callback(prev.corpInstallment),
+                                        }))
+                                    }
+                                    placeholder="일시불"
+                                    listMode="SCROLLVIEW"
                                 />
                             </View>
 
