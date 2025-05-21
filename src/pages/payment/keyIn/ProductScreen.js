@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Dimensions, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/DefaultModal';
+import refreshHooks from '../../../components/hooks/RefreshHooks';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
     const { height: screenHeight } = Dimensions.get('window');
@@ -56,6 +57,21 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         onNext();
     };
 
+    const resetForm = () => {
+        setFormData({
+            productName: '',
+            amount: '',
+            buyerName: '',
+            phoneNo: '',
+            udf1: '',
+            cardType: 'personal',
+        });
+    };
+
+    const { refreshing, onRefresh } = refreshHooks(() => {
+        resetForm();
+    });
+
     return (
         <>
             <ErrorModal
@@ -65,9 +81,11 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             />
 
             <ScrollView
-                style={[styles.container,{}]}
-                contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
-                keyboardShouldPersistTaps="handled"
+                style={[styles.container, {height:screenHeight}]}
+                contentContainerStyle={styles.contentContainer}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
             >
                 {/* 헤더 및 입력 필드들 */}
                 <View style={styles.header}>

@@ -162,6 +162,7 @@ export default StyleSheet.create({
     footerContainer: {
         height: 50,
         marginTop: 20,
+        marginBottom: 60,
     },
 
     fullWidthTouchable: {
@@ -181,7 +182,7 @@ export default StyleSheet.create({
         textAlign:'center',
         paddingTop: Platform.select({
             ios: 15,
-            android: 10,
+            android: 12,
         }),
         color: '#fff',
     },

@@ -73,6 +73,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
     switch (step) {
         case 'PRODUCT': {
             return (
+            <>
                 <SafeAreaView style={{ flex: 1 }}>
                     {renderHeader("신용카드 수기결제", () => resetFormData())}
                     <ProductScreen
@@ -81,6 +82,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
                         onNext={next}
                     />
                 </SafeAreaView>
+            </>
             );
         }
         case 'REGULAR':{

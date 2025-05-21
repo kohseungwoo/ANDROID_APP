@@ -1,5 +1,5 @@
-import React, {useState, useRef} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RNPickerSelect from 'react-native-picker-select';
 import styles from '../../../assets/styles/RegularStyle';
@@ -7,6 +7,7 @@ import NointModal from '../../../components/modal/NointModal';
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const [alertVisible, setAlertVisible] = useState(false);
+    const { height: screenHeight } = Dimensions.get('window');
     const [nointText, setNointMessage] = useState('');
 
     const onlyNumber = (value) => {
@@ -89,7 +90,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
             />
 
             <ScrollView
-                style={styles.container}
+                style={[styles.container, {height:screenHeight}]}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
                 keyboardShouldPersistTaps="handled"
             >
