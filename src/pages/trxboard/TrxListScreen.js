@@ -3,7 +3,7 @@ import {
     Animated,
     Modal,
     Platform,
-    RefreshControl,
+    RefreshControl, SafeAreaView,
     ScrollView,
     Text,
     TouchableOpacity,
@@ -124,12 +124,14 @@ const TrxListScreen = () => {
     const { refreshing, onRefresh } = refreshHooks(refresh);
 
     return (
+        <SafeAreaView style={styles.safeArea}>
         <View style={styles.flex_1}>
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
+
                 <HeaderSub title="결제 현황" onRefresh={refresh} />
 
                 <View style={styles.searchSection}>
@@ -314,6 +316,7 @@ const TrxListScreen = () => {
             )}
 
         </View>
+        </SafeAreaView>
     );
 };
 

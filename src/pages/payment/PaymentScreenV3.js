@@ -1,14 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
-import HeaderSub from '../../components/HeaderSub';
 import styles from '../../assets/styles/PaymentStyle';
 import refreshHooks from '../../components/hooks/RefreshHooks';
 import KeyInScreenV3 from './KeyInScreenV3';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const PaymentScreenV3 = () => {
-    const navigation = useNavigation();
-
     // 상품 정보
     const [formData, setFormData] = useState({
         productName: '',

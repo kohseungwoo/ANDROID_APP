@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     wrapper: {
@@ -99,7 +99,10 @@ export default StyleSheet.create({
     buttonStyle: {
         height: 42,
         marginTop:14,
-        paddingTop:8,
+        paddingTop: Platform.select({
+            ios: 12,
+            android: 8,
+        }),
         paddingVertical: 6, // 위 아래 여백
         paddingHorizontal: 5, // 좌 우 여백
         borderWidth: 1,

@@ -160,17 +160,17 @@ export default StyleSheet.create({
     },
 
     footerContainer: {
-        position: 'absolute',
-        bottom: 10,
-        left: 0,
-        right: 0,
         height: 50,
-        borderRadius: 8,
-        backgroundColor: '#253e6d',
+        marginTop: 30,
     },
 
     fullWidthTouchable: {
         flex: 1,
+        width:'100%',
+        backgroundColor: '#253e6d',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     footerButton: {

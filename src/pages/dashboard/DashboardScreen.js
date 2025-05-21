@@ -1,5 +1,5 @@
 import React from 'react';
-import {RefreshControl, ScrollView, useWindowDimensions, View} from 'react-native';
+import {RefreshControl, SafeAreaView, ScrollView, View} from 'react-native';
 import Main from '../../components/MainV2';
 import Header from '../../components/Header';
 import styles from '../../assets/styles/DashboardStyle';
@@ -12,21 +12,23 @@ const DashboardScreen = () => {
     });
 
     return (
-        <View style={styles.container}>
-            <Header />
-            <View style={styles.flex_1}>
-                <ScrollView
-                    contentContainerStyle={styles.contentContainer}
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }
-                >
-                    <View style={styles.innerWrapper}>
-                        <Main />
-                    </View>
-                </ScrollView>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Header />
+                <View style={styles.flex_1}>
+                    <ScrollView
+                        contentContainerStyle={styles.contentContainer}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
+                    >
+                        <View style={styles.innerWrapper}>
+                            <Main />
+                        </View>
+                    </ScrollView>
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

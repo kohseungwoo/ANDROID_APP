@@ -9,6 +9,7 @@ import trxDetail from '../pages/trxboard/TrxDetailScreen';
 import TabNavigator from '../components/TabNavigator';
 import usePortraitLock from './hooks/UnlockHooks';
 import noticeScreen from '../pages/notice/NoticeScreen';
+import errorScreen from '../pages/error/ErrorScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const AppContent = () => {
                 <Stack.Screen name="PAYMENTMENU" component={paymentMenu} />
                 <Stack.Screen name="TRXDETAIL" component={trxDetail} />
                 <Stack.Screen name="NOTICE" component={noticeScreen} />
+                <Stack.Screen name="ERROR" component={errorScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

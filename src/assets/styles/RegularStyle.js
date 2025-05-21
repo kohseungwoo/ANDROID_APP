@@ -26,10 +26,10 @@ export default StyleSheet.create({
     },
     buttonText: {
         color: '#000',
-        fontSize: 12,
+        fontSize: 13,
         fontWeight:'bold',
         textAlign:'center',
-        paddingHorizontal:5
+        paddingHorizontal : 8,
     },
     separator: { height: 1.3, backgroundColor: '#000', marginVertical: 5 },
     cardTitle: { fontSize: 20, fontWeight: 'bold' },
@@ -170,17 +170,17 @@ export default StyleSheet.create({
     },
 
     footerContainer: {
-        position: 'absolute',
-        bottom: 10,
-        left: 0,
-        right: 0,
         height: 50,
-        borderRadius: 8,
-        backgroundColor: '#253e6d',
+        marginTop: 30,
     },
 
     fullWidthTouchable: {
         flex: 1,
+        width:'100%',
+        backgroundColor: '#253e6d',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     footerButton: {

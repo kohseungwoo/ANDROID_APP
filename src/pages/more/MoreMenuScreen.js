@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/MoreMenuStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -76,7 +76,8 @@ const MoreMenuScreen = () => {
                 defaultMessage={defaultMessage}
             />
 
-            <ScrollView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <ScrollView style={styles.container}>
                 {/* 상단: 로그아웃 버튼 + 유저 정보 */}
                 <View style={styles.headerBox}>
                     <TouchableOpacity
@@ -114,6 +115,7 @@ const MoreMenuScreen = () => {
                     })}
                 </View>
             </ScrollView>
+            </SafeAreaView>
         </>
     );
 };

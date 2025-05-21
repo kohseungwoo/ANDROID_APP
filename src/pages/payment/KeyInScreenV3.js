@@ -1,9 +1,9 @@
 import React, {useCallback, useState} from 'react';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import ProductScreen from './keyIn/ProductScreen';
 import RegularScreen from './keyIn/RegularScreen';
 import styles from '../../assets/styles/HeaderSubStyle';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const KeyInScreenV3 = ({ formData, setFormData }) => {
@@ -45,6 +45,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
     };
 
     const renderHeader = (title, onRefresh) => (
+        <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
             {step === "REGULAR" && (
                 <TouchableOpacity
@@ -65,6 +66,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
                 <AntDesign name="reload1" size={20} color="#808080" />
             </TouchableOpacity>
         </View>
+        </SafeAreaView>
     );
 
 

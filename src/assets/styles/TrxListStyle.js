@@ -29,8 +29,7 @@ export default StyleSheet.create({
         backgroundColor: '#f1f1f1',
         paddingHorizontal: 8,
         paddingVertical: 6,
-        borderRadius: 8,
-        flex: 1,
+        borderRadius: 8,        flex: 1,
     },
     dateInput: {
         marginLeft: 6,
@@ -155,7 +154,7 @@ export default StyleSheet.create({
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: -4 },
-        shadowRadius: 6,
+        shadowRadius: 2,
         zIndex: 10, // 화면 위로 올리기 위해
     },
     totalAmountRow: {
@@ -223,5 +222,8 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         color: '#007aff',
     },
-
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff', // 배경색을 헤더 배경과 맞춰주세요
+    },
 });

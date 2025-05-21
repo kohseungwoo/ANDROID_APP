@@ -31,7 +31,7 @@ export default StyleSheet.create({
         elevation: 4,
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        shadowRadius: 8,
+        shadowRadius: 2,
         shadowOffset: { width: 0, height: 4 },
     },
     logoContainer: {

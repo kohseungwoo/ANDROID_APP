@@ -17,7 +17,7 @@ export default StyleSheet.create({
         elevation: 3,
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        shadowRadius: 6,
+        shadowRadius: 2,
         shadowOffset: { width: 0, height: 2 },
     },
     cardTitle: {
@@ -60,7 +60,7 @@ export default StyleSheet.create({
         elevation: 3,
         shadowColor: '#000',
         shadowOpacity: 0.08,
-        shadowRadius: 6,
+        shadowRadius: 2,
         shadowOffset: { width: 0, height: 2 },
     },
     transactionHeader: {

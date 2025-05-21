@@ -42,4 +42,8 @@ export default StyleSheet.create({
         fontSize: 16,
         color: '#000',
     },
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff', // 배경색을 헤더 배경과 맞춰주세요
+    },
 });
