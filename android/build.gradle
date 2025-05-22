@@ -5,7 +5,7 @@ buildscript {
         compileSdkVersion = 35
         targetSdkVersion = 35
         ndkVersion = "27.1.12297006"
-        kotlinVersion = "1.6.10" // Kotlin 버전 확인 (필요시 변경)
+        kotlinVersion = "1.8.0" // Kotlin 버전 확인 (필요시 변경)
     }
     repositories {
         google()
