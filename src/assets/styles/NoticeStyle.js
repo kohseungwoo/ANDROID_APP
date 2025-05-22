@@ -5,6 +5,10 @@ export default StyleSheet.create({
     contentContainer: {
         flexGrow: 1,
     },
+    safeArea: {
+      flex: 1,
+      backgroundColor: '#fff', // 배경색을 헤더 배경과 맞춰주세요
+    },
     flex_1:{
         flex:1,
     },

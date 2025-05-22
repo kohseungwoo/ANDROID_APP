@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Linking, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Linking, RefreshControl, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import HeaderSub from '../../components/HeaderSub';
 import styles from '../../assets/styles/NoticeStyle';
 import refreshHooks from '../../components/hooks/RefreshHooks';
@@ -247,20 +247,21 @@ const NoticeScreen = () => {
                 onConfirm={() => setAlertVisible(false)}
             />
 
+            <SafeAreaView style={styles.safeArea}>
             <HeaderSub title={tabConfig[activeTab].title} />
-
-            <View style={styles.container}>
-                <ScrollView
-                    contentContainerStyle={styles.contentContainer}
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }
-                >
-                    {renderTabButtons()}
-                    {renderContent()}
-                </ScrollView>
-                {renderPagination()}
-            </View>
+              <View style={styles.container}>
+                  <ScrollView
+                      contentContainerStyle={styles.contentContainer}
+                      refreshControl={
+                          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                      }
+                  >
+                      {renderTabButtons()}
+                      {renderContent()}
+                  </ScrollView>
+                  {renderPagination()}
+              </View>
+            </SafeAreaView>
         </>
     );
 };
