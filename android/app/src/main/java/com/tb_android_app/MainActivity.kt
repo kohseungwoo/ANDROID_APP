@@ -7,6 +7,8 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 import android.os.Bundle
 import com.zoontek.rnbootsplash.RNBootSplash;
+import android.graphics.Color
+import android.view.View
 
 class MainActivity : ReactActivity() {
 

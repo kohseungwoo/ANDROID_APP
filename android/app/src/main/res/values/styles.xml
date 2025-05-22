@@ -1,12 +1,11 @@
-<resources>
+<!--npx react-native generate-bootsplash ./logo.png  &#45;&#45;logo-width=450 &#45;&#45;platforms=android 처럼 BootSplashTheme의 크기를 정해야함 -->
 
-    <!-- Base application theme. -->
+<resources>
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <!-- 내비게이션 바 색상(투명) -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
-
         <item name="android:datePickerDialogTheme">@style/CustomDatePickerTheme</item>
     </style>
 
@@ -18,8 +17,14 @@
         <item name="colorAccent">#253e6d</item> <!-- 취소/확인 텍스트 -->
     </style>
 
-    <style name="BootSplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BootSplashTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_screen</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="BootTheme" parent="Theme.BootSplash">
+        <item name="bootSplashBackground">@color/bootsplash_background</item>
+        <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+        <item name="postBootSplashTheme">@style/AppTheme</item>
     </style>
 </resources>

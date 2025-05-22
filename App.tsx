@@ -6,14 +6,15 @@ import RNBootSplash from 'react-native-bootsplash';
 
 export default function App() {
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
-        RNBootSplash.hide(); // 앱 준비되면 스플래시 숨기기
+        RNBootSplash.hide({ fade: true });
 
         // 추가 로딩이 필요할 경우 (API 등)
         const timeout = setTimeout(() => {
             setLoading(false);
         }, 3000);
+
+        RNBootSplash.hide({fade: true}); // 앱 준비되면 스플래시 숨기기
 
         return () => clearTimeout(timeout);
     }, []);
