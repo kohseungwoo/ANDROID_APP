@@ -6,14 +6,14 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 import android.os.Bundle
-import org.devio.rn.splashscreen.SplashScreen
+import com.zoontek.rnbootsplash.RNBootSplash;
 
 class MainActivity : ReactActivity() {
 
     override fun getMainComponentName(): String = "TB_ANDROID_APP"  // ← 앱 이름과 동일해야 함
 
     override  fun onCreate(savedInstanceState: Bundle?) {
-        SplashScreen.show(this)
+        RNBootSplash.init(this, R.style.BootSplashTheme)
         super.onCreate(savedInstanceState)
     }
 

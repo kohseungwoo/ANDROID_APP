@@ -18,7 +18,8 @@
         <item name="colorAccent">#253e6d</item> <!-- 취소/확인 텍스트 -->
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BootSplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>
