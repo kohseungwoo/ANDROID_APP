@@ -52,6 +52,7 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         width: '100%',
+        color:'#000',
     },
     errorContainer: {
         minHeight: 25,

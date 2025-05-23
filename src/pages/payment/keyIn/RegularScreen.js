@@ -86,6 +86,8 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const cardCorpRef3 = useRef(null);
     const cardCorpRef4 = useRef(null);
 
+    const expiryPersRef = useRef(null);
+    const expiryCorpRef = useRef(null);
     const pwdPersRef = useRef(null);
     const pwdCorpRef = useRef(null);
     const dobRef = useRef(null);
@@ -257,7 +259,8 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             <View style={styles.row}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.label}>유효기간</Text>
-                                    <TextInput style={styles.input}
+                                    <TextInput ref={expiryPersRef}
+                                               style={styles.input}
                                                keyboardType="number-pad"
                                                placeholder="MM/YY"
                                                maxLength={4}
@@ -272,7 +275,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     />
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
+                                    <Text style={[styles.label, {marginLeft:20}]}>비밀번호 2앞 2자리</Text>
                                     <TextInput ref={pwdPersRef}
                                                style={[styles.input, {marginLeft:20}]}
                                                keyboardType="number-pad"
@@ -425,7 +428,8 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             <View style={styles.row}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.label}>유효기간</Text>
-                                    <TextInput style={styles.input}
+                                    <TextInput ref={expiryCorpRef}
+                                               style={styles.input}
                                                keyboardType="number-pad"
                                                placeholder="MM/YY"
                                                maxLength={4}

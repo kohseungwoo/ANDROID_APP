@@ -134,6 +134,7 @@ export default StyleSheet.create({
         paddingBottom: 12,
         marginBottom:12,
         textAlign: 'center',
+        color:'#000',
     },
     InputRow: {
         flexDirection: 'row',
@@ -159,6 +160,7 @@ export default StyleSheet.create({
         paddingBottom: 12,
         marginBottom:12,
         fontSize:16,
+        color:'#000',
     },
 
     installmentInput: {
