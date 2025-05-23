@@ -43,16 +43,30 @@ export default StyleSheet.create({
         resizeMode: 'contain',
     },
     inputGroup: {
-        marginBottom: 10,
+        flexDirection: 'row',       // 입력창과 아이콘 가로 배치
+        alignItems: 'center',       // 세로 가운데 정렬
+        borderWidth: 1,             // 테두리 두께
+        borderColor: '#ccc',        // 테두리 색상 (연한 회색)
+        borderRadius: 8,            // 둥근 모서리
+        paddingHorizontal: 10,      // 좌우 안쪽 여백
+        marginVertical: 8,          // 위아래 마진
+        height: 48,                 // 높이 고정 (필요에 따라 조절)
+        backgroundColor: '#fff',    // 배경색 (필요에 따라)
     },
     input: {
-        padding: 10,
+        flex: 1,                    // 남은 공간 모두 차지
         fontSize: 16,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 5,
-        width: '100%',
-        color:'#000',
+        color: '#333',
+        paddingVertical: 0,         // 높이 맞추기 위해 세로 패딩 제거 또는 조절
+    },
+    eyeIconContainer: {
+        paddingLeft: 10,            // 입력창과 아이콘 사이 간격
+        justifyContent: 'center',   // 아이콘 세로 가운데 정렬
+    },
+    eyeIcon: {
+        width: 16,
+        height: 16,
+        tintColor: '#666',
     },
     errorContainer: {
         minHeight: 25,
@@ -73,6 +87,7 @@ export default StyleSheet.create({
         color: '#fff',
         textAlign: 'center',
         fontSize: 16,
+        fontWeight:'bold'
     },
     loginBtnLoading: {
         opacity: 0.6,

@@ -18,6 +18,7 @@
     </style>
 
     <style name="BootSplashTheme" parent="Theme.BootSplash">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="bootSplashBackground">@color/white</item>
         <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
         <item name="postBootSplashTheme">@style/AppTheme</item>
