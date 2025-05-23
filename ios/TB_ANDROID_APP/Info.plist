@@ -70,7 +70,7 @@
   <key>UIViewControllerBasedStatusBarAppearance</key>
   <false/>
 
-  <!-- ✅ 아이콘 설정은 이 안에 있어야 함 -->
+  <!-- 아이콘 설정은 이 안에 있어야 함 -->
   <key>CFBundleIcons</key>
   <dict>
     <key>CFBundlePrimaryIcon</key>
