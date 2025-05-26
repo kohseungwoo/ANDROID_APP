@@ -7,6 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {moveParamScreen} from '../../components/hooks/ScreenHooks';
 import DefaultModal from '../../components/modal/DefaultModal';
+import {Logout} from '../../components/Logout';
 
 const menuItems = [
     {
@@ -57,14 +58,7 @@ const MoreMenuScreen = () => {
             default:
                 navigation.navigate(item.route);
         }
-    }, [navigation])
-
-    const logout = () => {
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'LOGIN' }],
-        });
-    };
+    }, [navigation]);
 
 
     return (
@@ -81,7 +75,7 @@ const MoreMenuScreen = () => {
                 {/* 상단: 로그아웃 버튼 + 유저 정보 */}
                 <View style={styles.headerBox}>
                     <TouchableOpacity
-                        onPress={() => logout()}
+                        onPress={()=>Logout(navigation)}
                         style={styles.logoutButton}
                     >
                         <MaterialIcons name="logout" size={18} color="#000" />

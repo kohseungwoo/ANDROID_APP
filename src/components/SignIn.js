@@ -1,27 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {
-    ActivityIndicator,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../assets/styles/SignInStyle';
+import RNBootSplash from 'react-native-bootsplash';
 import * as Keychain from 'react-native-keychain';
+import LottieView from 'lottie-react-native';
+import {Logout} from './Logout';
 
 const SignIn = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('test');
-    const [password, setPassword] = useState('1');
+    const [username, setUsername] = useState('demo_kovan');
+    const [password, setPassword] = useState('12345');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    const [splashLoading, setSplashLoading] = useState(true);
 
     // 앱 시작 시 자동 로그인 시도
     useEffect(() => {
@@ -29,20 +24,24 @@ const SignIn = () => {
             const credentials = await Keychain.getGenericPassword();
             if (credentials) {
                 const token = credentials.password;
+                global.E2U?.INFO('자동 로그인 실행!');
 
                 try {
-                    // const response = await fetch('https://tetms.e2u.kr/token/+token', {
-                    //     method: 'GET',
-                    //     headers: { 'Content-Type': 'application/json' },
-                    //     body: JSON.stringify({ id:username, password:password, version:'v1' }),
-                    // });
+                    const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login/${token}`, {
+                        method: 'GET',
+                        headers: {
+                            'VERSION'  : global.E2U?.APP_VERSION,
+                        },
+                    });
 
-                    const response = {
-                        "code"     : "0001"
-                    };
-
-                    if (response.code === '0000') {
-                        handlerMove();
+                    const result = await response.json();
+                    if (result.code === '0000') {
+                        global.E2U?.INFO('자동 로그인 정상처리');
+                        handlerMove(result);
+                    }else{
+                        if (result.code === '803') {
+                            await Logout(navigation);
+                        }
                     }
                 } catch (err) {
                     console.warn('[시스템 오류] 자동 로그인 실패 \n' + err);
@@ -50,44 +49,70 @@ const SignIn = () => {
                     setIsLoading(false);
                 }
             }
+
+            setSplashLoading(false);
+            RNBootSplash.hide({ fade: true });
         };
         checkStoredToken();
+
+
     }, []);
 
     const handleLogin = async () => {
+        global.E2U?.INFO('로그인 클릭!');
         setIsLoading(true);
-
         try {
-            let response = await fetch(`${global.E2U_API_URL}/login`, {
+            if(!username || !password){
+                setErrorMessage('아이디 또는 패스워드를 입력해주시기 바랍니다.');
+                return;
+            }
+
+            const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login`, {
                 method: 'POST',
-                headers: global.E2U_CONTENT_TYPE_JSON,
-                body: JSON.stringify({ id:username, password:password, version:'v1' }),
+                headers: {
+                    'Content-Type': global.E2U?.CONTENT_TYPE_JSON,
+                    'VERSION'  : global.E2U?.APP_VERSION,
+                },
+                body: JSON.stringify({
+                    userId  : username,
+                    pw      : password,
+                }),
             });
 
-            response = {
-                "code"     : "0001",
-                "data"     : {
-                    "accToken" : "tmk_MTCWMDAWMTGXNJC2ZMM",
-                    "grade"    : "APP",
-                    "appId"    : "",
-                    "appNick"  : "",
-                },
-            };
+            const result = await response.json();
+            if (result.code === '0000') {
+                global.E2U?.INFO('로그인 정상처리');
 
-            if (response.code === '0000' && response.data.accToken) {
-                await Keychain.setGenericPassword(username, response.data.accToken);
-                handlerMove();
-            } else {
+                await Keychain.setGenericPassword(username, result.data?.key || '');
+                handlerMove(result);
+            }else{
+                if (result.code === '803') {
+                    await Logout(navigation);
+                }else{
                 setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
+                }
             }
         } catch (err) {
-            setErrorMessage('[시스템 오류] 관리자 문의');
+            setErrorMessage('[시스템 오류] 관리자 문의하시기 바랍니다.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handlerMove = () => {
+    const handlerMove = (result) => {
+        global.E2U.INFO(`로그인 응답 JSON \n ${JSON.stringify(result)}`);
+
+        if(!result?.data?.key){
+            setErrorMessage('로그인을 재시도 해주시기 바랍니다.');
+            return;
+        }
+
+        // global.E2U 가맹점 정보 저장
+        global.E2U.key      = result?.data?.key || '';
+        global.E2U.grade    = result?.data?.grade || '';
+        global.E2U.appId    = result?.data?.appId || '';
+        global.E2U.nick     = result?.data?.nick || '';
+
         navigation.reset({
             index: 0,
             routes: [
@@ -100,6 +125,19 @@ const SignIn = () => {
             ],
         });
     };
+
+    if (splashLoading) {
+        return (
+            <View style={{flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center'}}>
+                <LottieView
+                    source={require('../assets/animation/loading.json')}
+                    autoPlay
+                    loop
+                    style={{width: 150, height: 150}}
+                />
+            </View>
+        );
+    }
 
     return (
         <KeyboardAvoidingView

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
-import FORMAT from '../utils/FormatUtils';
+import FORMAT from '../utils/Utils';
 import styles from '../assets/styles/MainV1Style';
 
 const MainV1 = () => {
@@ -40,7 +40,7 @@ const MainV1 = () => {
                     <View style={styles.amountWrapper}>
                         <Text style={styles.currency}>₩</Text>
                         <Text style={[styles.amount, dailyAmount < 0 && styles.cancelAmount]} adjustsFontSizeToFit numberOfLines={1}>
-                            {FORMAT.formatComma(dailyAmount)}
+                            {FORMAT.comma(dailyAmount)}
                         </Text>
                         <Text style={styles.currencyText}>원</Text>
                     </View>
@@ -54,7 +54,7 @@ const MainV1 = () => {
                     <View style={styles.amountWrapper}>
                         <Text style={styles.currency}>₩</Text>
                         <Text style={[styles.amount, monthlyAmount < 0 && styles.cancelAmount]} adjustsFontSizeToFit numberOfLines={1}>
-                            {FORMAT.formatComma(monthlyAmount)}
+                            {FORMAT.comma(monthlyAmount)}
                         </Text>
                         <Text style={styles.currencyText}>원</Text>
                     </View>
@@ -104,7 +104,7 @@ const MainV1 = () => {
                                             ]}
                                         >
                                             {item.type === '취소' ? '-' : ''}
-                                            {FORMAT.formatKRW(item.amount)}
+                                            {FORMAT.KRW(item.amount)}
                                         </Text>
                                     </Text>
                                 </View>

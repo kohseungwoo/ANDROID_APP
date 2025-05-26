@@ -1,7 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {
-    Animated,
-    Modal,
+import {Animated,Modal,
     Platform,
     RefreshControl, SafeAreaView,
     ScrollView,
@@ -12,31 +10,23 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HeaderSub from '../../components/HeaderSub';
-import FORMAT from '../../utils/FormatUtils';
+import UTILS from '../../utils/Utils';
 import styles from '../../assets/styles/TrxListStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import refreshHooks from '../../components/hooks/RefreshHooks';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-const dummyTransactions = [
-    { id: '1', date: '2025-04-01 10:20:30', method: '신용카드', product: '아메리카노', amount: -4500 },
-    { id: '2', date: '2025-04-02 13:45:00', method: '카카오페이', product: '치킨세트', amount: 18000 },
-    { id: '3', date: '2025-04-02 13:45:00', method: '네이버페이', product: '칫솔세트', amount: 20000 },
-    { id: '4', date: '2025-04-02 13:45:00', method: '네이버페이', product: '속옷세트', amount: 9000 },
-    { id: '5', date: '2025-04-02 13:45:00', method: '삼성페이', product: '잠옷세트', amount: 66000 },
-    { id: '6', date: '2025-04-02 13:45:00', method: '애플페이', product: '과일세트', amount: 35000 },
-    { id: '7', date: '2025-04-02 13:45:00', method: '가상계좌', product: '키보드RF', amount: 15000 },
-];
-
-const formatDate = (date) => {
-    return `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
-};
+import DefaultModal from '../../components/modal/DefaultModal';
+import {Logout} from '../../components/Logout';
+import moment from 'moment';
 
 const TrxListScreen = () => {
     const navigation = useNavigation();
     const layout = useWindowDimensions();
     const isLandscape = useMemo(() => layout.width > layout.height, [layout]);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [defaultMessage, setDefaultMessage] = useState(false);
+    const [message, setMessage] = useState('');
 
     const translateY = useRef(new Animated.Value(200)).current;
 
@@ -48,22 +38,29 @@ const TrxListScreen = () => {
     const [showToPicker, setShowToPicker] = useState(false);
     const [currentPicker, setCurrentPicker] = useState(null);
 
-
-    const [filtered, setFiltered] = useState(dummyTransactions);
+    // 거래 관련
+    const [trxList, setTrxList] = useState([]);
+    const [currentPage, setCurrentPage] = useState([]);
+    const [pageSize, setPageSize] = useState([]);
+    const [totalRecords, setTotalRecords] = useState([]);
+    const [totalPages, setTotalPages] = useState([]);
     const [showDetails, setShowDetails] = useState(false);
-
 
     const horizontalPadding = isLandscape ? 100 : 0;
 
+    const formatDate = (date) => {
+        return `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+    };
+
     const groupedTotals = useMemo(() => {
         return Object.values(
-            filtered.reduce((acc, curr) => {
+            trxList.reduce((acc, curr) => {
                 if (!acc[curr.method]) acc[curr.method] = { method: curr.method, amount: 0 };
                 acc[curr.method].amount += curr.amount;
                 return acc;
             }, {})
         );
-    }, [filtered]);
+    }, [trxList]);
 
     const handleShowDetails = () => {
         setShowDetails(prev => {
@@ -77,9 +74,9 @@ const TrxListScreen = () => {
         });
     };
 
-    const handleSearch = () => {
-        let from = fromDateObj;
-        let to = toDateObj;
+    async function handleSearch(fromDateParam, toDateParam){
+        let from = fromDateParam || fromDateObj;
+        let to = toDateParam || toDateObj;
 
         // to가 from보다 작으면 to를 from으로 설정
         if (to < from) {
@@ -90,41 +87,74 @@ const TrxListScreen = () => {
         const fromFormatted = formatDate(from).replace(/\./g, '-');
         const toFormatted = formatDate(to).replace(/\./g, '-');
 
-        const filteredList = dummyTransactions.filter(
-            item => item.date >= fromFormatted && item.date <= toFormatted
-        );
-        setFiltered(filteredList);
+        try{
+            const response = await fetch(`${global.E2U?.API_URL}/v2/trx/paging`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
+                },
+                body: JSON.stringify({
+                    search : [{
+                        'id'    : 'regDay',
+                        'value' : `${fromFormatted.replaceAll('-','')}, ${toFormatted.replaceAll('-','')}`,
+                        'oper'  : 'bt',
+                    }],
+                }),
+            });
+
+            const result = await response.json();
+            if (result.code === '0000') {
+                setTotalRecords(result.data?.totalRecords || 0);
+                setTrxList(result.data?.result);
+            }else{
+                if (result.code === '803') {
+                    await Logout(navigation);
+                }else{
+                    setMessage(`${result.message}`);
+                    setAlertVisible(true);
+                    setDefaultMessage(false);
+                }
+            }
+        }catch(err){
+            global.E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
+            setMessage(`거래 조회 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
+            setAlertVisible(true);
+            setDefaultMessage(false);
+        }
     };
 
     const refresh = () => {
         const now = new Date();
         setFromDateObj(now);
         setToDateObj(now);
-
-        const formattedNow = formatDate(now).replace(/\./g, '-');
-
-        const filteredList = dummyTransactions.filter(
-            item => item.date === formattedNow
-        );
-
-        setFiltered(filteredList);
+        handleSearch(now, now);
+        setShowDetails(false);
     };
 
     useFocusEffect(
         useCallback(() => {
-            const today = new Date();
-            setFromDateObj(today);
-            setToDateObj(today);
+            const now = new Date();
+            setFromDateObj(now);
+            setToDateObj(now);
 
-            handleSearch();
+            handleSearch(now, now);
             setShowDetails(false);
         }, [])
     );
 
     const { refreshing, onRefresh } = refreshHooks(refresh);
-
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <>
+            <DefaultModal
+                visible={alertVisible}
+                message={message}
+                onConfirm={() => setAlertVisible(false)}
+                defaultMessage={defaultMessage}
+            />
+
+            <SafeAreaView style={styles.safeArea}>
         <View style={styles.flex_1}>
             <HeaderSub title="결제 현황" onRefresh={refresh} />
             <ScrollView
@@ -157,14 +187,14 @@ const TrxListScreen = () => {
                             <Text style={styles.dateInput}>{formatDate(toDateObj)}</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+                    <TouchableOpacity style={styles.searchButton} onPress={() => handleSearch(fromDateObj, toDateObj)}>
                         <Text style={styles.searchButtonText}>조회</Text>
                     </TouchableOpacity>
                 </View>
 
 
                 <View style={styles.dateRangeRow}>
-                    <Text style={styles.dateRangeText}>{`총 ${filtered.length} 건`}</Text>
+                    <Text style={styles.dateRangeText}>{`총 ${totalRecords || 0} 건`}</Text>
                     <TouchableOpacity onPress={handleShowDetails} style={styles.dropdownContainer}>
                         <Text style={styles.dropdownText}>전체</Text>
                         <Text style={styles.dropdownArrow}>▼</Text>
@@ -172,30 +202,32 @@ const TrxListScreen = () => {
                 </View>
 
                 <View style={styles.whiteBackground}>
-                    {filtered.map((item, index) => {
-                        const isLastItem = index === filtered.length - 1;
-                        const shouldShowBorder = filtered.length <= 5 && isLastItem;
+                    {trxList?.map((item, index) => {
+                        const isLastItem = index === trxList?.length - 1;
+                        const shouldShowBorder = trxList?.length <= 5 && isLastItem;
 
                         return (
                             <TouchableOpacity
-                                key={item.id}
+                                key={item.trxId}
                                 onPress={() => navigation.navigate('TRXDETAIL', { item })}
                                 activeOpacity={0.7}
                             >
                                 <View style={[styles.transactionItem, shouldShowBorder && styles.lastTransactionItem]}>
                                     <View style={styles.productRow}>
                                         <Text style={styles.productName} numberOfLines={1}>
-                                            {FORMAT.formatSlice(item.product, 14)}
+                                            {UTILS.slice(item.productName, 14)}
                                         </Text>
                                         <View style={styles.amountWithArrow}>
                                             <Text style={[styles.amount, item.amount < 0 && styles.amountNegative]}>
-                                                {FORMAT.formatKRW(item.amount)}
+                                                {UTILS.KRW(item.amount)}
                                             </Text>
                                             <MaterialIcons name="arrow-forward-ios" size={12} color="#adadad" />
                                         </View>
                                     </View>
-                                    <Text style={styles.transactionDate}>{item.date}</Text>
-                                    <Text style={styles.transactionMethod}>{item.method}</Text>
+                                    <Text style={styles.transactionDate}>
+                                        {moment(item.regDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')}
+                                    </Text>
+                                    <Text style={styles.transactionMethod}>{UTILS.convertMethod(item.method)}</Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -238,15 +270,15 @@ const TrxListScreen = () => {
                             <View style={styles.detailRow}>
                                 <Text style={styles.methodText}>전체</Text>
                                 <Text style={styles.methodAmount}>
-                                    {FORMAT.formatKRW(filtered.reduce((acc, curr) => acc + curr.amount, 0))}
+                                    {UTILS.KRW(trxList.reduce((acc, curr) => acc + curr.amount, 0))}
                                 </Text>
                             </View>
 
                             {groupedTotals.map((item) => (
                                 <View style={styles.detailRow} key={item.method}>
-                                    <Text style={styles.methodText}>{item.method}</Text>
+                                    <Text style={styles.methodText}>{UTILS.convertMethod(item.method)}</Text>
                                     <Text style={[styles.methodAmount, item.amount < 0 && styles.amountNegative]}>
-                                        {FORMAT.formatKRW(item.amount)}
+                                        {UTILS.KRW(item.amount)}
                                     </Text>
                                 </View>
                             ))}
@@ -316,6 +348,7 @@ const TrxListScreen = () => {
 
         </View>
         </SafeAreaView>
+        </>
     );
 };
 

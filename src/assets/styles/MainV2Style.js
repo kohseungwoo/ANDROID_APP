@@ -152,7 +152,8 @@ export default StyleSheet.create({
     },
     reloadIcon: {
         color: '#808080',
-        fontSize: 14,
+        fontSize: 18,
+        paddingTop:5,
     },
     transactionRow: {
         marginTop: 12,

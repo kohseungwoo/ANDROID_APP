@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {moveParamScreen, moveScreen} from './hooks/ScreenHooks';
 import Swiper from 'react-native-swiper';
-import FORMAT from '../utils/FormatUtils';
+import UTILS from '../utils/Utils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인
 import moment from 'moment'; // 날짜
 import 'moment/locale/ko';
@@ -21,6 +21,16 @@ const MainV2 = () => {
     const [isAmountHidden, setIsAmountHidden] = useState(false); // 금액 숨김,보기
     const amountOpacity = useRef(new Animated.Value(0)).current; // 시작 opacity 0
     const amountTranslate = useRef(new Animated.Value(-10)).current; // 시작 translateY -10
+
+    const [dailyAmount, setDailyAmount] = useState(0);
+    const [monthlyAmount, setMonthlyAmount] = useState(0);
+    const [totalCount, setTotalCount] = useState(10);
+    const [transactions, setTransactions] = useState(null);
+
+    const toDay = moment().format("YYYYMMDD");
+    const startDay = moment().startOf('month').format('YYYYMMDD');
+    const endDay = moment().endOf('month').format('YYYYMMDD');
+
 
     // 금액 애니메이션을 설정하는 함수
     const runAmountAnimation = useCallback(() => {
@@ -41,11 +51,6 @@ const MainV2 = () => {
         ]).start();
     }, [amountOpacity, amountTranslate]);
 
-    useFocusEffect(
-        useCallback(() => {
-            runAmountAnimation();
-        }, [runAmountAnimation])
-    );
 
     // 금액 숨김/보기 토글
     const toggleAmountHidden = () => {
@@ -72,39 +77,6 @@ const MainV2 = () => {
         }
     };
 
-
-    // 날짜 변수 선언
-    const today = moment().format('M.D(dd)');
-    const currentMonth = moment().format('M월');
-
-    const dailyAmount = 6748264;
-    const monthlyAmount = 155123943;
-    const totalCount = 10; // 최대 5건
-
-    const transactions = [
-        { id: '1', day: '20250417', time:'123211', type: '승인', amount: 1000 },
-        { id: '2', day: '20250417', time:'111254', type: '취소', amount: 5400 },
-        { id: '3', day: '20250416', time:'090133', type: '승인', amount: 12000 },
-        { id: '4', day: '20250415', time:'204420', type: '승인', amount: 7650 },
-        { id: '5', day: '20250415', time:'192217', type: '취소', amount: 30000 },
-        { id: '6', day: '20250414', time:'192016', type: '취소', amount: 1004 },
-        { id: '7', day: '20250414', time:'182011', type: '승인', amount: 1200 },
-        { id: '8', day: '20250414', time:'175022', type: '승인', amount: 15500 },
-        { id: '9', day: '20250414', time:'164030', type: '취소', amount: 22100 },
-        { id: '10', day: '20250414', time:'153050', type: '취소', amount: 6600 },
-    ];
-
-    const appMok = {
-        type: 'APP', // or '상점'
-        id: 'appId',
-        name: '앱상호명',
-    };
-
-    const parseDate = (item) => {
-        const dateStr = `${item.day}${item.time}`; // 20250417123211
-        return moment(dateStr, 'YYYYMMDDHHmmss');
-    };
-
     const handlePress = useCallback((item) => {
         switch (item.key) {
             case 'version':
@@ -117,6 +89,58 @@ const MainV2 = () => {
                 navigation.navigate(item.route);
         }
     }, [navigation]);
+
+
+    async function reloadTrx() {
+        const totalMonth = await search(`${startDay}, ${endDay}`);
+        setMonthlyAmount(totalMonth.data?.totalAmount);
+        setTransactions(totalMonth.data?.result);
+    }
+
+    async function search(regDay) {
+        const response = await fetch(`${global.E2U.API_URL}/v2/trx/paging`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                'Authorization': global.E2U?.key,
+                'VERSION'  : global.E2U?.APP_VERSION,
+            },
+            body: JSON.stringify({
+                search : [{
+                    'id'    : 'regDay',
+                    'value' : `${regDay}`,
+                    'oper'  : 'bt',
+                }],
+            }),
+        });
+
+        return await response.json();
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            runAmountAnimation();
+
+            async function fetchData() {
+                try {
+                    const totalToday = await search(`${toDay}, ${toDay}`);
+                    setDailyAmount(totalToday.data?.result.reduce((sum, item) => sum + (item.amount || 0), 0));
+
+                    const totalMonth = await search(`${startDay}, ${endDay}`);
+                    setMonthlyAmount(totalMonth.data?.totalAmount);
+                    setTransactions(totalMonth.data?.result);
+
+                } catch (err) {
+                    global.E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
+                    setMessage(`대시보드 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
+                    setAlertVisible(true);
+                    setDefaultMessage(false);
+                }
+            }
+
+            fetchData();
+        }, [runAmountAnimation])
+    );
 
     return (
         <>
@@ -135,13 +159,16 @@ const MainV2 = () => {
                 >
                     {/* ================ 기존 콘텐츠 시작 ================ */}
                     <View style={styles.merchantContainer}>
-                        {appMok.type === 'APP' && (
+                        {global.E2U?.grade === 'APP' && (
                             <View style={styles.badge}>
                                 <Text style={styles.badgeText}>매장</Text>
                             </View>
                         )}
                         <Text style={styles.merchantNick}>
-                            {appMok.name} <Text style={styles.grayText}>({appMok.id})</Text>
+                            {global.E2U?.nick || ''}
+                            <Text style={styles.grayText}>
+                                {global.E2U?.appId ? ` (${global.E2U?.appId})` : ''}
+                            </Text>
                         </Text>
                     </View>
 
@@ -205,7 +232,7 @@ const MainV2 = () => {
                         <View style={styles.card}>
                             <View style={styles.cardHeader}>
                                 <Text style={styles.cardTitle}>
-                                    일 매출 <Text style={styles.cardDate}>{today}</Text>
+                                    일 매출 <Text style={styles.cardDate}>{moment().format('M.D(dd)')}</Text>
                                 </Text>
                             </View>
                             <View style={styles.amountRow}>
@@ -225,7 +252,7 @@ const MainV2 = () => {
                                             adjustsFontSizeToFit
                                             numberOfLines={1}
                                         >
-                                            {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(dailyAmount)}
+                                            {isAmountHidden ? '* * * * * *' : UTILS.comma(dailyAmount)}
                                         </Text>
                                     </Animated.View>
                                     <Text style={styles.currencyText}>원</Text>
@@ -244,7 +271,7 @@ const MainV2 = () => {
                         {/* 월 매출 카드 */}
                         <View style={styles.card}>
                             <Text style={styles.cardTitle}>
-                                월 매출 <Text style={styles.cardDate}>{currentMonth}</Text>
+                                월 매출 <Text style={styles.cardDate}>{moment().format('M월')}</Text>
                             </Text>
                             <View style={styles.amountRow}>
                                 <View style={styles.amountWrapperLeft}>
@@ -262,7 +289,7 @@ const MainV2 = () => {
                                             adjustsFontSizeToFit
                                             numberOfLines={1}
                                         >
-                                            {isAmountHidden ? '* * * * * *' : FORMAT.formatComma(monthlyAmount)}
+                                            {isAmountHidden ? '* * * * * *' : UTILS.comma(monthlyAmount)}
                                         </Text>
                                     </Animated.View>
                                     <Text style={styles.currencyText}>원</Text>
@@ -290,7 +317,7 @@ const MainV2 = () => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.headerIcons}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => reloadTrx()}>
                                     <Ionicons name="reload" size={24} style={styles.reloadIcon} />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => setShowTransactions(!showTransactions)}>
@@ -303,33 +330,37 @@ const MainV2 = () => {
 
                         {showTransactions && (
                             <FlatList
-                                data={transactions
+                                data={(transactions || [])
                                     .slice()
-                                    .sort((a, b) => parseDate(b) - parseDate(a))
+                                    .sort((a, b) => UTILS.parseDate(b.regDay+b.regTime) - UTILS.parseDate(a.regDay+a.regTime))
                                     .slice(0, totalCount)}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.trxId}
                                 scrollEnabled={false}
                                 renderItem={({ item }) => (
                                     <View style={styles.transactionRow}>
                                         <View style={styles.transactionTextContainer}>
                                             <Text style={styles.transactionText}>
-                                                {parseDate(item).format('YYYY-MM-DD  HH:mm:ss')}
+                                                {UTILS.parseDate(item.regDay+item.regTime).format('YYYY-MM-DD  HH:mm:ss')}
                                             </Text>
                                             <Text>
                                                 <Text
                                                     style={[
                                                         styles.transactionAmount,
-                                                        item.type === '취소' && styles.cancelAmount,
+                                                        item.trxType !== 'authorized' && styles.cancelAmount,
                                                     ]}
                                                 >
-                                                    {item.type === '취소' ? '-' : ''}
-                                                    {FORMAT.formatKRW(item.amount)}
+                                                    {UTILS.KRW(item.amount)}
                                                 </Text>
                                             </Text>
                                         </View>
                                         <View style={styles.rowDivider} />
                                     </View>
                                 )}
+                                ListEmptyComponent={
+                                    <View style={{ paddingTop:20, alignItems: 'left'}}>
+                                        <Text style={{ color: '#888', fontSize: 16 }}>거래정보를 찾을 수 없습니다.</Text>
+                                    </View>
+                                }
                             />
                         )}
                     </View>

@@ -46,5 +46,6 @@ export default StyleSheet.create({
     confirmText: {
         color: '#fff',
         fontSize: 14,
+        fontWeight:'bold'
     },
 });

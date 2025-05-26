@@ -1,8 +1,9 @@
 import React from 'react';
 import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import FORMAT from '../../utils/FormatUtils';
+import UTILS from '../../utils/Utils';
 import styles from '../../assets/styles/TrxDetailStyle';
+import moment from 'moment';
 
 const TrxDetailScreen = () => {
     const navigation = useNavigation();
@@ -16,18 +17,18 @@ const TrxDetailScreen = () => {
         <SafeAreaView style={styles.safeContainer}>
             <View style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContent}>
-                    <Text style={styles.hashTitle}>#{item.method}</Text>
-                    <Text style={styles.mchtName}>역전호떡</Text>
+                    <Text style={styles.hashTitle}>#{UTILS.convertMethod(item.method)}</Text>
+                    <Text style={styles.mchtName}>{global.E2U?.nick}</Text>
                     <View style={styles.thickDivider} />
 
                     <View style={styles.row}>
                         <Text style={styles.label}>거래시각</Text>
-                        <Text style={styles.value}>{item.date.replace(/-/g, '.')}</Text>
+                        <Text style={styles.value}>{moment(item.regDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')}</Text>
                     </View>
 
                     <View style={styles.row}>
                         <Text style={styles.label}>거래구분</Text>
-                        <Text style={styles.value}>{item.method} (체크)</Text>
+                        <Text style={styles.value}>{UTILS.convertMethod(item.method)} (체크)</Text>
                     </View>
 
                     <View style={styles.row}>
@@ -37,18 +38,18 @@ const TrxDetailScreen = () => {
 
                     <View style={styles.row}>
                         <Text style={styles.label}>거래번호</Text>
-                        <Text style={styles.value}>TRX250421522043</Text>
+                        <Text style={styles.value}>{item.trxId}</Text>
                     </View>
 
                     <View style={styles.row}>
                         <Text style={styles.label}>승인번호</Text>
-                        <Text style={styles.value}>57680890</Text>
+                        <Text style={styles.value}>{item.authCd}</Text>
                     </View>
 
                     <View style={styles.row}>
                         <Text style={styles.label}>거래금액</Text>
                         <Text style={styles.amount}>
-                            {FORMAT.formatKRW(item.amount)}
+                            {UTILS.KRW(item.amount)}
                         </Text>
                     </View>
 
@@ -56,22 +57,22 @@ const TrxDetailScreen = () => {
 
                     <View style={styles.row}>
                         <Text style={styles.label}>카드정보</Text>
-                        <Text style={styles.value}>비씨카드</Text>
+                        <Text style={styles.value}>{item.issuer}</Text>
                     </View>
 
                     <View style={styles.row}>
                         <Text style={styles.label}>카드번호</Text>
-                        <Text style={styles.value}>4092-12**-****-331*</Text>
+                        <Text style={styles.value}>{`${UTILS.convertBin(item.bin)}-****-${item.last4}`}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>할부개월</Text>
-                        <Text style={styles.value}>일시불</Text>
+                        <Text style={styles.value}>{item.installment === '00' ? '일시불' : `${item.installment} 개월`} </Text>
                     </View>
 
                     <View style={styles.lightDivider} />
                     <View style={styles.row}>
                         <Text style={styles.label}>사용처</Text>
-                        <Text style={styles.value}>역전호떡</Text>
+                        <Text style={styles.value}>{global.E2U?.nick}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>주소</Text>

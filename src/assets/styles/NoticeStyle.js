@@ -93,7 +93,7 @@ export default StyleSheet.create({
     },
 
     sectionTitle: {
-        fontSize: 15,
+        fontSize: 22,
         fontWeight: 'bold',
         paddingLeft : 14,
         color:'#000000',
