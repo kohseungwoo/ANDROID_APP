@@ -1,16 +1,47 @@
 import React, {useRef, useState} from 'react';
-import {Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
 import DropDownPicker from 'react-native-dropdown-picker';
+import DefaultModal from '../../../components/modal/DefaultModal';
+import {Logout} from '../../../components/Logout';
+import {useNavigation} from '@react-navigation/native';
+import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
+    const navigation = useNavigation();
     const [alertVisible, setAlertVisible] = useState(false);
+    const [validVisible, setValidVisible] = useState(false);
     const { height: screenHeight } = Dimensions.get('window');
+    const [message, setMessage] = useState('');
+    const [validMessage, setValidMessage] = useState('');
+    const [defaultMessage, setDefaultMessage] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalCallback, setModalCallback] = useState(() => () => {});
+
     const [nointText, setNointMessage] = useState('');
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const cardPersRef1 = useRef(null);
+    const cardPersRef2 = useRef(null);
+    const cardPersRef3 = useRef(null);
+    const cardPersRef4 = useRef(null);
+
+    const cardCorpRef1 = useRef(null);
+    const cardCorpRef2 = useRef(null);
+    const cardCorpRef3 = useRef(null);
+    const cardCorpRef4 = useRef(null);
+
+    const expiryPersRef = useRef(null);
+    const expiryCorpRef = useRef(null);
+    const pwdPersRef = useRef(null);
+    const pwdCorpRef = useRef(null);
+    const dobRef = useRef(null);
+    const brnRef = useRef(null);
 
     const [items, setItems] = useState(
         Array.from({ length: 12 }, (_, i) => ({
@@ -24,33 +55,29 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         return value.replace(/[^0-9]/g, '');
     };
 
-    const getInstallment = () => {
-        setNointMessage(`
-            <h3>2025년 5월 카드사 무이자 할부 안내</h3>
-            <p><strong>1. 적용 기간 :</strong><br/> 2025년 5월 1일 ~ 2025년 5월 31일</p>
-            <p><strong>2. 무이자 할부 프로모션 (카드사 부담)</strong><br/>
-            ▷ 현대카드 : 2~3개월<br/>
-            ▷ 국민카드 : 2~3개월<br/>
-            ▷ 삼성카드 : 2~5개월<br/>
-            ▷ 신한카드 : 2~5개월<br/>
-            ▷ 롯데카드 : 2~5개월<br/>
-            ▷ 비씨카드 : 2~6개월<br/>
-            ▷ 우리카드 : 2~6개월<br/>
-            ▷ NH농협카드 : 2~6개월<br/>
-            </p>
-            <p><strong>3. 유의사항</strong><br/>
-            <p>※ 5만원 이상 할부 결제 시 적용 (단, 현대 1만원 이상 할부 결제 시 적용)</p>  
-            <p>※ 업종 무이자 제외 대상 : 법인/체크/선불/기프트/하이브리드/은행계열카드</p>  
-            <p>- 은행계열카드 : BC카드 마크가 없는 Non-BC카드 (ex. 제주, 광주, 전북카드 등)</p>  
-            <p>- 수협카드는 BC 회원사 전환으로 업종 무이자 적용 가능 (단, 부분무이자는 적용 불가)</p>  
-            <p>※ 제외 업종 : 제세공과금, 등록금, 우편요금, 상품권, 도시가스요금</p>  
-            <p>※ 삼성카드 : 병원, 약국, 제약 업종 제외</p>  
-            <p>※ 현대카드 : 제약 업종 제외</p>  
-            <p>※ 농협카드 : 의약품, 도서, 손해보험, 면세점 업종 제외</p>  
-            <p>※ 신용카드사 정책 변경에 따라 변동 될 수 있음</p>  
-            <p>※ 하나카드 할부 불가</p>
-            `);
-        setAlertVisible(true);
+    const getInstallment = async () => {
+        try{
+            const response = await fetch(`${global.E2U?.API_URL}/v2/noint/latest`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
+                },
+            });
+
+            const result = await response.text();
+            global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
+
+            if (result) {
+                setNointMessage(result);
+                setAlertVisible(true);
+            }else{
+                setNointMessage(`카드사 무이자 할부안내 조회에 실패했습니다. <br/> 관리자에게 문의하시기 바랍니다.`);
+                setAlertVisible(true);
+            }
+        }catch(err){
+            global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
+        }
     };
 
     const [installmentIdx, setInstallmentIdx] = useState(
@@ -76,23 +103,160 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         });
     };
 
-    const cardPersRef1 = useRef(null);
-    const cardPersRef2 = useRef(null);
-    const cardPersRef3 = useRef(null);
-    const cardPersRef4 = useRef(null);
+    const paymentBtn = async () => {
+        formData.personalCardNumber1 = '9490';
+        formData.personalCardNumber2 = '9402';
+        formData.personalCardNumber3 = '1292';
+        formData.personalCardNumber4 = '9009';
+        formData.personalExpiry = '2905';
+        formData.personalPassword = '00';
+        formData.dob = '950101';
 
-    const cardCorpRef1 = useRef(null);
-    const cardCorpRef2 = useRef(null);
-    const cardCorpRef3 = useRef(null);
-    const cardCorpRef4 = useRef(null);
+        const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
+            ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
 
-    const expiryPersRef = useRef(null);
-    const expiryCorpRef = useRef(null);
-    const pwdPersRef = useRef(null);
-    const pwdCorpRef = useRef(null);
-    const dobRef = useRef(null);
-    const brnRef = useRef(null);
+        let cardNumber, expiry, installment, pin, auth;
+        if(cardType === 'personal'){
+           if (!personalCardNumber1 || !personalCardNumber2 || !personalCardNumber3 || !personalCardNumber4) {
+               setValidMessage('카드번호를 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
 
+           if (!personalInstallment) {
+               formData.personalInstallment = 0;
+           }
+
+           if (!personalExpiry) {
+               setValidMessage('유효기간을 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
+
+           if (!personalPassword) {
+               setValidMessage('비밀번호를 올바르게 입력해주세요..');
+               setValidVisible(true);
+               return;
+           }
+
+           if (!dob) {
+               setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
+
+            cardNumber  = personalCardNumber1 + personalCardNumber2 + personalCardNumber3 + personalCardNumber4;
+            expiry      = personalExpiry;
+            installment = personalInstallment;
+            pin      = personalPassword;
+            auth        = dob;
+        }else if(cardType === 'corporate'){
+           if (!corpCardNumber1 || !corpCardNumber2 || !corpCardNumber3 || !corpCardNumber4) {
+               setValidMessage('카드번호를 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
+
+           if (!corpInstallment) {
+               formData.corpInstallment = 0;
+           }
+
+           if (!corpExpiry) {
+               setValidMessage('유효기간을 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
+
+           if (!corpPassword) {
+               setValidMessage('비밀번호를 올바르게 입력해주세요..');
+               setValidVisible(true);
+               return;
+           }
+
+           if (!brn) {
+               setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
+               setValidVisible(true);
+               return;
+           }
+
+            cardNumber  = corpCardNumber1 + corpCardNumber2 + corpCardNumber3 + corpCardNumber4;
+            expiry      = corpExpiry;
+            installment = corpInstallment;
+            pin      = corpPassword;
+            auth        = brn;
+       }else{
+           setValidMessage('정의되지 않은 입력이 확인되었습니다.');
+           setValidVisible(true);
+           return;
+       }
+
+
+        try{
+            setLoading(true);
+            const response = await fetch(`${global.E2U?.API_URL}/v2/api/pay`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                },
+                body: JSON.stringify({
+                    amount        : formData.amount,
+                    method        : 'card',
+                    type          : 'regular',
+                    number        : cardNumber,
+                    expiry        : expiry,
+                    installment   : installment,
+                    pin           : pin,
+                    dob           : auth,
+                    memberId      : '',
+                    cardType      : formData.cardType,
+                    customerName  : formData.buyerName,
+                    email         : '',
+                    phoneNo       : formData.phoneNo,
+                    productName   : formData.productName,
+                    qty           : 1,
+                    price         : formData.amount,
+                }),
+            });
+
+            const result = await response.json();
+            global.E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
+            if (result.code === '0000') {
+                setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
+                setModalCallback(() => handleTrxList);
+                setModalVisible(true);
+            }else{
+                if (result.code === '803') {
+                    setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                    setModalCallback(() => handleExit);
+                    setModalVisible(true);
+                }else{
+                    setValidMessage(`${result.message}`);
+                    setValidVisible(true);
+                    setDefaultMessage(false);
+                }
+            }
+        }catch(err){
+            global.E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
+            setMessage(`결제 API 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
+            setValidVisible(true);
+            setDefaultMessage(false);
+        }finally{
+            setLoading(false);
+        }
+    };
+
+    async function handleExit(){
+        await Logout(navigation);
+    }
+
+    function handleTrxList(){
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'TRXLIST' }],
+        });
+    }
 
     return (
         <>
@@ -100,6 +264,22 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 visible={alertVisible}
                 message={nointText}
                 onConfirm={() => setAlertVisible(false)}
+            />
+
+            <DefaultModal
+                visible={validVisible}
+                message={validMessage}
+                onConfirm={() => setValidVisible(false)}
+                defaultMessage={defaultMessage}
+            />
+
+            <ConfirmOkModal
+                visible={modalVisible}
+                onConfirm={() => {
+                    modalCallback();
+                    setModalVisible(false);
+                }}
+                message={modalMessage}
             />
 
             <ScrollView
@@ -481,11 +661,17 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 </View>
 
                 <View style={styles.footerContainer}>
-                    <TouchableOpacity style={styles.fullWidthTouchable}>
+                    <TouchableOpacity style={styles.fullWidthTouchable} onPress={paymentBtn}>
                         <Text style={styles.footerButton}>결제하기</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="#808080" />
+                </View>
+            )}
         </>
     );
 };

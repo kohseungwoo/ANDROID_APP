@@ -6,10 +6,17 @@ import refreshHooks from '../../components/hooks/RefreshHooks';
 import NointModal from '../../components/modal/NointModal';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {Logout} from '../../components/Logout';
+import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
 
 const NoticeScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [defaultMessage, setDefaultMessage] = useState(false);
+    const [message, setMessage] = useState('');
+    const [exitVisible, setExitVisible] = useState(false);
+
+    const [selectedNotice, setSelectedNotice] = useState(null);
     const initialTab = route?.params?.tab || 'notice';
     const [activeTab, setActiveTab] = useState(initialTab);
     const [itemsPerPage, setItemPerPage] = useState(8);
@@ -19,10 +26,6 @@ const NoticeScreen = () => {
 
     const refresh = () => {};
     const { refreshing, onRefresh } = refreshHooks(refresh);
-
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [selectedNotice, setSelectedNotice] = useState(null);
-    // const [activeTab, setActiveTab] = useState('notice');
 
     const [currentPageMap, setCurrentPageMap] = useState({
         notice: 1,
@@ -48,6 +51,10 @@ const NoticeScreen = () => {
         setSelectedNotice(faq.answer);
         setAlertVisible(true);
     };
+
+    async function handleExit(){
+        await Logout(navigation);
+    }
 
     useEffect(() => {
         handleTabChange(initialTab);
@@ -76,18 +83,33 @@ const NoticeScreen = () => {
             });
 
             const result = await response.json();
+            global.E2U?.INFO(`${tabKey} 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
+
             if (result.code === '0000') {
                 switch (tabKey){
                     case "notice" : setNoticeList(result.data); break;
                     case "faq"    : setFaqList(result.data); break;
+                    default :
+                        setMessage(`${tabKey} 정보를 찾을 수 없습니다. \n 관리자에게 문의하시기 바랍니다.`);
+                        setAlertVisible(true);
+                        setDefaultMessage(false);
+                    break;
                 }
             }else{
                 if (result.code === '803') {
-                    await Logout(navigation);
+                    setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                    setExitVisible(true);
+                }else{
+                    setMessage(`${result.message}`);
+                    setAlertVisible(true);
+                    setDefaultMessage(false);
                 }
             }
         } catch (err) {
-            console.warn('[시스템 오류] 자동 로그인 실패 \n' + err);
+            global.E2U?.WARN(`${tabKey} API 요청 실패 \n ${err}`);
+            setMessage(`정보 조회 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
+            setAlertVisible(true);
+            setDefaultMessage(false);
         }
     };
 
@@ -249,12 +271,20 @@ const NoticeScreen = () => {
         );
     };
 
+
     return (
         <>
             <NointModal
                 visible={alertVisible}
                 message={selectedNotice}
                 onConfirm={() => setAlertVisible(false)}
+            />
+
+            <ConfirmOkModal
+                visible={exitVisible}
+                onCancel={() => setExitVisible(true)}
+                onConfirm={handleExit}
+                message={message}
             />
 
             <SafeAreaView style={styles.safeArea}>

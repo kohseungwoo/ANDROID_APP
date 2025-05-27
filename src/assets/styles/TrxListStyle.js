@@ -3,7 +3,6 @@ import {StyleSheet} from 'react-native';
 export default StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fafafa',
     },
     flex_1:{
         flex:1,
@@ -29,7 +28,9 @@ export default StyleSheet.create({
         backgroundColor: '#f1f1f1',
         paddingHorizontal: 8,
         paddingVertical: 6,
-        borderRadius: 8,        flex: 1,
+        borderRadius: 8,
+        flex: 1,
+        height:50,
     },
     dateInput: {
         marginLeft: 6,
@@ -118,6 +119,7 @@ export default StyleSheet.create({
         color: '#111',
     },
     dateRangeRow: {
+        backgroundColor: '#fafafa',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

@@ -23,11 +23,11 @@ const SignIn = () => {
         const checkStoredToken = async () => {
             const credentials = await Keychain.getGenericPassword();
             if (credentials) {
-                const token = credentials.password;
+                const key = credentials.password;
                 global.E2U?.INFO('자동 로그인 실행!');
 
                 try {
-                    const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login/${token}`, {
+                    const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login/${key}`, {
                         method: 'GET',
                         headers: {
                             'VERSION'  : global.E2U?.APP_VERSION,
@@ -35,13 +35,10 @@ const SignIn = () => {
                     });
 
                     const result = await response.json();
+                    global.E2U?.INFO(`로그인 KEY 검증 API 응답 \n ${JSON.stringify(result)}`);
+
                     if (result.code === '0000') {
-                        global.E2U?.INFO('자동 로그인 정상처리');
                         handlerMove(result);
-                    }else{
-                        if (result.code === '803') {
-                            await Logout(navigation);
-                        }
                     }
                 } catch (err) {
                     console.warn('[시스템 오류] 자동 로그인 실패 \n' + err);
@@ -54,9 +51,11 @@ const SignIn = () => {
             RNBootSplash.hide({ fade: true });
         };
         checkStoredToken();
-
-
     }, []);
+
+    async function handleExit(){
+        await Logout(navigation);
+    }
 
     const handleLogin = async () => {
         global.E2U?.INFO('로그인 클릭!');
@@ -80,16 +79,16 @@ const SignIn = () => {
             });
 
             const result = await response.json();
-            if (result.code === '0000') {
-                global.E2U?.INFO('로그인 정상처리');
+            global.E2U?.INFO(`로그인 API 응답 \n ${JSON.stringify(result)}`);
 
+            if (result.code === '0000') {
                 await Keychain.setGenericPassword(username, result.data?.key || '');
                 handlerMove(result);
             }else{
-                if (result.code === '803') {
-                    await Logout(navigation);
+                if (result.code === '804') { // 보안 정책 위반으로 요청이 차단되었습니다.
+                    setErrorMessage(`${result.message}`);
                 }else{
-                setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
+                    setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
                 }
             }
         } catch (err) {

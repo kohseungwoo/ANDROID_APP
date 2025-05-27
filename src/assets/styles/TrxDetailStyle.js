@@ -11,29 +11,49 @@ export default StyleSheet.create({
     },
 
     scrollContent: {
-        padding: 20,
-        paddingBottom: 40,
+        paddingHorizontal:20,
     },
 
     landscapePadding: {
         paddingHorizontal: 100,
     },
+    title: {
+        paddingHorizontal: 16,
+        paddingTop: 20,
+    },
+
     hashTitle: {
         fontSize: 12,
         fontWeight: 'bold',
         color: '#2680eb',
         marginBottom: 2,
     },
+
+    nickAndCloseRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+
     mchtName: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 12,
     },
+
+    closeText: {
+        fontSize: 20,
+        color: '#888',
+        paddingHorizontal: 6,
+        fontWeight:'bold'
+    },
+
     thickDivider: {
         borderBottomWidth: 0.8,
         borderColor: '#808080',
         marginBottom: 20,
     },
+
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -63,7 +83,7 @@ export default StyleSheet.create({
     },
     footer: {
         paddingHorizontal : 20,
-        paddingVertical : 20,
+        paddingVertical : 30,
     },
     button: {
         backgroundColor: '#253e6d',
@@ -73,7 +93,53 @@ export default StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: 'bold',
+    },
+    actionRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+
+    actionButton: {
+        flex: 1,
+        marginHorizontal: 2,
+        paddingVertical: 12,
+        borderRadius: 6,
+        alignItems: 'center',
+    },
+
+    refundButton: {
+        backgroundColor: '#c87474',
+    },
+
+    receiptButton: {
+        backgroundColor: '#97aad1',
+    },
+
+    actionButtonText: {
+        color: '#fff',
+        fontSize: 15,
+        fontWeight: 'bold',
+    },
+
+    disabledButton: {
+        backgroundColor: '#cccccc',
+    },
+
+    disabledButtonText: {
+        color: '#888',
+    },
+    loadingOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.6)', // 반투명 배경
+        zIndex: 10,
     },
 });

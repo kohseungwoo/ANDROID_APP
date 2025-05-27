@@ -39,6 +39,8 @@ const convertBin = (bin) => {
     }
 };
 
+export const trxDetailRef = { current: false };
+
 const UTILS = {
     comma,
     KRW,

@@ -1,7 +1,12 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Animated,Modal,
+import {
+    ActivityIndicator,
+    Animated,
+    FlatList,
+    Modal,
     Platform,
-    RefreshControl, SafeAreaView,
+    RefreshControl,
+    SafeAreaView,
     ScrollView,
     Text,
     TouchableOpacity,
@@ -10,7 +15,7 @@ import {Animated,Modal,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HeaderSub from '../../components/HeaderSub';
-import UTILS from '../../utils/Utils';
+import UTILS, {trxDetailRef} from '../../utils/Utils';
 import styles from '../../assets/styles/TrxListStyle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -19,6 +24,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DefaultModal from '../../components/modal/DefaultModal';
 import {Logout} from '../../components/Logout';
 import moment from 'moment';
+import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
 
 const TrxListScreen = () => {
     const navigation = useNavigation();
@@ -27,6 +33,7 @@ const TrxListScreen = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
+    const [exitVisible, setExitVisible] = useState(false);
 
     const translateY = useRef(new Animated.Value(200)).current;
 
@@ -40,10 +47,12 @@ const TrxListScreen = () => {
 
     // 거래 관련
     const [trxList, setTrxList] = useState([]);
-    const [currentPage, setCurrentPage] = useState([]);
-    const [pageSize, setPageSize] = useState([]);
-    const [totalRecords, setTotalRecords] = useState([]);
-    const [totalPages, setTotalPages] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [isLoadingMore, setIsLoadingMore] = useState(false); // 추가 로딩 중 여부
+    const [hasMore, setHasMore] = useState(false); // 더 불러올 데이터 존재 여부
     const [showDetails, setShowDetails] = useState(false);
 
     const horizontalPadding = isLandscape ? 100 : 0;
@@ -74,18 +83,18 @@ const TrxListScreen = () => {
         });
     };
 
-    async function handleSearch(fromDateParam, toDateParam){
-        let from = fromDateParam || fromDateObj;
-        let to = toDateParam || toDateObj;
-
-        // to가 from보다 작으면 to를 from으로 설정
+    async function handleSearch(from = fromDateObj, to = toDateObj, page = 1, append = false) {
         if (to < from) {
             to = from;
-            setToDateObj(from); // 상태 업데이트
+            setToDateObj(from);
         }
 
         const fromFormatted = formatDate(from).replace(/\./g, '-');
         const toFormatted = formatDate(to).replace(/\./g, '-');
+
+        if (page === 1 && !append) {
+            setTrxList([]);
+        }
 
         try{
             const response = await fetch(`${global.E2U?.API_URL}/v2/trx/paging`, {
@@ -96,6 +105,7 @@ const TrxListScreen = () => {
                     'VERSION'  : global.E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
+                    page : page,
                     search : [{
                         'id'    : 'regDay',
                         'value' : `${fromFormatted.replaceAll('-','')}, ${toFormatted.replaceAll('-','')}`,
@@ -105,12 +115,21 @@ const TrxListScreen = () => {
             });
 
             const result = await response.json();
+            global.E2U?.INFO(`거래 조회 API 응답 \n ${JSON.stringify(result)}`);
+
             if (result.code === '0000') {
+                const newRecords = result.data?.result || [];
+                setTrxList((prev) => (append ? [...prev, ...newRecords] : newRecords));
                 setTotalRecords(result.data?.totalRecords || 0);
-                setTrxList(result.data?.result);
+
+                const more = result.data.totalRecords > page * pageSize;
+                setHasMore(more);
+                setCurrentPage(page);
+
             }else{
                 if (result.code === '803') {
-                    await Logout(navigation);
+                    setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                    setExitVisible(true);
                 }else{
                     setMessage(`${result.message}`);
                     setAlertVisible(true);
@@ -122,29 +141,44 @@ const TrxListScreen = () => {
             setMessage(`거래 조회 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
             setAlertVisible(true);
             setDefaultMessage(false);
+        }finally {
+            setIsLoadingMore(false);    // 반드시 여기서 false로!
         }
     };
+
+    async function handleExit(){
+        await Logout(navigation);
+    }
 
     const refresh = () => {
         const now = new Date();
         setFromDateObj(now);
         setToDateObj(now);
-        handleSearch(now, now);
+
+        setHasMore(false);
+        handleSearch(now, now, 1, false);
         setShowDetails(false);
     };
 
     useFocusEffect(
         useCallback(() => {
+            if (trxDetailRef.current) {
+                trxDetailRef.current = false; // 다음 진입 시에는 초기화 되도록
+                return;
+            }
+
             const now = new Date();
             setFromDateObj(now);
             setToDateObj(now);
 
-            handleSearch(now, now);
+            setHasMore(false);
+            handleSearch(now, now, 1, false);
             setShowDetails(false);
         }, [])
     );
 
     const { refreshing, onRefresh } = refreshHooks(refresh);
+
     return (
         <>
             <DefaultModal
@@ -154,14 +188,16 @@ const TrxListScreen = () => {
                 defaultMessage={defaultMessage}
             />
 
+            <ConfirmOkModal
+                visible={exitVisible}
+                onCancel={() => setExitVisible(true)}
+                onConfirm={handleExit}
+                message={message}
+            />
+
             <SafeAreaView style={styles.safeArea}>
-        <View style={styles.flex_1}>
-            <HeaderSub title="결제 현황" onRefresh={refresh} />
-            <ScrollView
-                style={styles.container}
-                contentContainerStyle={styles.contentContainer}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            >
+                <View style={styles.flex_1}>
+                <HeaderSub title="결제 현황" onRefresh={refresh} />
 
                 <View style={styles.searchSection}>
                     <View style={styles.dateInputRow}>
@@ -187,7 +223,11 @@ const TrxListScreen = () => {
                             <Text style={styles.dateInput}>{formatDate(toDateObj)}</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.searchButton} onPress={() => handleSearch(fromDateObj, toDateObj)}>
+                    <TouchableOpacity style={styles.searchButton}
+                                      onPress={() => {
+                                            setHasMore(false);
+                                            handleSearch(fromDateObj, toDateObj, 1, false);
+                                        }}>
                         <Text style={styles.searchButtonText}>조회</Text>
                     </TouchableOpacity>
                 </View>
@@ -201,10 +241,52 @@ const TrxListScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.whiteBackground}>
-                    {trxList?.map((item, index) => {
-                        const isLastItem = index === trxList?.length - 1;
-                        const shouldShowBorder = trxList?.length <= 5 && isLastItem;
+                {/*<ScrollView*/}
+                {/*    style={styles.container}*/}
+                {/*    contentContainerStyle={styles.contentContainer}*/}
+                {/*    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}*/}
+                {/*>*/}
+
+                {/*    <View style={styles.whiteBackground}>*/}
+                {/*        {trxList?.map((item, index) => {*/}
+                {/*            const isLastItem = index === trxList?.length - 1;*/}
+                {/*            const shouldShowBorder = trxList?.length <= 5 && isLastItem;*/}
+
+                {/*            return (*/}
+                {/*                <TouchableOpacity*/}
+                {/*                    key={item.trxId}*/}
+                {/*                    onPress={() => navigation.navigate('TRXDETAIL', { item })}*/}
+                {/*                    activeOpacity={0.7}*/}
+                {/*                >*/}
+                {/*                    <View style={[styles.transactionItem, shouldShowBorder && styles.lastTransactionItem]}>*/}
+                {/*                        <View style={styles.productRow}>*/}
+                {/*                            <Text style={styles.productName} numberOfLines={1}>*/}
+                {/*                                {UTILS.slice(item.productName, 14)}*/}
+                {/*                            </Text>*/}
+                {/*                            <View style={styles.amountWithArrow}>*/}
+                {/*                                <Text style={[styles.amount, item.amount < 0 && styles.amountNegative]}>*/}
+                {/*                                    {UTILS.KRW(item.amount)}*/}
+                {/*                                </Text>*/}
+                {/*                                <MaterialIcons name="arrow-forward-ios" size={12} color="#adadad" />*/}
+                {/*                            </View>*/}
+                {/*                        </View>*/}
+                {/*                        <Text style={styles.transactionDate}>*/}
+                {/*                            {moment(item.regDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')}*/}
+                {/*                        </Text>*/}
+                {/*                        <Text style={styles.transactionMethod}>{UTILS.convertMethod(item.method)}</Text>*/}
+                {/*                    </View>*/}
+                {/*                </TouchableOpacity>*/}
+                {/*            );*/}
+                {/*        })}*/}
+                {/*    </View>*/}
+                {/*</ScrollView>*/}
+
+                <FlatList
+                    data={trxList}
+                    keyExtractor={(item) => item.trxId.toString()}
+                    renderItem={({ item, index }) => {
+                        const isLastItem = index === trxList.length - 1;
+                        const shouldShowBorder = trxList.length <= 5 && isLastItem;
 
                         return (
                             <TouchableOpacity
@@ -231,12 +313,32 @@ const TrxListScreen = () => {
                                 </View>
                             </TouchableOpacity>
                         );
-                    })}
-                </View>
-            </ScrollView>
+                    }}
+                    onEndReachedThreshold={0.3}
+                    onEndReached={() => {
+                        if (!isLoadingMore && hasMore) {
+                            setIsLoadingMore(true);
+                            handleSearch(fromDateObj, toDateObj, currentPage + 1, true); // true로 append 방식
+                        }
+                    }}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                    ListHeaderComponent={
+                        <>
+                            {/* 총 건수, 날짜 필터, 조회 버튼 등 상단 고정 요소 */}
+                        </>
+                    }
+                    ListFooterComponent={
+                        isLoadingMore ? <ActivityIndicator size="small" color="#999" /> : null
+                    }
+                    contentContainerStyle={{ paddingBottom: 30 }}
+                    style={{ flex: 1, backgroundColor: '#fff' }}
+                />
 
-            {/* 전체 버튼 클릭 시 하단 상세 영역 */}
-            {showDetails && (
+
+                {/* 전체 버튼 클릭 시 하단 상세 영역 */}
+                {showDetails && (
                 <>
                     <TouchableOpacity
                         activeOpacity={1}

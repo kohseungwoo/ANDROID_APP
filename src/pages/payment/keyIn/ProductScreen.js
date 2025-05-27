@@ -29,9 +29,10 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         formData.amount = 1004;
         formData.buyerName = '홍길동';
         formData.phoneNo = '01000000000';
+
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {
-            setMessage('상품명을 올바르게 입력해주세요..');
+            setMessage('상품명을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
@@ -43,7 +44,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         }
 
         if (!buyerName) {
-            setMessage('구매자명을 올바르게 입력해주세요..');
+            setMessage('구매자명을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
