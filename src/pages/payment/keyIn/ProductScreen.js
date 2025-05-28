@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {
-    Dimensions,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Dimensions, KeyboardAvoidingView, Platform,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -77,7 +77,10 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                 message={message}
                 onConfirm={() => setAlertVisible(false)}
             />
-
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={{ flex: 1 }}
+            >
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView
                     style={[styles.container, {height:screenHeight}]}
@@ -182,6 +185,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                     </View>
                 </ScrollView>
             </SafeAreaView>
+            </KeyboardAvoidingView>
         </>
     );
 };

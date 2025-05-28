@@ -63,9 +63,10 @@ const InputModal = ({ visible, onConfirm, onCancel, message }) => {
                             styles.input,
                             {
                                 width: '96%',
+                                height: 45,
                                 borderWidth: 0.5,
                                 borderColor: '#ccc',
-                                marginBottom: errorMessage ? 5 : 35,
+                                marginBottom: errorMessage ? 5 : 30,
                                 paddingHorizontal: 10,
                                 borderRadius:5,
                             },

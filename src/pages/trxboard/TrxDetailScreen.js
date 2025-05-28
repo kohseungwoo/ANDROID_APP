@@ -1,5 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Linking, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Linking,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import UTILS from '../../utils/Utils';
 import styles from '../../assets/styles/TrxDetailStyle';
@@ -116,7 +125,10 @@ const TrxDetailScreen = () => {
 
     const receiptBtn = (phoneNumber)=> {
         const msg = `${global.E2U?.ADMIN_URL}/trx/receipt/${item.trxId}`;
-        const url = `sms:${phoneNumber}?body=${encodeURIComponent(msg)}`;
+        const url =
+          Platform.OS === 'ios'
+            ? `sms:${phoneNumber}&body=${encodeURIComponent(msg)}`
+            : `sms:${phoneNumber}?body=${encodeURIComponent(msg)}`;
 
         Linking.canOpenURL(url)
             .then((supported) => {

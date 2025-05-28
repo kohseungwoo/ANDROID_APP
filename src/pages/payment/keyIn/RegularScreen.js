@@ -1,5 +1,14 @@
 import React, {useRef, useState} from 'react';
-import {ActivityIndicator, Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions, KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
@@ -281,7 +290,10 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 }}
                 message={modalMessage}
             />
-
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={{ flex: 1 }}
+            >
             <ScrollView
                 style={[styles.container, {height:screenHeight}]}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
@@ -653,6 +665,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 </View>
             </ScrollView>
 
+            </KeyboardAvoidingView>
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <ActivityIndicator size="large" color="#808080" />
