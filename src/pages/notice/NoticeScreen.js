@@ -288,18 +288,18 @@ const NoticeScreen = () => {
             />
 
             <SafeAreaView style={styles.safeArea}>
-            <HeaderSub title={tabConfig[activeTab].title} />
-              <View style={styles.container}>
-                  <ScrollView
-                      contentContainerStyle={styles.contentContainer}
-                      refreshControl={
-                          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                      }
-                  >
-                      {renderTabButtons()}
-                      {renderContent()}
-                  </ScrollView>
-                  {renderPagination()}
+                <HeaderSub title={tabConfig[activeTab].title} />
+                <View style={styles.container}>
+                      <ScrollView
+                          contentContainerStyle={styles.contentContainer}
+                          refreshControl={
+                              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                          }
+                      >
+                          {renderTabButtons()}
+                          {renderContent()}
+                      </ScrollView>
+                      {renderPagination()}
               </View>
             </SafeAreaView>
         </>

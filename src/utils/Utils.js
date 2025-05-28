@@ -23,7 +23,7 @@ const onlyNumber = (value) => {
 };
 
 const removeSpecial = (value) => {
-    return value.replace(/[^a-zA-Z0-9]/g, '');
+    return value.replace(/[^a-zA-Z0-9가-힣]/g, '');
 };
 
 const convertMethod = (method) => {

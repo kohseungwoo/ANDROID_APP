@@ -60,7 +60,7 @@ export default StyleSheet.create({
 
     tabWrapper: {
         paddingTop:15,
-        paddingBottom: 40,
+        paddingBottom: 25,
     },
 
     tabInnerWrapper: {
