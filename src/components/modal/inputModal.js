@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
+    Keyboard,
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     Text,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View,
 } from 'react-native';
 import styles from '../../assets/styles/ExitModalStyle';
@@ -39,7 +43,7 @@ const InputModal = ({ visible, onConfirm, onCancel, message }) => {
             onRequestClose={handleCancel}
         >
             <View style={styles.backdrop}>
-                <View style={styles.modalBox}>
+                    <View style={styles.modalBox}>
                     <Text style={[
                         styles.message,
                         {
@@ -97,7 +101,7 @@ const InputModal = ({ visible, onConfirm, onCancel, message }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+</View>
         </Modal>
     );
 };

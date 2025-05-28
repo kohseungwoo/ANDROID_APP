@@ -82,8 +82,8 @@ export default StyleSheet.create({
         marginVertical: 10,
     },
     footer: {
-        paddingHorizontal : 20,
-        paddingVertical : 30,
+        // paddingHorizontal : 20,
+        paddingVertical : 10,
     },
     button: {
         backgroundColor: '#253e6d',

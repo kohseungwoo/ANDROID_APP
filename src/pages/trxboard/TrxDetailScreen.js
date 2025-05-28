@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Linking} from 'react-native';
+import {ActivityIndicator, Linking, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import UTILS from '../../utils/Utils';
 import styles from '../../assets/styles/TrxDetailStyle';
@@ -271,7 +271,7 @@ const TrxDetailScreen = () => {
                             <Text style={styles.label}>전화번호</Text>
                             <Text style={styles.value}>{companyTelNo}</Text>
                         </View>
-                    </ScrollView>
+
 
                     <View style={styles.footer}>
                         <View style={styles.actionRow}>
@@ -299,7 +299,10 @@ const TrxDetailScreen = () => {
                             <Text style={styles.buttonText}>확 인</Text>
                         </TouchableOpacity>
                     </View>
+                    </ScrollView>
                 </View>
+
+
             </SafeAreaView>
 
             {loading && (
