@@ -1,14 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Dimensions, KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator,Dimensions,KeyboardAvoidingView,Platform,ScrollView,Text,TextInput,TouchableOpacity,View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
@@ -17,8 +8,7 @@ import DefaultModal from '../../../components/modal/DefaultModal';
 import {Logout} from '../../../components/Logout';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
-import {trxDetailRef} from '../../../utils/Utils';
-import UTILS from '../../../utils/Utils';
+import UTILS, {trxDetailRef} from '../../../utils/Utils';
 
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
@@ -112,13 +102,13 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     };
 
     const paymentBtn = async () => {
-        formData.personalCardNumber1 = '9490';
-        formData.personalCardNumber2 = '9402';
-        formData.personalCardNumber3 = '1292';
-        formData.personalCardNumber4 = '9009';
-        formData.personalExpiry = '2905';
-        formData.personalPassword = '00';
-        formData.dob = '950101';
+        // formData.personalCardNumber1 = '9490';
+        // formData.personalCardNumber2 = '9402';
+        // formData.personalCardNumber3 = '1292';
+        // formData.personalCardNumber4 = '9009';
+        // formData.personalExpiry = '2905';
+        // formData.personalPassword = '00';
+        // formData.dob = '950101';
 
         const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
