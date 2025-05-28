@@ -340,7 +340,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     ref={cardPersRef1}
                                     style={styles.cardInput}
                                     maxLength={4}
-                                    keyboardType="number-pad"
                                     value={formData.personalCardNumber1}
                                     onChangeText={(text) => {
                                         const number = UTILS.onlyNumber(text);
@@ -354,7 +353,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
-                                           keyboardType="number-pad"
                                            value={formData.personalCardNumber2}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -368,7 +366,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
-                                           keyboardType="number-pad"
                                            value={formData.personalCardNumber3}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -381,7 +378,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <TextInput ref={cardPersRef4}
                                            style={styles.cardInput}
                                            maxLength={4}
-                                           keyboardType="number-pad"
                                            value={formData.personalCardNumber4}
                                            onChangeText={(text) => setFormData({
                                                ...formData,
@@ -441,7 +437,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     <Text style={styles.label}>유효기간</Text>
                                     <TextInput ref={expiryPersRef}
                                                style={styles.input}
-                                               keyboardType="number-pad"
                                                placeholder="MM/YY"
                                                maxLength={4}
                                                value={formData.personalExpiry}
@@ -458,7 +453,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 2앞 2자리</Text>
                                     <TextInput ref={pwdPersRef}
                                                style={[styles.input, {marginLeft:20}]}
-                                               keyboardType="number-pad"
                                                secureTextEntry
                                                placeholder="* *"
                                                maxLength={2}
@@ -478,7 +472,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
                             <TextInput ref={dobRef}
                                        style={styles.input}
-                                       keyboardType="number-pad"
                                        placeholder="주민번호 앞 6자리"
                                        maxLength={6}
                                        value={formData.dob}
@@ -503,7 +496,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <TextInput ref={cardCorpRef1}
                                            style={styles.cardInput}
                                            maxLength={4}
-                                           keyboardType="number-pad"
                                            value ={formData.corpCardNumber1}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -518,7 +510,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
-                                           keyboardType="number-pad"
                                            value ={formData.corpCardNumber2}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -533,7 +524,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
                                            secureTextEntry
-                                           keyboardType="number-pad"
                                            value ={formData.corpCardNumber3}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -547,7 +537,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <TextInput ref={cardCorpRef4}
                                            style={styles.cardInput}
                                            maxLength={4}
-                                           keyboardType="number-pad"
                                            value ={formData.corpCardNumber4}
                                            onChangeText={(text) => {
                                                setFormData({
@@ -610,7 +599,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     <Text style={styles.label}>유효기간</Text>
                                     <TextInput ref={expiryCorpRef}
                                                style={styles.input}
-                                               keyboardType="number-pad"
                                                placeholder="MM/YY"
                                                maxLength={4}
                                                value={formData.corpExpiry}
@@ -627,7 +615,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
                                     <TextInput ref={pwdCorpRef}
                                                style={[styles.input, {marginLeft:20}]}
-                                               keyboardType="number-pad"
                                                secureTextEntry
                                                placeholder="* *"
                                                maxLength={2}
@@ -647,7 +634,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                             <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
                             <TextInput ref={brnRef}
                                        style={styles.input}
-                                       keyboardType="number-pad"
                                        placeholder="사업자번호 10자리"
                                        maxLength={10}
                                        value={formData.brn}

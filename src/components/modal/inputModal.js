@@ -71,7 +71,6 @@ const InputModal = ({ visible, onConfirm, onCancel, message }) => {
                             },
                         ]}
                         placeholder="전화번호를 '-' 없이 입력하세요."
-                        keyboardType="number-pad"
                         value={UTILS.onlyNumber(phoneNumber)}
                         onChangeText={(text) => {
                             setPhoneNumber(text);

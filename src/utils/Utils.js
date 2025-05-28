@@ -1,8 +1,10 @@
 import moment from 'moment/moment';
 
 const comma = (amount) => {
-    if (typeof amount !== 'number') return amount;
-    return amount.toLocaleString();
+    if (!amount) return '0';
+
+    const numeric = String(amount).replace(/[^0-9]/g, '');
+    return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const KRW = (amount) => {

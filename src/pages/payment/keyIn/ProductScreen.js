@@ -117,7 +117,6 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
 
                         <Text style={styles.label}>결제금액</Text>
                         <TextInput style={styles.input}
-                                   keyboardType="number-pad"
                                    placeholder="0"
                                    maxLength={13}
                                    value={formData.amount} onChangeText={(text) => {
