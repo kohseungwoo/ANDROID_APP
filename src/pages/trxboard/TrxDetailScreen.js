@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Linking} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import UTILS, {trxDetailRef} from '../../utils/Utils';
+import UTILS from '../../utils/Utils';
 import styles from '../../assets/styles/TrxDetailStyle';
 import moment from 'moment';
 import {Logout} from '../../components/Logout';
 import DefaultModal from '../../components/modal/DefaultModal';
 import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
+import InputModal from '../../components/modal/inputModal';
 
 const TrxDetailScreen = () => {
     const navigation = useNavigation();
@@ -14,6 +15,7 @@ const TrxDetailScreen = () => {
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [inputVisible, setInputVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
     const [loading, setLoading] = useState(false);
@@ -46,10 +48,11 @@ const TrxDetailScreen = () => {
                     setCompanyTelNo(result.data?.telNo || companyTelNo);
                 }else{
                     if (result.code === '803') {
-                        setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
-                        setExitVisible(true);
+                        setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                        setModalCallback(() => handleExit);
+                        setModalVisible(true);
                     }else{
-                        setMessage(`${result.message}`);
+                        setMessage(`${result.description}`);
                         setAlertVisible(true);
                         setDefaultMessage(false);
                     }
@@ -96,7 +99,7 @@ const TrxDetailScreen = () => {
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
                 }else{
-                    setMessage(`${result.message}`);
+                    setMessage(`${result.description}`);
                     setAlertVisible(true);
                     setDefaultMessage(false);
                 }
@@ -111,16 +114,35 @@ const TrxDetailScreen = () => {
         }
     };
 
-    const receiptBtn = ()=> {
-        //https://admin.e2u.kr/trx/receipt/T250527719468
-    }
-;
+    const receiptBtn = (phoneNumber)=> {
+        const msg = `${global.E2U?.ADMIN_URL}/trx/receipt/${item.trxId}`;
+        const url = `sms:${phoneNumber}?body=${encodeURIComponent(msg)}`;
+
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    return Linking.openURL(url);
+                } else {
+                    setInputVisible(false);
+                    setAlertVisible(true);
+                    setMessage(`전표 전송에 실패하였습니다.`);
+                    setDefaultMessage(true);
+                }
+            }).catch((err) =>
+                global.E2U?.WARN(`SMS 연결 실패 \n ${err}`,
+                setInputVisible(false),
+                setMessage(`전표 전송에 실패하였습니다.`),
+                setDefaultMessage(true),
+            ));
+    };
+
+
     async function handleExit(){
         await Logout(navigation);
     }
 
     function handleTrxList(){
-        trxDetailRef.current = false; // 초기화
+        UTILS.trxDetailRef.current = false; // 초기화
         navigation.goBack();
     }
 
@@ -142,6 +164,15 @@ const TrxDetailScreen = () => {
                 message={modalMessage}
             />
 
+            <InputModal
+                visible={inputVisible}
+                onCancel={() => setInputVisible(false)}
+                onConfirm={(phoneNumber) => {
+                    setInputVisible(false);   // 모달 닫고
+                    receiptBtn(phoneNumber);        // SMS 열기
+                }}
+            />
+
             <SafeAreaView style={styles.safeContainer}>
                 <View style={styles.container}>
                     <View style={styles.title}>
@@ -150,7 +181,7 @@ const TrxDetailScreen = () => {
                         <View style={styles.nickAndCloseRow}>
                             <Text style={styles.mchtName}>{global.E2U?.nick}</Text>
                             <TouchableOpacity onPress={() => {
-                                trxDetailRef.current = true;
+                                UTILS.trxDetailRef.current = true;
                                 navigation.goBack();
                             }}>
                                 <Text style={styles.closeText}>✕</Text>
@@ -173,7 +204,7 @@ const TrxDetailScreen = () => {
 
                         <View style={styles.row}>
                             <Text style={styles.label}>거래유형</Text>
-                            <Text style={styles.value}>{item.amount > 0 ? "승인" : "승인취소"}</Text>
+                            <Text style={styles.value}>{item.trxType === 'authorized' ? "승인" : "승인취소"}</Text>
                         </View>
 
                         <View style={styles.row}>
@@ -244,7 +275,7 @@ const TrxDetailScreen = () => {
 
                     <View style={styles.footer}>
                         <View style={styles.actionRow}>
-                            {item.amount > 0 && (
+                            {item.trxType === 'authorized' && item.rfdId === '' && (
                                 <TouchableOpacity
                                     style={[styles.actionButton, styles.refundButton]}
                                     onPress={() => refundBtn()}
@@ -253,7 +284,7 @@ const TrxDetailScreen = () => {
                                 </TouchableOpacity>
                             )}
 
-                            <TouchableOpacity style={[styles.actionButton, styles.receiptButton]} onPress={() => receiptBtn()}>
+                            <TouchableOpacity style={[styles.actionButton, styles.receiptButton]} onPress={() => setInputVisible(true)}>
                                 <Text style={styles.actionButtonText}>전표 전송</Text>
                             </TouchableOpacity>
                         </View>
@@ -261,11 +292,11 @@ const TrxDetailScreen = () => {
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => {
-                                trxDetailRef.current = true;
+                                UTILS.trxDetailRef.current = true;
                                 navigation.goBack();
                             }}
                         >
-                            <Text style={styles.buttonText}>확인</Text>
+                            <Text style={styles.buttonText}>확 인</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Alert, ScrollView, Text, TextInput, TouchableOpacity} from 'react-native';
 import styles from '../../assets/styles/KeyInV1Style';
+import UTILS from '../../utils/Utils';
 
 /* V2 마이그레이션 before 버전 */
 const KeyInScreenV1 = ({
@@ -23,31 +24,27 @@ const KeyInScreenV1 = ({
         return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
-    const onlyNumber = (value) => {
-        return value.replace(/[^0-9]/g, '');
-    };
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.sectionTitle}>카드 정보</Text>
             <Text style={styles.label}>카드번호</Text>
             <TextInput style={styles.input} keyboardType="number-pad" value={cardNumber} onChangeText={(text) => {
-                setCardNumber(onlyNumber(text));
+                setCardNumber(UTILS.onlyNumber(text));
             }} placeholder="xxxx xxxx xxxx xxxx" maxLength={16}/>
 
             <Text style={styles.label}>유효기간</Text>
             <TextInput style={styles.input} keyboardType="number-pad" value={expiry} onChangeText={(text) => {
-                setExpiry(onlyNumber(text));
+                setExpiry(UTILS.onlyNumber(text));
             }} placeholder="MM/YY" maxLength={4} />
 
             <Text style={styles.label}>생년월일</Text>
             <TextInput style={styles.input} keyboardType="number-pad" value={birth} onChangeText={(text) => {
-                setBirth(onlyNumber(text));
+                setBirth(UTILS.onlyNumber(text));
             }} placeholder="YYYYMMDD" maxLength={8} />
 
             <Text style={styles.label}>비밀번호 앞 2자리</Text>
             <TextInput style={styles.input} keyboardType="number-pad" secureTextEntry value={password} onChangeText={(text) => {
-                setPassword(onlyNumber(text));
+                setPassword(UTILS.onlyNumber(text));
             }} placeholder="**" maxLength={2} />
 
             {/* 구매자 정보 */}
@@ -58,7 +55,7 @@ const KeyInScreenV1 = ({
 
             <Text style={styles.label}>휴대폰번호</Text>
             <TextInput style={styles.input} keyboardType="phone-pad" value={phone} onChangeText={(text) => {
-                setPhone(onlyNumber(text));}}
+                setPhone(UTILS.onlyNumber(text));}}
                        placeholder="010-1234-5678" maxLength={16}/>
             {/* 판매 정보 */}
             <Text style={[styles.sectionTitle, styles.customSectionTitle]}>판매 정보</Text>

@@ -5,6 +5,7 @@ import styles from '../../assets/styles/KeyInV2Style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DefaultModal from '../../components/modal/DefaultModal';
 
+/* 사용안함 */
 /* 단일 화면에서의 모든 처리 */
 const KeyInScreenV2 = ({
        appId, setAppId,

@@ -18,6 +18,14 @@ const parseDate =  (dateStr, format) => {
     return moment(dateStr, format ? format : 'YYYYMMDDHHmmss');
 };
 
+const onlyNumber = (value) => {
+    return value.replace(/[^0-9]/g, '');
+};
+
+const removeSpecial = (value) => {
+    return value.replace(/[^a-zA-Z0-9]/g, '');
+};
+
 const convertMethod = (method) => {
     let methodKr;
     switch (method) {
@@ -48,5 +56,8 @@ const UTILS = {
     parseDate,
     convertMethod,
     convertBin,
+    onlyNumber,
+    removeSpecial,
+    trxDetailRef,
 };
 export default UTILS;

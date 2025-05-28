@@ -86,7 +86,7 @@ const SignIn = () => {
                 handlerMove(result);
             }else{
                 if (result.code === '804') { // 보안 정책 위반으로 요청이 차단되었습니다.
-                    setErrorMessage(`${result.message}`);
+                    setErrorMessage(`${result.description}`);
                 }else{
                     setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
                 }

@@ -8,6 +8,9 @@ import DefaultModal from '../../../components/modal/DefaultModal';
 import {Logout} from '../../../components/Logout';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
+import {trxDetailRef} from '../../../utils/Utils';
+import UTILS from '../../../utils/Utils';
+
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const navigation = useNavigation();
@@ -50,10 +53,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         }))
     );
 
-
-    const onlyNumber = (value) => {
-        return value.replace(/[^0-9]/g, '');
-    };
 
     const getInstallment = async () => {
         try{
@@ -232,7 +231,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
                 }else{
-                    setValidMessage(`${result.message}`);
+                    setValidMessage(`${result.description}`);
                     setValidVisible(true);
                     setDefaultMessage(false);
                 }
@@ -252,6 +251,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     }
 
     function handleTrxList(){
+        trxDetailRef.current = false; // 초기화
         navigation.reset({
             index: 0,
             routes: [{ name: 'TRXLIST' }],
@@ -343,7 +343,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                     keyboardType="number-pad"
                                     value={formData.personalCardNumber1}
                                     onChangeText={(text) => {
-                                        const number = onlyNumber(text);
+                                        const number = UTILS.onlyNumber(text);
                                         setFormData({ ...formData, personalCardNumber1: number });
                                         if (number.length === 4) {
                                             cardPersRef2.current?.focus();
@@ -357,7 +357,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber2}
                                            onChangeText={(text) => {
-                                               const number = onlyNumber(text);
+                                               const number = UTILS.onlyNumber(text);
                                                setFormData({ ...formData, personalCardNumber2: number });
                                                if (number.length === 4) {
                                                    cardPersRef3.current?.focus();
@@ -371,7 +371,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            keyboardType="number-pad"
                                            value={formData.personalCardNumber3}
                                            onChangeText={(text) => {
-                                               const number = onlyNumber(text);
+                                               const number = UTILS.onlyNumber(text);
                                                setFormData({ ...formData, personalCardNumber3: number });
                                                if (number.length === 4) {
                                                    cardPersRef4.current?.focus();
@@ -385,7 +385,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            value={formData.personalCardNumber4}
                                            onChangeText={(text) => setFormData({
                                                ...formData,
-                                               personalCardNumber4: onlyNumber(text),
+                                               personalCardNumber4: UTILS.onlyNumber(text),
                                            })}
                                 />
                             </View>
@@ -446,7 +446,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                maxLength={4}
                                                value={formData.personalExpiry}
                                                onChangeText={(text) => {
-                                                   const number = onlyNumber(text);
+                                                   const number = UTILS.onlyNumber(text);
                                                    setFormData({ ...formData, personalExpiry: number });
                                                    if (number.length === 4) {
                                                        pwdPersRef.current?.focus();
@@ -464,7 +464,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                maxLength={2}
                                                value={formData.personalPassword}
                                                onChangeText={(text) => {
-                                                   const number = onlyNumber(text);
+                                                   const number = UTILS.onlyNumber(text);
                                                    setFormData({ ...formData, personalPassword: number });
                                                    if (number.length === 2) {
                                                        dobRef.current?.focus();
@@ -484,7 +484,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                        value={formData.dob}
                                        onChangeText={(text) => setFormData({
                                            ...formData,
-                                           dob: onlyNumber(text),
+                                           dob: UTILS.onlyNumber(text),
                                        })}
                             />
 
@@ -506,7 +506,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber1}
                                            onChangeText={(text) => {
-                                               const number = onlyNumber(text);
+                                               const number = UTILS.onlyNumber(text);
                                                setFormData({ ...formData, corpCardNumber1: number });
                                                if (number.length === 4) {
                                                    cardCorpRef2.current?.focus();
@@ -521,7 +521,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber2}
                                            onChangeText={(text) => {
-                                               const number = onlyNumber(text);
+                                               const number = UTILS.onlyNumber(text);
                                                setFormData({ ...formData, corpCardNumber2: number });
                                                if (number.length === 4) {
                                                    cardCorpRef3.current?.focus();
@@ -536,7 +536,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            keyboardType="number-pad"
                                            value ={formData.corpCardNumber3}
                                            onChangeText={(text) => {
-                                               const number = onlyNumber(text);
+                                               const number = UTILS.onlyNumber(text);
                                                setFormData({ ...formData, corpCardNumber3: number });
                                                if (number.length === 4) {
                                                    cardCorpRef4.current?.focus();
@@ -552,7 +552,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                            onChangeText={(text) => {
                                                setFormData({
                                                    ...formData,
-                                                   corpCardNumber4: onlyNumber(text),
+                                                   corpCardNumber4: UTILS.onlyNumber(text),
                                                });
                                            }}
                                 />
@@ -615,7 +615,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                maxLength={4}
                                                value={formData.corpExpiry}
                                                onChangeText={(text) => {
-                                                   const number = onlyNumber(text);
+                                                   const number = UTILS.onlyNumber(text);
                                                    setFormData({ ...formData, corpExpiry: number });
                                                    if (number.length === 4) {
                                                        pwdCorpRef.current?.focus();
@@ -633,7 +633,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                maxLength={2}
                                                value={formData.corpPassword}
                                                onChangeText={(text) => {
-                                                   const number = onlyNumber(text);
+                                                   const number = UTILS.onlyNumber(text);
                                                    setFormData({ ...formData, corpPassword: number });
                                                    if (number.length === 2) {
                                                        brnRef.current?.focus();
@@ -653,7 +653,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                        value={formData.brn}
                                        onChangeText={(text) => setFormData({
                                            ...formData,
-                                           brn: onlyNumber(text),
+                                           brn: UTILS.onlyNumber(text),
                                        })}
                             />
                         </>

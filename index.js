@@ -7,7 +7,8 @@ import {name as appName} from './app.json';
 
 /* 전역 변수 설정 */
 global.E2U = Config;
-global.E2U.API_URL = Config[`${Config.ENV}_API_URL`];
+global.E2U.API_URL   = Config[`${Config.ENV}_API_URL`];
+global.E2U.ADMIN_URL = Config[`${Config.ENV}_ADMIN_URL`];
 global.E2U.INFO  = Log.INFO;
 global.E2U.WARN  = Log.WARN;
 global.E2U.ERROR = Log.ERROR;
