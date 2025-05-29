@@ -1,14 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {RefreshControl, SafeAreaView, ScrollView, View} from 'react-native';
 import Main from '../../components/MainV2';
 import Header from '../../components/Header';
 import styles from '../../assets/styles/DashboardStyle';
-import refreshHooks from '../../components/hooks/RefreshHooks';
 
 const DashboardScreen = () => {
-    // 드래그 새로고침
-    const { refreshing, onRefresh } = refreshHooks(() => {
-        // 여기에 API 호출 등 로직 작성
+    const [refreshProps, setRefreshProps] = useState({
+        refreshing: false,
+        onRefresh: () => {},
     });
 
     return (
@@ -19,11 +18,14 @@ const DashboardScreen = () => {
                     <ScrollView
                         contentContainerStyle={styles.contentContainer}
                         refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            <RefreshControl
+                                refreshing={refreshProps.refreshing}
+                                onRefresh={refreshProps.onRefresh}
+                            />
                         }
                     >
                         <View style={styles.innerWrapper}>
-                            <Main />
+                            <Main setRefreshControlProps={setRefreshProps} />
                         </View>
                     </ScrollView>
                 </View>

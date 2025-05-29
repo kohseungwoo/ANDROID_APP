@@ -4,7 +4,6 @@ import Config from './src/components/Config';
 import Log from './src/components/LogContent';
 import {name as appName} from './app.json';
 
-
 /* 전역 변수 설정 */
 global.E2U = Config;
 global.E2U.API_URL   = Config[`${Config.ENV}_API_URL`];

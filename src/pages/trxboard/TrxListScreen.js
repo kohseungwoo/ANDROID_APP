@@ -25,6 +25,8 @@ import DefaultModal from '../../components/modal/DefaultModal';
 import {Logout} from '../../components/Logout';
 import moment from 'moment';
 import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
+import OpenStoreLink from '../../components/OpenStoreLink';
+import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 
 const TrxListScreen = () => {
     const navigation = useNavigation();
@@ -34,28 +36,26 @@ const TrxListScreen = () => {
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [exitVisible, setExitVisible] = useState(false);
-
+    const [openLinkVisible, setOpenLinkVisible] = useState(false);
     const translateY = useRef(new Animated.Value(200)).current;
-
-    // 날짜 상태
     const [fromDateObj, setFromDateObj] = useState(new Date());
     const [toDateObj, setToDateObj] = useState(new Date());
-
     const [showFromPicker, setShowFromPicker] = useState(false);
     const [showToPicker, setShowToPicker] = useState(false);
     const [currentPicker, setCurrentPicker] = useState(null);
-
-    // 거래 관련
     const [trxList, setTrxList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
     const [totalRecords, setTotalRecords] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
     const [isLoadingMore, setIsLoadingMore] = useState(false); // 추가 로딩 중 여부
     const [hasMore, setHasMore] = useState(false); // 더 불러올 데이터 존재 여부
     const [showDetails, setShowDetails] = useState(false);
-
     const horizontalPadding = isLandscape ? 100 : 0;
+
+    const handleOpenLinkConfirm = () => {
+        OpenStoreLink();
+        setOpenLinkVisible(false);
+    };
 
     const formatDate = (date) => {
         return `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
@@ -127,10 +127,12 @@ const TrxListScreen = () => {
                 setCurrentPage(page);
 
             }else{
-                if (result.code === '803') {
+                if (result.code === '802' || result.code === '803' ) {
                     setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setExitVisible(true);
-                }else{
+                }else if (result.code === '0009'){
+                    setOpenLinkVisible(true);
+                } else{
                     setMessage(`${result.description}`);
                     setAlertVisible(true);
                     setDefaultMessage(false);
@@ -150,7 +152,7 @@ const TrxListScreen = () => {
         await Logout(navigation);
     }
 
-    const refresh = () => {
+    const { refreshing, onRefresh } = refreshHooks(() => {
         const now = new Date();
         setFromDateObj(now);
         setToDateObj(now);
@@ -158,7 +160,7 @@ const TrxListScreen = () => {
         setHasMore(false);
         handleSearch(now, now, 1, false);
         setShowDetails(false);
-    };
+    });
 
     useFocusEffect(
         useCallback(() => {
@@ -177,7 +179,6 @@ const TrxListScreen = () => {
         }, [])
     );
 
-    const { refreshing, onRefresh } = refreshHooks(refresh);
 
     return (
         <>
@@ -195,9 +196,14 @@ const TrxListScreen = () => {
                 message={message}
             />
 
+            <UpdateInfoModal
+                visible={openLinkVisible}
+                onConfirm={handleOpenLinkConfirm}
+            />
+
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.flex_1}>
-                <HeaderSub title="결제 현황" onRefresh={refresh} />
+                <HeaderSub title="결제 현황" onRefresh={onRefresh} />
 
                 <View style={styles.searchSection}>
                     <View style={styles.dateInputRow}>

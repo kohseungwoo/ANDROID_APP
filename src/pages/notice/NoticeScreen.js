@@ -7,6 +7,8 @@ import NointModal from '../../components/modal/NointModal';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {Logout} from '../../components/Logout';
 import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
+import OpenStoreLink from '../../components/OpenStoreLink';
+import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 
 const NoticeScreen = () => {
     const navigation = useNavigation();
@@ -15,6 +17,7 @@ const NoticeScreen = () => {
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [exitVisible, setExitVisible] = useState(false);
+    const [openLinkVisible, setOpenLinkVisible] = useState(false);
 
     const [selectedNotice, setSelectedNotice] = useState(null);
     const initialTab = route?.params?.tab || 'notice';
@@ -35,6 +38,11 @@ const NoticeScreen = () => {
         notice: { title: '공지사항', data: noticeList },
         faq: { title: 'FAQ', data: faqList },
         contact: { title: '고객센터', data: contactList },
+    };
+
+    const handleOpenLinkConfirm = () => {
+        OpenStoreLink();
+        setOpenLinkVisible(false);
     };
 
     const formatDate = (dateStr) => {
@@ -96,10 +104,12 @@ const NoticeScreen = () => {
                     break;
                 }
             }else{
-                if (result.code === '803') {
+                if (result.code === '802' || result.code === '803' ) {
                     setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setExitVisible(true);
-                }else{
+                }else if (result.code === '0009'){
+                    setOpenLinkVisible(true);
+                } else{
                     setMessage(`${result.description}`);
                     setAlertVisible(true);
                     setDefaultMessage(false);
@@ -272,6 +282,7 @@ const NoticeScreen = () => {
     };
 
 
+
     return (
         <>
             <NointModal
@@ -285,6 +296,11 @@ const NoticeScreen = () => {
                 onCancel={() => setExitVisible(true)}
                 onConfirm={handleExit}
                 message={message}
+            />
+
+            <UpdateInfoModal
+                visible={openLinkVisible}
+                onConfirm={handleOpenLinkConfirm}
             />
 
             <SafeAreaView style={styles.safeArea}>

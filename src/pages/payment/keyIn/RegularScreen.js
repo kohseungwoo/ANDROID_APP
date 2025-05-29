@@ -1,5 +1,16 @@
 import React, {useRef, useState} from 'react';
-import {ActivityIndicator,Dimensions,KeyboardAvoidingView,Platform,ScrollView,Text,TextInput,TouchableOpacity,View} from 'react-native';
+import {
+    ActivityIndicator,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
@@ -9,6 +20,9 @@ import {Logout} from '../../../components/Logout';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
 import UTILS, {trxDetailRef} from '../../../utils/Utils';
+import OpenStoreLink from '../../../components/OpenStoreLink';
+import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
+import refreshHooks from '../../../components/hooks/RefreshHooks';
 
 
 const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
@@ -22,6 +36,7 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
+    const [openLinkVisible, setOpenLinkVisible] = useState(false);
 
     const [nointText, setNointMessage] = useState('');
     const [open, setOpen] = useState(false);
@@ -52,6 +67,10 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         }))
     );
 
+    const handleOpenLinkConfirm = () => {
+        OpenStoreLink();
+        setOpenLinkVisible(false);
+    };
 
     const getInstallment = async () => {
         try{
@@ -63,12 +82,20 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 },
             });
 
-            const result = await response.text();
+            const result = await response.json();
             global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result) {
-                setNointMessage(result);
-                setAlertVisible(true);
+                if (result.code === '802' || result.code === '803' ) {
+                    setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                    setModalCallback(() => handleExit);
+                    setModalVisible(true);
+                }else if (result.code === '0009' ) {
+                    setOpenLinkVisible(true);
+                }else{
+                    setNointMessage(result);
+                    setAlertVisible(true);
+                }
             }else{
                 setNointMessage(`카드사 무이자 할부안내 조회에 실패했습니다. <br/> 관리자에게 문의하시기 바랍니다.`);
                 setAlertVisible(true);
@@ -78,27 +105,34 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         }
     };
 
-    const [installmentIdx, setInstallmentIdx] = useState(
-        Array.from({ length: 12 }, (_, i) => ({
-            label: `${i + 1}개월`,
-            value: `${i + 1}`,
-        }))
-    );
-
     const resetCardForm = () => {
-        const keepKeys = ['productName','amount','buyerName','phoneNo'];
-
         setOpen(false);
-        setFormData(prev => {
-            const newForm = {};
-
-            // 유지할 key들은 기존 값 유지
-            keepKeys.forEach(key => {
-                newForm[key] = prev[key];
-            });
-
-            return newForm;
-        });
+        setFormData(prev => ({
+            ...prev,
+            personalCardNumber1: '',
+            personalCardNumber2: '',
+            personalCardNumber3: '',
+            personalCardNumber4: '',
+            personalInstallment: null,
+            personalExpiry: '',
+            personalPassword: '',
+            dob: '',
+            corpCardNumber1: '',
+            corpCardNumber2: '',
+            corpCardNumber3: '',
+            corpCardNumber4: '',
+            corpInstallment: null,
+            corpExpiry: '',
+            corpPassword: '',
+            brn: '',
+            // 유지할 항목은 그대로 두기
+            cardType : 'personal',
+            productName: prev.productName,
+            amount: prev.amount,
+            buyerName: prev.buyerName,
+            phoneNo: prev.phoneNo,
+            // cardType은 별도로 처리하므로 생략 가능
+        }));
     };
 
     const paymentBtn = async () => {
@@ -225,11 +259,13 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 setModalCallback(() => handleTrxList);
                 setModalVisible(true);
             }else{
-                if (result.code === '803') {
+                if (result.code === '802' || result.code === '803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
-                }else{
+                }else if (result.code === '0009'){
+                    setOpenLinkVisible(true);
+                } else{
                     setValidMessage(`${result.description}`);
                     setValidVisible(true);
                     setDefaultMessage(false);
@@ -257,6 +293,10 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
         });
     }
 
+    const { refreshing, onRefresh } = refreshHooks(() => {
+        resetCardForm();
+    });
+
     return (
         <>
             <NointModal
@@ -280,6 +320,12 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 }}
                 message={modalMessage}
             />
+
+            <UpdateInfoModal
+                visible={openLinkVisible}
+                onConfirm={handleOpenLinkConfirm}
+            />
+
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
               style={{ flex: 1 }}
@@ -288,6 +334,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 style={[styles.container, {height:screenHeight}]}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
                 keyboardShouldPersistTaps="handled"
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
             >
 
                 <View style={styles.header}>

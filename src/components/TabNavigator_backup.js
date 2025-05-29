@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {BackHandler, Keyboard} from 'react-native';
+import {BackHandler, Keyboard, Platform} from 'react-native';
 
 import TabButton from '../components/TabButton';
 import dashboard from '../pages/dashboard/DashboardScreen';
@@ -99,7 +99,9 @@ const TabNavigator = () => {
 
     const handleExit = () => {
         setExitVisible(false);
-        BackHandler.exitApp();
+        if (Platform.OS === 'android') {
+            BackHandler.exitApp();
+        }
     };
 
     return (

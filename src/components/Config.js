@@ -1,5 +1,7 @@
+import DeviceInfo from 'react-native-device-info';
+
 const Config = {
-    APP_VERSION : "V1",
+    APP_VERSION : DeviceInfo.getBuildNumber(),
     ENV : "DEV",
     DEBUG : true,
     DEV_API_URL  : "https://tetms.e2u.kr",

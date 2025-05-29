@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
-  ActivityIndicator,
-  Linking,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Linking,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import UTILS from '../../utils/Utils';
@@ -17,6 +17,8 @@ import {Logout} from '../../components/Logout';
 import DefaultModal from '../../components/modal/DefaultModal';
 import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
 import InputModal from '../../components/modal/inputModal';
+import OpenStoreLink from '../../components/OpenStoreLink';
+import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 
 const TrxDetailScreen = () => {
     const navigation = useNavigation();
@@ -27,6 +29,7 @@ const TrxDetailScreen = () => {
     const [inputVisible, setInputVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
+    const [openLinkVisible, setOpenLinkVisible] = useState(() => () => {});
     const [loading, setLoading] = useState(false);
 
     const route = useRoute();
@@ -56,10 +59,12 @@ const TrxDetailScreen = () => {
                     setCompanyAddr(result.data?.addr || companyAddr);
                     setCompanyTelNo(result.data?.telNo || companyTelNo);
                 }else{
-                    if (result.code === '803') {
+                    if (result.code === '802' || result.code === '803' ) {
                         setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                         setModalCallback(() => handleExit);
                         setModalVisible(true);
+                    }else if (result.code === '0009'){
+                        setOpenLinkVisible(true);
                     }else{
                         setMessage(`${result.description}`);
                         setAlertVisible(true);
@@ -76,6 +81,11 @@ const TrxDetailScreen = () => {
 
         companyCall();
     },[]);
+
+    const handleOpenLinkConfirm = () => {
+        OpenStoreLink();
+        setOpenLinkVisible(false);
+    };
 
     const refundBtn = async () => {
         setLoading(true);
@@ -103,10 +113,12 @@ const TrxDetailScreen = () => {
                 setModalCallback(() => handleTrxList);
                 setModalVisible(true);
             }else{
-                if (result.code === '803') {
+                if (result.code === '802' || result.code === '803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
+                }else if (result.code === '0009'){
+                    setOpenLinkVisible(true);
                 }else{
                     setMessage(`${result.description}`);
                     setAlertVisible(true);
@@ -174,6 +186,11 @@ const TrxDetailScreen = () => {
                     setModalVisible(false);
                 }}
                 message={modalMessage}
+            />
+
+            <UpdateInfoModal
+                visible={openLinkVisible}
+                onConfirm={handleOpenLinkConfirm}
             />
 
             <InputModal
