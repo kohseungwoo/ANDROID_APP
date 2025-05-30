@@ -24,11 +24,17 @@ export default StyleSheet.create({
     grayText:{
         color: '#888'
     },
-    badge: {
+    badgeManager: {
         paddingHorizontal: 6,
         paddingVertical: 2,
         borderRadius: 5,
-        backgroundColor : 'rgba(230,22,22,0.67)',
+        backgroundColor : 'rgba(230,77,22,0.67)',
+    },
+    badgeMember: {
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 5,
+        backgroundColor : 'rgba(55,90,228,0.67)',
     },
     badgeText: {
         color: '#fff',

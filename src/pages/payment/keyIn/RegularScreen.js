@@ -1,10 +1,9 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     ActivityIndicator,
     Dimensions,
     KeyboardAvoidingView,
     Platform,
-    RefreshControl,
     ScrollView,
     Text,
     TextInput,
@@ -22,10 +21,10 @@ import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
 import UTILS, {trxDetailRef} from '../../../utils/Utils';
 import OpenStoreLink from '../../../components/OpenStoreLink';
 import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
-import refreshHooks from '../../../components/hooks/RefreshHooks';
+import {fetchWithTimeout} from '../../../components/Fetch';
 
 
-const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
+const RegularScreen = ({ formData, setFormData }) => {
     const navigation = useNavigation();
     const [alertVisible, setAlertVisible] = useState(false);
     const [validVisible, setValidVisible] = useState(false);
@@ -59,13 +58,34 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
     const pwdCorpRef = useRef(null);
     const dobRef = useRef(null);
     const brnRef = useRef(null);
+    const [installment, setInstallment] = useState([]);
 
-    const [items, setItems] = useState(
-        Array.from({ length: 12 }, (_, i) => ({
-            label: `${i + 1}개월`,
-            value: `${i + 1}`,
-        }))
-    );
+    useEffect(() => {
+        if (formData?.installment) {
+            const rawNumbers = formData.installment
+                .split(':')
+                .map(val => parseInt(val, 10))
+                .filter(num => !isNaN(num));
+
+            // '00' 또는 '01'이 있으면 일시불(0) 하나만 포함
+            const hasSinglePayment = rawNumbers.includes(0) || rawNumbers.includes(1);
+
+            const uniqueNumbers = Array.from(
+                new Set(
+                    rawNumbers
+                        .filter(num => num > 1) // 일시불 제외
+                        .concat(hasSinglePayment ? [0] : []) // 일시불은 하나만
+                )
+            ).sort((a, b) => a - b); // 오름차순 정렬
+
+            const parsedItems = uniqueNumbers.map(num => ({
+                label: num === 0 ? '일시불' : `${String(num).padStart(2, '0')}개월`,
+                value: num,
+            }));
+
+            setInstallment(parsedItems);
+        }
+    }, [formData?.installment]);
 
     const handleOpenLinkConfirm = () => {
         OpenStoreLink();
@@ -74,65 +94,49 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
 
     const getInstallment = async () => {
         try{
-            const response = await fetch(`${global.E2U?.API_URL}/v2/noint/latest`, {
+            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/noint/latest`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': global.E2U?.key,
-                    'VERSION'  : global.E2U?.APP_VERSION,
+                    'Authorization': E2U?.key,
+                    'VERSION'  : E2U?.APP_VERSION,
                 },
-            });
+            }, E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
+            E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result) {
-                if (result.code === '802' || result.code === '803' ) {
+                if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
-                }else if (result.code === '0009' ) {
+                }else if (result.code === '0802' ) {
                     setOpenLinkVisible(true);
                 }else{
                     setNointMessage(result);
                     setAlertVisible(true);
                 }
             }else{
-                setNointMessage(`카드사 무이자 할부안내 조회에 실패했습니다. <br/> 관리자에게 문의하시기 바랍니다.`);
+                setNointMessage('카드사 무이자 할부안내 조회에 실패했습니다.');
                 setAlertVisible(true);
+                setDefaultMessage(true);
             }
         }catch(err){
-            global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
-        }
-    };
+            E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
 
-    const resetCardForm = () => {
-        setOpen(false);
-        setFormData(prev => ({
-            ...prev,
-            personalCardNumber1: '',
-            personalCardNumber2: '',
-            personalCardNumber3: '',
-            personalCardNumber4: '',
-            personalInstallment: null,
-            personalExpiry: '',
-            personalPassword: '',
-            dob: '',
-            corpCardNumber1: '',
-            corpCardNumber2: '',
-            corpCardNumber3: '',
-            corpCardNumber4: '',
-            corpInstallment: null,
-            corpExpiry: '',
-            corpPassword: '',
-            brn: '',
-            // 유지할 항목은 그대로 두기
-            cardType : 'personal',
-            productName: prev.productName,
-            amount: prev.amount,
-            buyerName: prev.buyerName,
-            phoneNo: prev.phoneNo,
-            // cardType은 별도로 처리하므로 생략 가능
-        }));
+            if (err.message === 'Request timed out') {
+                setNointMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setAlertVisible(true);
+
+            }else if (err.message === 'Network request failed') {
+                setNointMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                setAlertVisible(true);
+            }else{
+                setNointMessage('카드사 무이자 할부안내 조회에 실패했습니다.');
+                setAlertVisible(true);
+                setDefaultMessage(true);
+            }
+        }
     };
 
     const paymentBtn = async () => {
@@ -225,12 +229,12 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
 
         try{
             setLoading(true);
-            const response = await fetch(`${global.E2U?.API_URL}/v2/api/pay`, {
+            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/api/pay`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': global.E2U?.key,
-                    'VERSION'  : global.E2U?.APP_VERSION,
-                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': E2U?.key,
+                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
                 },
                 body: JSON.stringify({
                     amount        : formData.amount,
@@ -250,20 +254,20 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                     qty           : 1,
                     price         : formData.amount,
                 }),
-            });
+            }, E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            global.E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
+            E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
             if (result.code === '0000') {
                 setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
                 setModalCallback(() => handleTrxList);
                 setModalVisible(true);
             }else{
-                if (result.code === '802' || result.code === '803' ) {
+                if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
-                }else if (result.code === '0009'){
+                }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
                 } else{
                     setValidMessage(`${result.description}`);
@@ -272,13 +276,47 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
-            setMessage(`결제 API 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
-            setValidVisible(true);
-            setDefaultMessage(false);
+            E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
+
+            if (err.message === 'Request timed out') {
+                setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setAlertVisible(true);
+
+            }else if (err.message === 'Network request failed') {
+                setMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                setAlertVisible(true);
+            }else{
+                setMessage('결제 API 호출에 실패하였습니다.');
+                setValidVisible(true);
+                setDefaultMessage(true);
+            }
+
         }finally{
             setLoading(false);
         }
+    };
+
+    const resetCardForm = () => {
+        setOpen(false);
+        setFormData(prev => ({
+            ...prev,
+            personalCardNumber1: '',
+            personalCardNumber2: '',
+            personalCardNumber3: '',
+            personalCardNumber4: '',
+            personalInstallment: null,
+            personalExpiry: '',
+            personalPassword: '',
+            dob: '',
+            corpCardNumber1: '',
+            corpCardNumber2: '',
+            corpCardNumber3: '',
+            corpCardNumber4: '',
+            corpInstallment: null,
+            corpExpiry: '',
+            corpPassword: '',
+            brn: '',
+        }));
     };
 
     async function handleExit(){
@@ -292,10 +330,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
             routes: [{ name: 'TRXLIST' }],
         });
     }
-
-    const { refreshing, onRefresh } = refreshHooks(() => {
-        resetCardForm();
-    });
 
     return (
         <>
@@ -334,9 +368,6 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                 style={[styles.container, {height:screenHeight}]}
                 contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
                 keyboardShouldPersistTaps="handled"
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
             >
 
                 <View style={styles.header}>
@@ -442,9 +473,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <DropDownPicker
                                     open={open}
                                     value={formData.personalInstallment}
-                                    items={items}
+                                    items={installment}
                                     setOpen={setOpen}
-                                    setItems={setItems}
+                                    setItems={setInstallment}
                                     setValue={(callback) =>
                                         setFormData((prev) => ({
                                             ...prev,
@@ -482,55 +513,62 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 />
                             {/*</View>*/}
 
-
                             <View style={styles.row}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.label}>유효기간</Text>
-                                    <TextInput ref={expiryPersRef}
-                                               style={styles.input}
-                                               placeholder="MM/YY"
-                                               maxLength={4}
-                                               value={formData.personalExpiry}
-                                               onChangeText={(text) => {
-                                                   const number = UTILS.onlyNumber(text);
-                                                   setFormData({ ...formData, personalExpiry: number });
-                                                   if (number.length === 4) {
-                                                       pwdPersRef.current?.focus();
-                                                   }
-                                               }}
+                                    <TextInput
+                                        ref={expiryPersRef}
+                                        style={styles.input}
+                                        placeholder="MM/YY"
+                                        maxLength={4}
+                                        value={formData.personalExpiry}
+                                        onChangeText={(text) => {
+                                            const number = UTILS.onlyNumber(text);
+                                            setFormData({ ...formData, personalExpiry: number });
+                                            if (number.length === 4) {
+                                                pwdPersRef.current?.focus();
+                                            }
+                                        }}
                                     />
                                 </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={[styles.label, {marginLeft:20}]}>비밀번호 2앞 2자리</Text>
-                                    <TextInput ref={pwdPersRef}
-                                               style={[styles.input, {marginLeft:20}]}
-                                               secureTextEntry
-                                               placeholder="* *"
-                                               maxLength={2}
-                                               value={formData.personalPassword}
-                                               onChangeText={(text) => {
-                                                   const number = UTILS.onlyNumber(text);
-                                                   setFormData({ ...formData, personalPassword: number });
-                                                   if (number.length === 2) {
-                                                       dobRef.current?.focus();
-                                                   }
-                                               }}
-                                    />
-                                </View>
+
+                                {formData.authType === 'CEPB' && (
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={[styles.label, { marginLeft: 20 }]}>비밀번호 2앞 2자리</Text>
+                                        <TextInput
+                                            ref={pwdPersRef}
+                                            style={[styles.input, { marginLeft: 20 }]}
+                                            secureTextEntry
+                                            placeholder="* *"
+                                            maxLength={2}
+                                            value={formData.personalPassword}
+                                            onChangeText={(text) => {
+                                                const number = UTILS.onlyNumber(text);
+                                                setFormData({ ...formData, personalPassword: number });
+                                                if (number.length === 2) {
+                                                    dobRef.current?.focus();
+                                                }
+                                            }}
+                                        />
+                                    </View>
+                                )}
                             </View>
 
-
-                            <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
-                            <TextInput ref={dobRef}
-                                       style={styles.input}
-                                       placeholder="주민번호 앞 6자리"
-                                       maxLength={6}
-                                       value={formData.dob}
-                                       onChangeText={(text) => setFormData({
-                                           ...formData,
-                                           dob: UTILS.onlyNumber(text),
-                                       })}
-                            />
+                            {formData.authType === 'CEPB' && (
+                                <>
+                                    <Text style={[styles.label, { paddingTop: 10 }]}>본인확인</Text>
+                                    <TextInput
+                                        ref={dobRef}
+                                        style={styles.input}
+                                        placeholder="주민번호 앞 6자리"
+                                        maxLength={6}
+                                        value={formData.dob}
+                                        onChangeText={(text) =>
+                                            setFormData({ ...formData, dob: UTILS.onlyNumber(text) })
+                                        }
+                                    />
+                                </>
+                            )}
 
                             {/*<View style={{paddingLeft:5, paddingTop:2}}>*/}
                             {/*    <Text style={{color:'#808080'}}>* 개인 : 주민번호 앞 6자리</Text>*/}
@@ -603,9 +641,9 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                 <DropDownPicker
                                     open={open}
                                     value={formData.corpInstallment}
-                                    items={items}
+                                    items={installment}
                                     setOpen={setOpen}
-                                    setItems={setItems}
+                                    setItems={setInstallment}
                                     setValue={(callback) =>
                                         setFormData((prev) => ({
                                             ...prev,
@@ -662,37 +700,45 @@ const RegularScreen = ({ formData, setFormData, onNext, onBack }) => {
                                                }}
                                     />
                                 </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
-                                    <TextInput ref={pwdCorpRef}
-                                               style={[styles.input, {marginLeft:20}]}
-                                               secureTextEntry
-                                               placeholder="* *"
-                                               maxLength={2}
-                                               value={formData.corpPassword}
-                                               onChangeText={(text) => {
-                                                   const number = UTILS.onlyNumber(text);
-                                                   setFormData({ ...formData, corpPassword: number });
-                                                   if (number.length === 2) {
-                                                       brnRef.current?.focus();
-                                                   }
-                                               }}
-                                    />
-                                </View>
+
+                                {formData.authType === 'CEPB' && (
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={[styles.label, {marginLeft:20}]}>비밀번호 앞 2자리</Text>
+                                        <TextInput ref={pwdCorpRef}
+                                                   style={[styles.input, {marginLeft:20}]}
+                                                   secureTextEntry
+                                                   placeholder="* *"
+                                                   maxLength={2}
+                                                   value={formData.corpPassword}
+                                                   onChangeText={(text) => {
+                                                       const number = UTILS.onlyNumber(text);
+                                                       setFormData({ ...formData, corpPassword: number });
+                                                       if (number.length === 2) {
+                                                           brnRef.current?.focus();
+                                                       }
+                                                   }}
+                                        />
+                                    </View>
+                                )}
                             </View>
 
 
-                            <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
-                            <TextInput ref={brnRef}
-                                       style={styles.input}
-                                       placeholder="사업자번호 10자리"
-                                       maxLength={10}
-                                       value={formData.brn}
-                                       onChangeText={(text) => setFormData({
-                                           ...formData,
-                                           brn: UTILS.onlyNumber(text),
-                                       })}
-                            />
+                            {formData.authType === 'CEPB' && (
+                                <>
+                                    <Text style={[styles.label,{paddingTop:10}]}>본인확인</Text>
+                                    <TextInput ref={brnRef}
+                                               style={styles.input}
+                                               placeholder="사업자번호 10자리"
+                                               maxLength={10}
+                                               value={formData.brn}
+                                               onChangeText={(text) => setFormData({
+                                                   ...formData,
+                                                   brn: UTILS.onlyNumber(text),
+                                               })
+                                        }
+                                    />
+                                </>
+                            )}
                         </>
                     )}
                 </View>

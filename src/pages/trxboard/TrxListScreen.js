@@ -27,6 +27,7 @@ import moment from 'moment';
 import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
 import OpenStoreLink from '../../components/OpenStoreLink';
 import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
+import {fetchWithTimeout} from '../../components/Fetch';
 
 const TrxListScreen = () => {
     const navigation = useNavigation();
@@ -97,12 +98,12 @@ const TrxListScreen = () => {
         }
 
         try{
-            const response = await fetch(`${global.E2U?.API_URL}/v2/trx/paging`, {
+            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/trx/paging`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
-                    'Authorization': global.E2U?.key,
-                    'VERSION'  : global.E2U?.APP_VERSION,
+                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': E2U?.key,
+                    'VERSION'  : E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     page : page,
@@ -112,10 +113,10 @@ const TrxListScreen = () => {
                         'oper'  : 'bt',
                     }],
                 }),
-            });
+            }, E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            global.E2U?.INFO(`거래 조회 API 응답 \n ${JSON.stringify(result)}`);
+            E2U?.INFO(`거래 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 const newRecords = result.data?.result || [];
@@ -127,10 +128,10 @@ const TrxListScreen = () => {
                 setCurrentPage(page);
 
             }else{
-                if (result.code === '802' || result.code === '803' ) {
+                if (result.code === '0805' || result.code === '0803' ) {
                     setMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setExitVisible(true);
-                }else if (result.code === '0009'){
+                }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
                 } else{
                     setMessage(`${result.description}`);
@@ -139,10 +140,20 @@ const TrxListScreen = () => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
-            setMessage(`거래 조회 호출에 실패하였습니다. \n 관리자에게 문의하시기 바랍니다.`);
-            setAlertVisible(true);
-            setDefaultMessage(false);
+            E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
+
+            if (err.message === 'Request timed out') {
+                setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setAlertVisible(true);
+
+            }else if (err.message === 'Network request failed') {
+                setMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                setAlertVisible(true);
+            }else{
+                setMessage('거래 조회 API 호출에 실패하였습니다.');
+                setAlertVisible(true);
+                setDefaultMessage(true);
+            }
         }finally {
             setIsLoadingMore(false);    // 반드시 여기서 false로!
         }
@@ -377,7 +388,9 @@ const TrxListScreen = () => {
                         <ScrollView>
                             <View style={styles.detailRow}>
                                 <Text style={styles.methodText}>전체</Text>
-                                <Text style={styles.methodAmount}>
+                                <Text style={[styles.methodAmount, {
+                                    color : UTILS.KRW(trxList.reduce((acc, curr) => acc + curr.amount, 0)) < 0 ? 'red' : 'black'
+                                }]}>
                                     {UTILS.KRW(trxList.reduce((acc, curr) => acc + curr.amount, 0))}
                                 </Text>
                             </View>

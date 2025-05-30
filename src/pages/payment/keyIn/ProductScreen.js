@@ -1,29 +1,67 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
-  Dimensions, KeyboardAvoidingView, Platform,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/DefaultModal';
 import refreshHooks from '../../../components/hooks/RefreshHooks';
 import UTILS from '../../../utils/Utils';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {moveScreen} from '../../../components/hooks/ScreenHooks';
+import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
+import {fetchWithTimeout} from '../../../components/Fetch';
+import {Logout} from '../../../components/Logout';
+import OpenStoreLink from '../../../components/OpenStoreLink';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
-    const { height: screenHeight } = Dimensions.get('window');
+    const navigation = useNavigation();
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalCallback, setModalCallback] = useState(() => () => {});
+    const [modalVisible, setModalVisible] = useState(false);
+    const [openLinkVisible, setOpenLinkVisible] = useState(() => () => {});
+    const [loading, setLoading] = useState(false);
+    const {height: screenHeight } = Dimensions.get('window');
     const [alertVisible, setAlertVisible] = useState(false);
     const [message, setMessage] = useState('');
+    const [defaultMessage, setDefaultMessage] = useState(false);
 
-    const confirmBtn = () =>{
+    useFocusEffect(
+        useCallback(() => {
+            if(!E2U?.method?.card?.includes("regular")){
+                E2U?.WARN(E2U?.method?.card);
+                setModalMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다. \n 메인으로 이동합니다.`);
+                setModalCallback(() => () => {
+                    moveScreen(navigation, "MAIN")
+                });
+                setModalVisible(true);
+            }
+        }, [])
+    );
+
+    const handleOpenLinkConfirm = () => {
+        OpenStoreLink();
+        setOpenLinkVisible(false);
+    };
+
+    async function handleExit(){
+        await Logout(navigation);
+    }
+
+    const confirmBtn = async () =>{
         // formData.cardType = 'personal'; // 고정
         // formData.productName = formData.productName || 'test';
-        // formData.amount = formData.amount || '1004';
+        // formData.amount = formData.amount || '51004';
         // formData.buyerName = formData.buyerName || '홍길동';
         // formData.phoneNo = formData.phoneNo || '01000000000';
 
@@ -52,7 +90,64 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             return;
         }
 
-        onNext();
+        try{
+            setLoading(true);
+            if(!formData.authType){
+                const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/trx/method/card`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': E2U?.key,
+                        'VERSION'  : E2U?.APP_VERSION,
+                    },
+                }, E2U?.NETWORK_TIMEOUT);
+
+                const result = await response.json();
+                E2U?.INFO(`카드 결제 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
+
+                if (result.code === '0000') {
+                    if(!result.data?.status){
+                        setModalMessage(`카드 결제 서비스 '이용 불가 상태' 가맹점 입니다. \n 메인으로 이동합니다.`);
+                        setModalCallback(() => () => {
+                            moveScreen(navigation, "MAIN")
+                        });
+                        setModalVisible(true);
+                    }else{
+                        // DB 데이터 할당
+                        formData.authType = result.data?.authType || "CE";
+                        formData.installment = result.data?.installment;
+                    }
+                }else{
+                    if (result.code === '0805' || result.code === '0803' ) {
+                        setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
+                        setModalCallback(() => handleExit);
+                        setModalVisible(true);
+                    }else if (result.code === '0802'){
+                        setOpenLinkVisible(true);
+                    }else{
+                        setMessage(`${result.description}`);
+                        setAlertVisible(true);
+                    }
+                }
+            }
+        }catch(err){
+            E2U?.WARN(`카드 결제 정보 조회 API 요청 실패 \n ${err}`);
+
+            if (err.message === 'Request timed out') {
+                setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setAlertVisible(true);
+
+            }else if (err.message === 'Network request failed') {
+                setMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                setAlertVisible(true);
+            }else{
+                setMessage('카드 결제 정보 조회 호출에 실패하였습니다.');
+                setAlertVisible(true);
+                setDefaultMessage(true);
+            }
+        }finally {
+            setLoading(false);
+            onNext();
+        }
     };
 
     const resetForm = () => {
@@ -77,6 +172,17 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                 message={message}
                 onConfirm={() => setAlertVisible(false)}
             />
+
+            <ConfirmOkModal
+                visible={modalVisible}
+                onConfirm={() => {
+                    modalCallback();
+                    setModalVisible(false);
+                }}
+                message={modalMessage}
+            />
+
+
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
               style={{ flex: 1 }}
@@ -186,6 +292,12 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                 </ScrollView>
             </SafeAreaView>
             </KeyboardAvoidingView>
+
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="#808080" />
+                </View>
+            )}
         </>
     );
 };

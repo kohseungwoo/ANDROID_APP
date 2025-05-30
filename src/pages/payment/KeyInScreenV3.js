@@ -10,7 +10,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 const KeyInScreenV3 = ({ formData, setFormData }) => {
     const [step, setStep] = useState('PRODUCT');
 
-    const resetFormData = () => {
+    const resetFormProductData = () => {
         setFormData({
             productName: '',
             amount: '',
@@ -21,10 +21,33 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
         });
     };
 
+    const resetFormRegularData = () => {
+        setFormData(prev => ({
+            ...prev,
+            cardType : 'personal',
+            personalCardNumber1: '',
+            personalCardNumber2: '',
+            personalCardNumber3: '',
+            personalCardNumber4: '',
+            corpInstallment: '',
+            personalExpiry: '',
+            personalPassword: '',
+            dob: '',
+            corpCardNumber1: '',
+            corpCardNumber2: '',
+            corpCardNumber3: '',
+            corpCardNumber4: '',
+            personalInstallment: '',
+            corpExpiry: '',
+            corpPassword: '',
+            brn: '',
+        }));
+    };
+
     useFocusEffect(
         useCallback(() => {
             setStep('PRODUCT');     // step 초기화
-            resetFormData();        // 데이터 초기화
+            resetFormProductData();        // 데이터 초기화
         }, [])
     );
 
@@ -75,7 +98,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
             return (
             <>
                 <SafeAreaView style={{ flex: 1 }}>
-                    {renderHeader("신용카드 수기결제", () => resetFormData())}
+                    {renderHeader("신용카드 수기결제", () => resetFormProductData())}
                     <ProductScreen
                         formData={formData}
                         setFormData={setFormData}
@@ -88,7 +111,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
         case 'REGULAR':{
             return (
                 <SafeAreaView style={{ flex: 1 }}>
-                    {renderHeader("신용카드 수기결제", () => resetFormData())}
+                    {renderHeader("신용카드 수기결제", () => resetFormRegularData())}
                     <RegularScreen
                         formData={formData}
                         setFormData={setFormData}

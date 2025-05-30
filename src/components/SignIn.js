@@ -17,6 +17,8 @@ import * as Keychain from 'react-native-keychain';
 import LottieView from 'lottie-react-native';
 import OpenStoreLink from './OpenStoreLink';
 import UpdateInfoModal from './modal/UpdateInfoModal';
+import ConfirmOkModal from './modal/ConfirmOkModal';
+import {fetchWithTimeout} from '../components/Fetch';
 
 const SignIn = () => {
     const navigation = useNavigation();
@@ -27,7 +29,9 @@ const SignIn = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
-
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalCallback, setModalCallback] = useState(() => () => {});
     const [splashLoading, setSplashLoading] = useState(true);
 
     // 앱 시작 시 자동 로그인 시도
@@ -36,26 +40,40 @@ const SignIn = () => {
             const credentials = await Keychain.getGenericPassword();
             if (credentials) {
                 const key = credentials.password;
-                global.E2U?.INFO('자동 로그인 실행!');
+                E2U?.INFO(`자동 로그인 실행! KEY : [${key}]`);
 
                 try {
-                    const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login/${key}`, {
+                    const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/auth/login`, {
                         method: 'GET',
                         headers: {
-                            'VERSION'  : global.E2U?.APP_VERSION,
+                            'Content-Type' : E2U?.CONTENT_TYPE_JSON,
+                            'Authorization': key,
+                            'VERSION'      : E2U?.APP_VERSION,
                         },
-                    });
+                    }, E2U?.NETWORK_TIMEOUT);
 
                     const result = await response.json();
-                    global.E2U?.INFO(`로그인 KEY 검증 API 응답 \n ${JSON.stringify(result)}`);
+                    E2U?.INFO(`로그인 KEY 검증 API 응답 \n ${JSON.stringify(result)}`);
 
                     if (result.code === '0000') {
                         handlerMove(result);
-                    }else if (result.code === '0009'){
+                    }else if (result.code === '0802'){
                         setOpenLinkVisible(true);
                     }
                 } catch (err) {
-                    console.warn('[시스템 오류] 자동 로그인 실패 \n' + err);
+                    E2U?.WARN('[시스템 오류] 자동 로그인 실패 \n' + err);
+
+                    if (err.message === 'Request timed out') {
+                        setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                        setModalVisible(true);
+
+                    }else if (err.message === 'Network request failed') {
+                        setModalMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                        setModalVisible(true);
+                    }else{
+                        setErrorMessage('[시스템 오류] 관리자 문의하시기 바랍니다.');
+                    }
+
                 } finally {
                     setIsLoading(false);
                 }
@@ -68,7 +86,7 @@ const SignIn = () => {
     }, []);
 
     const handleLogin = async () => {
-        global.E2U?.INFO('로그인 클릭!');
+        E2U?.INFO('로그인 클릭!');
         setIsLoading(true);
         try {
             if(!username || !password){
@@ -76,53 +94,71 @@ const SignIn = () => {
                 return;
             }
 
-            const response = await fetch(`${global.E2U?.API_URL}/v2/auth/login`, {
+            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/auth/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': global.E2U?.CONTENT_TYPE_JSON,
-                    'VERSION'  : global.E2U?.APP_VERSION,
+                    'Content-Type': E2U?.CONTENT_TYPE_JSON,
+                    'VERSION'  : E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     userId  : username,
                     pw      : password,
                 }),
-            });
+            }, E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            global.E2U?.INFO(`로그인 API 응답 \n ${JSON.stringify(result)}`);
+            E2U?.INFO(`로그인 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 await Keychain.setGenericPassword(username, result.data?.key || '');
                 handlerMove(result);
             }else{
-                if (result.code === '804') { // 보안 정책 위반으로 요청이 차단되었습니다.
+                if (result.code === '0804') { // 보안 정책 위반으로 요청이 차단되었습니다.
                     setErrorMessage(`${result.description}`);
-                }else if (result.code === '802'){
+                }else if (result.code === '0009'){
+                    await Keychain.setGenericPassword(username, result.data?.key || ''); // 구 버전의 경우 modal 문구 처리 후 로그인
+
+                    setModalMessage(`${result.description}`);
+                    setModalCallback(() => () => handlerMove(result));
+                    setModalVisible(true);
+                }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
                 } else{
                     setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
                 }
             }
         } catch (err) {
-            setErrorMessage('[시스템 오류] 관리자 문의하시기 바랍니다.');
+            E2U?.WARN('[시스템 오류] 로그인 실패 \n' + err);
+            if (err.message === 'Request timed out') {
+                setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setModalVisible(true);
+
+            }else if (err.message === 'Network request failed') {
+                setModalMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
+                setModalVisible(true);
+            }else{
+                setErrorMessage('[시스템 오류] 관리자 문의하시기 바랍니다.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
     const handlerMove = (result) => {
-        global.E2U.INFO(`로그인 응답 JSON \n ${JSON.stringify(result)}`);
+        E2U.INFO(`로그인 응답 JSON \n ${JSON.stringify(result)}`);
 
         if(!result?.data?.key){
             setErrorMessage('로그인을 재시도 해주시기 바랍니다.');
             return;
         }
 
-        // global.E2U 가맹점 정보 저장
-        global.E2U.key      = result?.data?.key   || '';
-        global.E2U.grade    = result?.data?.grade || '';
-        global.E2U.appId    = result?.data?.appId || '';
-        global.E2U.nick     = result?.data?.nick  || '';
+        // E2U 가맹점 정보 저장
+        E2U.key      = result?.data?.key      || '';
+        E2U.roleType = result?.data?.roleType || 'MEMBER';
+        E2U.grade    = result?.data?.grade    || '';
+        E2U.appId    = result?.data?.appId    || '';
+        E2U.nick     = result?.data?.nick     || '';
+        E2U.method   = result?.data?.method   || {};
 
         navigation.reset({
             index: 0,
@@ -160,6 +196,17 @@ const SignIn = () => {
             <UpdateInfoModal
                 visible={openLinkVisible}
                 onConfirm={handleOpenLinkConfirm}
+            />
+
+            <ConfirmOkModal
+                visible={modalVisible}
+                onConfirm={() => {
+                    if (typeof modalCallback === 'function') {
+                        modalCallback(); // 이제 여기서만 실행됨
+                    }
+                    setModalVisible(false);
+                }}
+                message={modalMessage}
             />
 
             <KeyboardAvoidingView

@@ -1,12 +1,12 @@
 const LOG = {
     INFO: (message) => {
-        if (global.E2U?.DEBUG) console.log(message);
+        if (E2U?.DEBUG) console.log(message);
     },
     WARN: (message) => {
-        if (global.E2U?.DEBUG) console.warn(message);
+        if (E2U?.DEBUG) console.warn(message);
     },
     ERROR: (message) => {
-        if (global.E2U?.DEBUG) console.error(message);
+        if (E2U?.DEBUG) console.error(message);
     }
 };
 
