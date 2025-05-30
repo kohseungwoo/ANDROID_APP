@@ -98,12 +98,12 @@ const TrxListScreen = () => {
         }
 
         try{
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/trx/paging`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/trx/paging`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     page : page,
@@ -113,10 +113,10 @@ const TrxListScreen = () => {
                         'oper'  : 'bt',
                     }],
                 }),
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`거래 조회 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`거래 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 const newRecords = result.data?.result || [];
@@ -140,7 +140,7 @@ const TrxListScreen = () => {
                 }
             }
         }catch(err){
-            E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');

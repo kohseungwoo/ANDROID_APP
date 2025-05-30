@@ -94,16 +94,16 @@ const RegularScreen = ({ formData, setFormData }) => {
 
     const getInstallment = async () => {
         try{
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/noint/latest`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/noint/latest`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result) {
                 if (result.code === '0805' || result.code === '0803' ) {
@@ -122,7 +122,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                 setDefaultMessage(true);
             }
         }catch(err){
-            E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setNointMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -229,12 +229,12 @@ const RegularScreen = ({ formData, setFormData }) => {
 
         try{
             setLoading(true);
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/api/pay`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/api/pay`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
-                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
                 },
                 body: JSON.stringify({
                     amount        : formData.amount,
@@ -254,10 +254,10 @@ const RegularScreen = ({ formData, setFormData }) => {
                     qty           : 1,
                     price         : formData.amount,
                 }),
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
             if (result.code === '0000') {
                 setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
                 setModalCallback(() => handleTrxList);
@@ -276,7 +276,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                 }
             }
         }catch(err){
-            E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');

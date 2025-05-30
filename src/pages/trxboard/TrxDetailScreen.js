@@ -40,20 +40,20 @@ const TrxDetailScreen = () => {
     const { item } = route.params;
 
     useEffect(() => {
-        E2U?.INFO('본사 정보 조회 API 요청');
+        global.E2U?.INFO('본사 정보 조회 API 요청');
 
         const companyCall = async () => {
             try{
-                const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/axios/company`, {
+                const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/axios/company`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': E2U?.key,
-                        'VERSION'  : E2U?.APP_VERSION,
+                        'Authorization': global.E2U?.key,
+                        'VERSION'  : global.E2U?.APP_VERSION,
                     },
-                }, E2U?.NETWORK_TIMEOUT);
+                }, global.E2U?.NETWORK_TIMEOUT);
 
                 const result = await response.json();
-                E2U?.INFO(`본사 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
+                global.E2U?.INFO(`본사 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
 
                 if (result.code === '0000') {
                     setCompanyName(result.data?.name || companyName);
@@ -73,7 +73,7 @@ const TrxDetailScreen = () => {
                     }
                 }
             }catch(err){
-                E2U?.WARN(`본사 정보 조회 API 요청 실패 \n ${err}`);
+                global.E2U?.WARN(`본사 정보 조회 API 요청 실패 \n ${err}`);
 
                 if (err.message === 'Request timed out') {
                     setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -100,7 +100,7 @@ const TrxDetailScreen = () => {
     };
 
     const refundBtn = async () => {
-        if(E2U?.roleType !== 'MANAGER'){
+        if(global.E2U?.roleType !== 'MANAGER'){
             setModalMessage(`'일반' 권한은 취소 요청이 불가능합니다. \n 확인 후 재시도 해주시기 바랍니다.`);
             setModalVisible(true);
             return;
@@ -108,22 +108,22 @@ const TrxDetailScreen = () => {
 
         try{
             setLoading(true);
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/api/refund`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/api/refund`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     rootTrxId   : `${item.trxId}`,
                     trackId     : `${item.trackId}`,
                     amount      : `${item.amount}`,
                 }),
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`취소 요청 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`취소 요청 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
@@ -143,7 +143,7 @@ const TrxDetailScreen = () => {
                 }
             }
         }catch(err){
-            E2U?.WARN(`취소 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`취소 API 요청 실패 \n ${err}`);
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setAlertVisible(true);
@@ -163,7 +163,7 @@ const TrxDetailScreen = () => {
     };
 
     const receiptBtn = (phoneNumber)=> {
-        const msg = `${E2U?.ADMIN_URL}/trx/receipt/${item.trxId}`;
+        const msg = `${global.E2U?.ADMIN_URL}/trx/receipt/${item.trxId}`;
         const url =
           Platform.OS === 'ios'
             ? `sms:${phoneNumber}&body=${encodeURIComponent(msg)}`
@@ -180,7 +180,7 @@ const TrxDetailScreen = () => {
                     setDefaultMessage(true);
                 }
             }).catch((err) =>
-                E2U?.WARN(`SMS 연결 실패 \n ${err}`,
+                global.E2U?.WARN(`SMS 연결 실패 \n ${err}`,
                 setInputVisible(false),
                 setMessage(`전표 전송에 실패하였습니다.`),
                 setDefaultMessage(true),
@@ -234,7 +234,7 @@ const TrxDetailScreen = () => {
                         <Text style={styles.hashTitle}>#{UTILS.convertMethod(item.method)}</Text>
 
                         <View style={styles.nickAndCloseRow}>
-                            <Text style={styles.mchtName}>{E2U?.nick}</Text>
+                            <Text style={styles.mchtName}>{global.E2U?.nick}</Text>
                             <TouchableOpacity onPress={() => {
                                 UTILS.trxDetailRef.current = true;
                                 navigation.goBack();
@@ -298,7 +298,7 @@ const TrxDetailScreen = () => {
                         <View style={styles.lightDivider} />
                         <View style={styles.row}>
                             <Text style={styles.label}>사용처</Text>
-                            <Text style={styles.value}>{E2U?.nick}</Text>
+                            <Text style={styles.value}>{global.E2U?.nick}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>주소</Text>

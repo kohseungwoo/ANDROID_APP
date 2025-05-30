@@ -95,7 +95,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
     const handlePaymentPress = (type) => {
         switch (type) {
             case 'CARD'     :
-                if(E2U?.method?.card?.includes("regular")){
+                if(global.E2U?.method?.card?.includes("regular")){
                     moveScreen(navigation, "PAYMENT"); break;
                 }else{
                     setMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다.`);
@@ -104,14 +104,14 @@ const MainV2 = ({ setRefreshControlProps }) => {
             case 'TRXLIST'  :
                 moveScreen(navigation, "TRXLIST"); break;
             case 'SMS':
-                if(E2U?.method?.add?.includes("link")){
+                if(global.E2U?.method?.add?.includes("link")){
                 }else{
                     setMessage(`SMS 결제 서비스 '이용 불가' 가맹점 입니다.`);
                     setAlertVisible(true);
                 }
                 break;
             case 'QR':
-                if(E2U?.method?.add?.includes("qr")){
+                if(global.E2U?.method?.add?.includes("qr")){
                 }else{
                     setMessage(`QR 결제 서비스 '이용 불가' 가맹점 입니다.`);
                     setAlertVisible(true);
@@ -153,12 +153,12 @@ const MainV2 = ({ setRefreshControlProps }) => {
     async function search(regDay) {
         try{
 
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/trx/paging`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/trx/paging`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     search : [{
@@ -167,10 +167,10 @@ const MainV2 = ({ setRefreshControlProps }) => {
                         'oper'  : 'bt',
                     }],
                 }),
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`대시보드 조회 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`대시보드 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if(result?.code === '0000') {
                 return result;
@@ -195,7 +195,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
             setDailyAmount(0);
             setMonthlyAmount(0);
 
-            E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setAlertVisible(true);
@@ -231,7 +231,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
                         setTransactions(totalMonth.data?.result);
                     }
                 } catch (err) {
-                    E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
+                    global.E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
                     if (err.message === 'Request timed out') {
                         setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                         setAlertVisible(true);
@@ -285,22 +285,22 @@ const MainV2 = ({ setRefreshControlProps }) => {
                 >
                     {/* ================ 기존 콘텐츠 시작 ================ */}
                     <View style={styles.merchantContainer}>
-                        {E2U?.roleType === 'MANAGER' && (
+                        {global.E2U?.roleType === 'MANAGER' && (
                             <View style={styles.badgeManager}>
                                 <Text style={styles.badgeText}>관리자</Text>
                             </View>
                         )}
 
-                        {E2U?.roleType === 'MEMBER' && (
+                        {global.E2U?.roleType === 'MEMBER' && (
                             <View style={styles.badgeMember}>
                                 <Text style={styles.badgeText}>일반</Text>
                             </View>
                         )}
 
                         <Text style={styles.merchantNick}>
-                            {E2U?.nick || ''}
+                            {global.E2U?.nick || ''}
                             <Text style={styles.grayText}>
-                                {E2U?.appId ? ` (${E2U?.appId})` : ''}
+                                {global.E2U?.appId ? ` (${global.E2U?.appId})` : ''}
                             </Text>
                         </Text>
                     </View>

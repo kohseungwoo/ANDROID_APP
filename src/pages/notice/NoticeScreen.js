@@ -82,17 +82,17 @@ const NoticeScreen = () => {
         }
 
         try {
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/${tabKey}/range`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/${tabKey}/range`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type' : E2U?.CONTENT_TYPE_JSON,
-                    'Authorization': E2U?.key,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
+                    'Authorization': global.E2U?.key,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`${tabKey} 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`${tabKey} 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 switch (tabKey){
@@ -117,7 +117,7 @@ const NoticeScreen = () => {
                 }
             }
         } catch (err) {
-            E2U?.WARN(`${tabKey} API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`${tabKey} API 요청 실패 \n ${err}`);
             if (err.message === 'Request timed out') {
                 setSelectedNotice('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setAlertVisible(true);

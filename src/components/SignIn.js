@@ -40,20 +40,20 @@ const SignIn = () => {
             const credentials = await Keychain.getGenericPassword();
             if (credentials) {
                 const key = credentials.password;
-                E2U?.INFO(`자동 로그인 실행! KEY : [${key}]`);
+                global.E2U?.INFO(`자동 로그인 실행! KEY : [${key}]`);
 
                 try {
-                    const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/auth/login`, {
+                    const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/auth/login`, {
                         method: 'GET',
                         headers: {
-                            'Content-Type' : E2U?.CONTENT_TYPE_JSON,
+                            'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
                             'Authorization': key,
-                            'VERSION'      : E2U?.APP_VERSION,
+                            'VERSION'      : global.E2U?.APP_VERSION,
                         },
-                    }, E2U?.NETWORK_TIMEOUT);
+                    }, global.E2U?.NETWORK_TIMEOUT);
 
                     const result = await response.json();
-                    E2U?.INFO(`로그인 KEY 검증 API 응답 \n ${JSON.stringify(result)}`);
+                    global.E2U?.INFO(`로그인 KEY 검증 API 응답 \n ${JSON.stringify(result)}`);
 
                     if (result.code === '0000') {
                         handlerMove(result);
@@ -61,7 +61,7 @@ const SignIn = () => {
                         setOpenLinkVisible(true);
                     }
                 } catch (err) {
-                    E2U?.WARN('[시스템 오류] 자동 로그인 실패 \n' + err);
+                    global.E2U?.WARN('[시스템 오류] 자동 로그인 실패 \n' + err);
 
                     if (err.message === 'Request timed out') {
                         setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -86,7 +86,7 @@ const SignIn = () => {
     }, []);
 
     const handleLogin = async () => {
-        E2U?.INFO('로그인 클릭!');
+        global.E2U?.INFO('로그인 클릭!');
         setIsLoading(true);
         try {
             if(!username || !password){
@@ -94,20 +94,20 @@ const SignIn = () => {
                 return;
             }
 
-            const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/auth/login`, {
+            const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/auth/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': E2U?.CONTENT_TYPE_JSON,
-                    'VERSION'  : E2U?.APP_VERSION,
+                    'Content-Type': global.E2U?.CONTENT_TYPE_JSON,
+                    'VERSION'  : global.E2U?.APP_VERSION,
                 },
                 body: JSON.stringify({
                     userId  : username,
                     pw      : password,
                 }),
-            }, E2U?.NETWORK_TIMEOUT);
+            }, global.E2U?.NETWORK_TIMEOUT);
 
             const result = await response.json();
-            E2U?.INFO(`로그인 API 응답 \n ${JSON.stringify(result)}`);
+            global.E2U?.INFO(`로그인 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
                 await Keychain.setGenericPassword(username, result.data?.key || '');
@@ -128,7 +128,7 @@ const SignIn = () => {
                 }
             }
         } catch (err) {
-            E2U?.WARN('[시스템 오류] 로그인 실패 \n' + err);
+            global.E2U?.WARN('[시스템 오류] 로그인 실패 \n' + err);
             if (err.message === 'Request timed out') {
                 setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setModalVisible(true);
@@ -145,20 +145,20 @@ const SignIn = () => {
     };
 
     const handlerMove = (result) => {
-        E2U.INFO(`로그인 응답 JSON \n ${JSON.stringify(result)}`);
+        global.E2U.INFO(`로그인 응답 JSON \n ${JSON.stringify(result)}`);
 
         if(!result?.data?.key){
             setErrorMessage('로그인을 재시도 해주시기 바랍니다.');
             return;
         }
 
-        // E2U 가맹점 정보 저장
-        E2U.key      = result?.data?.key      || '';
-        E2U.roleType = result?.data?.roleType || 'MEMBER';
-        E2U.grade    = result?.data?.grade    || '';
-        E2U.appId    = result?.data?.appId    || '';
-        E2U.nick     = result?.data?.nick     || '';
-        E2U.method   = result?.data?.method   || {};
+        // global.E2U 가맹점 정보 저장
+        global.E2U.key      = result?.data?.key      || '';
+        global.E2U.roleType = result?.data?.roleType || 'MEMBER';
+        global.E2U.grade    = result?.data?.grade    || '';
+        global.E2U.appId    = result?.data?.appId    || '';
+        global.E2U.nick     = result?.data?.nick     || '';
+        global.E2U.method   = result?.data?.method   || {};
 
         navigation.reset({
             index: 0,

@@ -38,8 +38,8 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
 
     useFocusEffect(
         useCallback(() => {
-            if(!E2U?.method?.card?.includes("regular")){
-                E2U?.WARN(E2U?.method?.card);
+            if(!global.E2U?.method?.card?.includes("regular")){
+                global.E2U?.WARN(global.E2U?.method?.card);
                 setModalMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다. \n 메인으로 이동합니다.`);
                 setModalCallback(() => () => {
                     moveScreen(navigation, "MAIN")
@@ -93,16 +93,16 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         try{
             setLoading(true);
             if(!formData.authType){
-                const response = await fetchWithTimeout(`${E2U?.API_URL}/v2/trx/method/card`, {
+                const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/trx/method/card`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': E2U?.key,
-                        'VERSION'  : E2U?.APP_VERSION,
+                        'Authorization': global.E2U?.key,
+                        'VERSION'  : global.E2U?.APP_VERSION,
                     },
-                }, E2U?.NETWORK_TIMEOUT);
+                }, global.E2U?.NETWORK_TIMEOUT);
 
                 const result = await response.json();
-                E2U?.INFO(`카드 결제 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
+                global.E2U?.INFO(`카드 결제 정보 조회 API 응답 \n ${JSON.stringify(result)}`);
 
                 if (result.code === '0000') {
                     if(!result.data?.status){
@@ -130,7 +130,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                 }
             }
         }catch(err){
-            E2U?.WARN(`카드 결제 정보 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.WARN(`카드 결제 정보 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
