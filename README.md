@@ -4,16 +4,15 @@
 #  로그보기 <br>
 > react-native log-android
 
-#  RN APK 생성
-> ./gradlew assembleDebug // debug 모드
+#  RN APK 생성 명령어
+> cd android > ./gradlew assembleDebug // debug 모드
 <br>
-> ./gradlew assembleRelease // release 모드
+> cd android > ./gradlew assembleRelease // release 모드
 
-
-# openSSL 설치
+# RN APK 생성 전 openSSL 설치
 > https://slproweb.com/products/Win32OpenSSL.html
 
-# 2.2 gradle.properties
+# RN APK 생성 전 gradle.properties 설정
 > STORE_FILE=build/outputs/e2utb-key.keystore // keyStore 정보 관리
 <br> STORE_PASSWORD=etou_1qa2ws
 <br> KEY_ALIAS=release-key
@@ -59,7 +58,3 @@
         }
     }
 
-
-# APK Release 배포
-    cd android
-    ./gradlew assembleRelease

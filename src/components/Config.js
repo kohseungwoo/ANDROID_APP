@@ -10,7 +10,7 @@ const Config = {
     DEV_ADMIN_URL       : "https://teadmin.e2u.kr",
     STG_ADMIN_URL       : "https://tsadmin.e2u.kr",
     PROD_ADMIN_URL      : "https://admin.e2u.kr",
-    NETWORK_TIMEOUT     : 10000,
+    NETWORK_TIMEOUT     : 30000,
     CONTENT_TYPE_JSON   : { 'Content-Type': 'application/json' },
 };
 
