@@ -6,8 +6,10 @@ import styles from '../../assets/styles/HeaderSubStyle';
 import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const KeyInScreenV3 = ({ formData, setFormData }) => {
+    const insets = useSafeAreaInsets();
     const [step, setStep] = useState('PRODUCT');
 
     const resetFormProductData = () => {
@@ -69,10 +71,10 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
     };
 
     const renderHeader = (title, onRefresh) => (
-        <View style={styles.header}>
+        <View style={[styles.header, {height: 60+insets.top, paddingTop:insets.top}]}>
             {step === "REGULAR" && (
                 <TouchableOpacity
-                    style={styles.backButton}
+                    style={[styles.backButton, {paddingTop:insets.top}]}
                     onPress={() => setStep('PRODUCT')}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
@@ -82,7 +84,7 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
             <Text style={styles.title}>{title}</Text>
 
             <TouchableOpacity
-                style={styles.refreshButton}
+                style={[styles.refreshButton, {paddingTop:insets.top}]}
                 onPress={onRefresh}
                 hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
             >

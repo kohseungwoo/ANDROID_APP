@@ -1,12 +1,14 @@
 import React from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation, useNavigationState} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../assets/styles/HeaderSubStyle';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 
 const HeaderSub = React.memo(({ title, onRefresh }) => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     const currentRouteName = useNavigationState((state) => {
         if (!state || !state.routes || state.index == null) return null;
@@ -23,10 +25,10 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
     const showReloadButton = !['DASHBOARD', 'MORE', 'NOTICE'].includes(currentRouteName?.toUpperCase());
 
     return (
-        <View style={styles.header}>
+        <View style={[styles.header, {height : 60 + insets.top, paddingTop:insets.top}]}>
             {showBackButton && (
                 <TouchableOpacity
-                    style={styles.backButton}
+                    style={[styles.backButton, {paddingTop:insets.top}]}
                     onPress={() => navigation.goBack()}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
@@ -37,7 +39,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
             {showReloadButton && (
                 <TouchableOpacity
-                    style={styles.refreshButton}
+                    style={[styles.refreshButton, {paddingTop:insets.top}]}
                     onPress={onRefresh}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >

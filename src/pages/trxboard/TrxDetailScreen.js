@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-    ActivityIndicator,
+    ActivityIndicator, Dimensions,
     Linking,
     Platform,
     SafeAreaView,
@@ -20,6 +20,7 @@ import InputModal from '../../components/modal/inputModal';
 import OpenStoreLink from '../../components/OpenStoreLink';
 import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../components/Fetch';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const TrxDetailScreen = () => {
     const navigation = useNavigation();
@@ -38,6 +39,10 @@ const TrxDetailScreen = () => {
     const [companyAddr , setCompanyAddr] = useState('경기도 성남시 수정구 위례광장로 19, 10층 1001호');
     const [companyTelNo, setCompanyTelNo] = useState('1600-4191');
     const { item } = route.params;
+
+    const insets = useSafeAreaInsets();
+    const {height: screenHeight } = Dimensions.get('window');
+
 
     useEffect(() => {
         global.E2U?.INFO('본사 정보 조회 API 요청');
@@ -228,7 +233,7 @@ const TrxDetailScreen = () => {
                 }}
             />
 
-            <SafeAreaView style={styles.safeContainer}>
+            <SafeAreaView style={[styles.safeContainer,{paddingTop:insets.top}]}>
                 <View style={styles.container}>
                     <View style={styles.title}>
                         <Text style={styles.hashTitle}>#{UTILS.convertMethod(item.method)}</Text>
@@ -328,7 +333,7 @@ const TrxDetailScreen = () => {
                         </View>
 
 
-                    <View style={styles.footer}>
+                    <View style={[styles.footer, {top: screenHeight-(screenHeight-insets.bottom)}]}>
                         <View style={styles.actionRow}>
                             {item.trxType === 'authorized' && item.rfdId === '' && (
                                 <TouchableOpacity

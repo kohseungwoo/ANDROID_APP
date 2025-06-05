@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {moveParamScreen} from '../../components/hooks/ScreenHooks';
 import DefaultModal from '../../components/modal/DefaultModal';
 import {Logout} from '../../components/Logout';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const menuItems = [
     {
@@ -45,6 +46,7 @@ const MoreMenuScreen = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
+    const insets = useSafeAreaInsets();
 
     const handlePress = useCallback((item) => {
         switch (item.key) {
@@ -70,7 +72,7 @@ const MoreMenuScreen = () => {
                 defaultMessage={defaultMessage}
             />
 
-            <SafeAreaView style={styles.safeArea}>
+            <SafeAreaView style={[styles.safeArea, {paddingTop: insets.top}]}>
                 <ScrollView style={styles.container}>
                 {/* 상단: 로그아웃 버튼 + 유저 정보 */}
                 <View style={styles.headerBox}>

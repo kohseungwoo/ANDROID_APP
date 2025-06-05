@@ -10,7 +10,7 @@ export default StyleSheet.create({
         backgroundColor: '#f7f7f7',
     },
     scrollViewContent: {
-        paddingBottom: 60,
+        paddingBottom: 30,
     },
     merchantContainer:{
         flexDirection: 'row',
@@ -243,7 +243,6 @@ export default StyleSheet.create({
         color: '#333',
     },
     footerContainer: {
-        height: 50,
         bottom: 20,
         marginHorizontal: 20,
         flexDirection: 'row',

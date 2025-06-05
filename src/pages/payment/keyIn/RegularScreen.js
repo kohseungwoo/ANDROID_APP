@@ -22,6 +22,7 @@ import UTILS, {trxDetailRef} from '../../../utils/Utils';
 import OpenStoreLink from '../../../components/OpenStoreLink';
 import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 
 const RegularScreen = ({ formData, setFormData }) => {
@@ -29,6 +30,8 @@ const RegularScreen = ({ formData, setFormData }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [validVisible, setValidVisible] = useState(false);
     const { height: screenHeight } = Dimensions.get('window');
+    const insets = useSafeAreaInsets();
+
     const [message, setMessage] = useState('');
     const [validMessage, setValidMessage] = useState('');
     const [defaultMessage, setDefaultMessage] = useState(false);
@@ -93,6 +96,7 @@ const RegularScreen = ({ formData, setFormData }) => {
     };
 
     const getInstallment = async () => {
+        setLoading(true);
         try{
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/noint/latest`, {
                 method: 'GET',
@@ -104,6 +108,7 @@ const RegularScreen = ({ formData, setFormData }) => {
 
             const result = await response.json();
             global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
+
 
             if (result) {
                 if (result.code === '0805' || result.code === '0803' ) {
@@ -136,6 +141,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                 setAlertVisible(true);
                 setDefaultMessage(true);
             }
+        }finally {
+            setLoading(false);
         }
     };
 
@@ -376,7 +383,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                         <Text style={styles.title}>카드정보</Text>
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={getInstallment}>
+                    <TouchableOpacity style={styles.button} onPress={getInstallment} disabled={loading} >
                         <Text style={styles.buttonText}>카드사 무이자 할부안내</Text>
                     </TouchableOpacity>
                 </View>
@@ -743,10 +750,12 @@ const RegularScreen = ({ formData, setFormData }) => {
                     )}
                 </View>
 
-                <View style={styles.footerContainer}>
-                    <TouchableOpacity style={styles.fullWidthTouchable} onPress={paymentBtn}>
-                        <Text style={styles.footerButton}>결제하기</Text>
-                    </TouchableOpacity>
+                <View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>
+                    <View style={[styles.footerContainer, {top : screenHeight-(screenHeight-insets.bottom)}]}>
+                        <TouchableOpacity style={styles.fullWidthTouchable} onPress={paymentBtn}>
+                            <Text style={styles.footerButton}>결제하기</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
 

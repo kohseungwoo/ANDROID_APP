@@ -174,8 +174,6 @@ export default StyleSheet.create({
 
     footerContainer: {
         height: 50,
-        marginTop: 20,
-        marginBottom: 60,
     },
 
     fullWidthTouchable: {

@@ -10,6 +10,7 @@ import ConfirmOkModal from '../../components/modal/ConfirmOkModal';
 import OpenStoreLink from '../../components/OpenStoreLink';
 import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../components/Fetch';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const NoticeScreen = () => {
     const navigation = useNavigation();
@@ -27,6 +28,7 @@ const NoticeScreen = () => {
     const [noticeList, setNoticeList] = useState([]);
     const [faqList, setFaqList] = useState([]);
     const [contactList, setContactList] = useState([]);
+    const insets = useSafeAreaInsets();
 
     const refresh = () => {};
     const { refreshing, onRefresh } = refreshHooks(refresh);
@@ -313,7 +315,7 @@ const NoticeScreen = () => {
                 onConfirm={handleOpenLinkConfirm}
             />
 
-            <SafeAreaView style={styles.safeArea}>
+            <SafeAreaView style={[styles.safeArea, {paddingBottom:insets.bottom}]}>
                 <HeaderSub title={tabConfig[activeTab].title} />
                 <View style={styles.container}>
                       <ScrollView

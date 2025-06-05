@@ -2,7 +2,6 @@ import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     header: {
-        height: 60,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
@@ -19,7 +18,6 @@ export default StyleSheet.create({
     backButton: {
         position: 'absolute',
         left: 16,
-        top: 18,
     },
     title: {
         fontSize: 18,
@@ -29,7 +27,6 @@ export default StyleSheet.create({
     refreshButton: {
         position: 'absolute',
         right: 16,
-        top: 18,
     },
     safeArea: {
         flex: 1,

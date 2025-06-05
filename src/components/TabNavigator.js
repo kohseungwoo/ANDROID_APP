@@ -10,6 +10,7 @@ import trxList from '../pages/trxboard/TrxListScreen';
 import more from '../pages/more/MoreScreen';
 import ConfirmModal from './modal/ConfirmModal';
 import usePortraitLock from './hooks/UnlockHooks';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +19,7 @@ const TabNavigator = () => {
 
     const [exitVisible, setExitVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
+    const insets = useSafeAreaInsets();
 
     const tabScreens = [
         {
@@ -101,8 +103,8 @@ const TabNavigator = () => {
                         : {
                             backgroundColor: '#fff',
                             paddingTop: 10,
-                            height: 60,
-                            paddingBottom: 0,
+                            height: 60 + insets.bottom,
+                            paddingBottom: insets.bottom,
                             borderTopWidth: 0.5,
                             borderColor:'#ccc',
                             // elevation: 10,  // 높여서 그림자 효과 강조
