@@ -55,11 +55,11 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     }
 
     const confirmBtn = async () =>{
-        formData.cardType = 'personal'; // 고정
-        formData.productName = formData.productName || 'test';
-        formData.amount = formData.amount || '51004';
-        formData.buyerName = formData.buyerName || '홍길동';
-        formData.phoneNo = formData.phoneNo || '01000000000';
+        // formData.cardType = 'personal'; // 고정
+        // formData.productName = formData.productName || 'test';
+        // formData.amount = formData.amount || '51004';
+        // formData.buyerName = formData.buyerName || '홍길동';
+        // formData.phoneNo = formData.phoneNo || '01000000000';
 
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {

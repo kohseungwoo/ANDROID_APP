@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useFocusEffect} from '@react-navigation/native';
-import {BackHandler, Keyboard, Platform} from 'react-native';
+import {BackHandler, Keyboard, NativeModules, Platform} from 'react-native';
 
 import TabButton from '../components/TabButton';
 import dashboard from '../pages/dashboard/DashboardScreen';
@@ -17,6 +17,7 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
     usePortraitLock();
 
+    const { ExitApp } = NativeModules;
     const [exitVisible, setExitVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const insets = useSafeAreaInsets();
@@ -82,7 +83,7 @@ const TabNavigator = () => {
     const handleExit = () => {
         setExitVisible(false);
         if (Platform.OS === 'android') {
-            BackHandler.exitApp();
+            ExitApp.exitApp();
         }
     };
 

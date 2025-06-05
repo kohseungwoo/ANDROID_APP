@@ -1,8 +1,9 @@
 import React, {useCallback, useState} from 'react';
 import SignIn from '../../components/SignIn';
 import {useFocusEffect} from '@react-navigation/native';
-import {BackHandler, Platform} from 'react-native';
+import {BackHandler, NativeModules, Platform} from 'react-native';
 import ConfirmModal from '../../components/modal/ConfirmModal';
+const { ExitApp } = NativeModules;
 
 const SignInScreen = () => {
     const [exitVisible, setExitVisible] = useState(false);
@@ -22,7 +23,7 @@ const SignInScreen = () => {
     const handleExit = () => {
         setExitVisible(false);
         if (Platform.OS === 'android') {
-            BackHandler.exitApp();
+            ExitApp.exitApp();
         }
     };
 
