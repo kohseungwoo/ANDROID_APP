@@ -2,11 +2,8 @@ import React, {useCallback, useState} from 'react';
 import {
     ActivityIndicator,
     Dimensions,
-    KeyboardAvoidingView,
     Platform,
-    RefreshControl,
     SafeAreaView,
-    ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
@@ -23,6 +20,7 @@ import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {Logout} from '../../../components/Logout';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
     const navigation = useNavigation();
@@ -36,6 +34,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [message, setMessage] = useState('');
     const [defaultMessage, setDefaultMessage] = useState(false);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -55,11 +54,11 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     }
 
     const confirmBtn = async () =>{
-        // formData.cardType = 'personal'; // 고정
-        // formData.productName = formData.productName || 'test';
-        // formData.amount = formData.amount || '51004';
-        // formData.buyerName = formData.buyerName || '홍길동';
-        // formData.phoneNo = formData.phoneNo || '01000000000';
+        formData.cardType = 'personal'; // 고정
+        formData.productName = formData.productName || 'test';
+        formData.amount = formData.amount || '51004';
+        formData.buyerName = formData.buyerName || '홍길동';
+        formData.phoneNo = formData.phoneNo || '01000000000';
 
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {
@@ -179,18 +178,22 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             />
 
 
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-              style={{ flex: 1 }}
+            <KeyboardAwareScrollView
+              style={styles.container}
+              contentContainerStyle={styles.contentContainer}
+              enableOnAndroid={true} // Android에서 스크롤 처리 허용
+              enableAutomaticScroll={true} // 포커스 시 자동 스크롤
+              extraScrollHeight={80}
+              keyboardShouldPersistTaps="handled"
             >
-                <SafeAreaView style={{ flex: 1, height:screenHeight}}>
-                    <ScrollView
-                        style={styles.container}
-                        contentContainerStyle={styles.contentContainer}
-                        refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                        }
-                    >
+                <SafeAreaView style={{width: '100%'}}>
+                    {/*<ScrollView*/}
+                    {/*    style={styles.container}*/}
+                    {/*    contentContainerStyle={styles.contentContainer}*/}
+                    {/*    refreshControl={*/}
+                    {/*        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />*/}
+                    {/*    }*/}
+                    {/*>*/}
                         {/* 헤더 및 입력 필드들 */}
                         <View style={styles.header}>
                             <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
@@ -287,9 +290,9 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </ScrollView>
+                    {/*</ScrollView>*/}
                 </SafeAreaView>
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
 
             {loading && (
                 <View style={styles.loadingOverlay}>

@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
     page: {
@@ -7,9 +7,8 @@ export default StyleSheet.create({
     },
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: 'center',
+        paddingVertical: '50%', // 대신 중앙 정렬 느낌 유지
         alignItems: 'center',
-        minHeight: Dimensions.get('window').height,
     },
     layoutContainer: {
         width: '90%',

@@ -1,15 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    ActivityIndicator,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import {ActivityIndicator, Image, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../assets/styles/SignInStyle';
 import RNBootSplash from 'react-native-bootsplash';
@@ -19,13 +9,14 @@ import OpenStoreLink from './OpenStoreLink';
 import UpdateInfoModal from './modal/UpdateInfoModal';
 import ConfirmOkModal from './modal/ConfirmOkModal';
 import {fetchWithTimeout} from '../components/Fetch';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const SignIn = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('demo_kovan');
+    const [password, setPassword] = useState('12345');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
@@ -193,27 +184,25 @@ const SignIn = () => {
 
     return (
         <>
-            <UpdateInfoModal
-                visible={openLinkVisible}
-                onConfirm={handleOpenLinkConfirm}
-            />
-
+            <UpdateInfoModal visible={openLinkVisible} onConfirm={handleOpenLinkConfirm} />
             <ConfirmOkModal
                 visible={modalVisible}
                 onConfirm={() => {
-                    if (typeof modalCallback === 'function') {
-                        modalCallback(); // 이제 여기서만 실행됨
-                    }
+                    if (typeof modalCallback === 'function') modalCallback();
                     setModalVisible(false);
                 }}
                 message={modalMessage}
             />
 
-            <KeyboardAvoidingView
+            <KeyboardAwareScrollView
                 style={styles.page}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                contentContainerStyle={styles.scrollContainer}
+                enableOnAndroid={true} // Android에서 스크롤 처리 허용
+                enableAutomaticScroll={true} // 포커스 시 자동 스크롤
+                extraScrollHeight={80}
+                keyboardShouldPersistTaps="handled"
             >
-                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <SafeAreaView style={{width: '100%'}}>
                     <View style={styles.layoutContainer}>
                         <View style={styles.layoutTitleContainer}>
                             <Text style={styles.bgText}>Sign In</Text>
@@ -221,10 +210,7 @@ const SignIn = () => {
 
                         <View style={styles.loginContainer}>
                             <View style={styles.logoContainer}>
-                                <Image
-                                    source={require('../assets/images/logo.png')}
-                                    style={styles.logo}
-                                />
+                                <Image source={require('../assets/images/logo.png')} style={styles.logo} />
                             </View>
 
                             <View style={styles.inputGroup}>
@@ -269,7 +255,6 @@ const SignIn = () => {
                                 )}
                             </View>
 
-
                             <View style={styles.errorContainer}>
                                 {errorMessage ? (
                                     <Text style={styles.errorMessage}>{errorMessage}</Text>
@@ -277,10 +262,7 @@ const SignIn = () => {
                             </View>
 
                             <TouchableOpacity
-                                style={[
-                                    styles.loginBtn,
-                                    isLoading && styles.loginBtnLoading
-                                ]}
+                                style={[styles.loginBtn, isLoading && styles.loginBtnLoading]}
                                 onPress={handleLogin}
                                 disabled={isLoading}
                             >
@@ -292,9 +274,8 @@ const SignIn = () => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-
+                </SafeAreaView>
+            </KeyboardAwareScrollView>
         </>
     );
 };

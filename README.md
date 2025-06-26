@@ -4,6 +4,9 @@
 #  로그보기 <br>
 > react-native log-android
 
+# RN APP BUNDLE 생성 명령어 (구글 스토어에 업로드 하기 위함)
+> cd android > ./gradlew bundleRelease // release 모드
+
 #  RN APK 생성 명령어
 > cd android > ./gradlew assembleDebug // debug 모드
 <br>

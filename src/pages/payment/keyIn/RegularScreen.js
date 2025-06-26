@@ -1,15 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import {ActivityIndicator, Dimensions, Platform, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
@@ -23,7 +13,7 @@ import OpenStoreLink from '../../../components/OpenStoreLink';
 import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const RegularScreen = ({ formData, setFormData }) => {
     const navigation = useNavigation();
@@ -62,6 +52,8 @@ const RegularScreen = ({ formData, setFormData }) => {
     const dobRef = useRef(null);
     const brnRef = useRef(null);
     const [installment, setInstallment] = useState([]);
+
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         if (formData?.installment) {
@@ -367,16 +359,15 @@ const RegularScreen = ({ formData, setFormData }) => {
                 onConfirm={handleOpenLinkConfirm}
             />
 
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-              style={{ flex: 1 }}
-            >
-            <ScrollView
-                style={[styles.container, {height:screenHeight}]}
-                contentContainerStyle={styles.contentContainer} // 키보드 위 공간 확보
+            <KeyboardAwareScrollView
+                style={styles.container}
+                contentContainerStyle={styles.contentContainer}
+                enableOnAndroid={true} // Android에서 스크롤 처리 허용
+                enableAutomaticScroll={true} // 포커스 시 자동 스크롤
+                ref={scrollRef}
+                extraScrollHeight={80}
                 keyboardShouldPersistTaps="handled"
             >
-
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="card-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
@@ -468,10 +459,13 @@ const RegularScreen = ({ formData, setFormData }) => {
                                            style={styles.cardInput}
                                            maxLength={4}
                                            value={formData.personalCardNumber4}
-                                           onChangeText={(text) => setFormData({
-                                               ...formData,
-                                               personalCardNumber4: UTILS.onlyNumber(text),
-                                           })}
+                                           onChangeText={(text) => {
+                                               const number = UTILS.onlyNumber(text);
+                                               setFormData({ ...formData, personalCardNumber4: number });
+                                               if (number.length === 4) {
+                                                   expiryPersRef.current?.focus();
+                                               }
+                                           }}
                                 />
                             </View>
 
@@ -553,7 +547,10 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                 const number = UTILS.onlyNumber(text);
                                                 setFormData({ ...formData, personalPassword: number });
                                                 if (number.length === 2) {
-                                                    dobRef.current?.focus();
+                                                    setTimeout(() => {
+                                                        scrollRef.current?.scrollToFocusedInput(dobRef.current, 200);
+                                                        dobRef.current?.focus();
+                                                    }, 100);
                                                 }
                                             }}
                                         />
@@ -721,7 +718,10 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                        const number = UTILS.onlyNumber(text);
                                                        setFormData({ ...formData, corpPassword: number });
                                                        if (number.length === 2) {
-                                                           brnRef.current?.focus();
+                                                           setTimeout(() => {
+                                                               scrollRef.current?.scrollToFocusedInput(brnRef.current, 200);
+                                                               brnRef.current?.focus();
+                                                           }, 100);
                                                        }
                                                    }}
                                         />
@@ -757,9 +757,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </ScrollView>
-
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <ActivityIndicator size="large" color="#808080" />

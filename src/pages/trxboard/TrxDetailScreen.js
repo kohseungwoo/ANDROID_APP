@@ -258,6 +258,11 @@ const TrxDetailScreen = () => {
                         </View>
 
                         <View style={styles.row}>
+                            <Text style={styles.label}>상품명</Text>
+                            <Text style={styles.value}>{item.productName}</Text>
+                        </View>
+
+                        <View style={styles.row}>
                             <Text style={styles.label}>거래구분</Text>
                             <Text style={styles.value}>{UTILS.convertMethod(item.method)} (체크)</Text>
                         </View>

@@ -57,7 +57,7 @@ export default StyleSheet.create({
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     label: {
         fontSize: 14,
@@ -79,7 +79,7 @@ export default StyleSheet.create({
         borderBottomWidth: 0.5,
         borderColor: '#808080',
         opacity: 0.5,
-        marginVertical: 10,
+        marginVertical: 8,
     },
     footer: {
         // paddingHorizontal : 20,
@@ -87,7 +87,7 @@ export default StyleSheet.create({
     },
     button: {
         backgroundColor: '#253e6d',
-        paddingVertical: 14,
+        paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
     },

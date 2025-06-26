@@ -258,46 +258,6 @@ const TrxListScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/*<ScrollView*/}
-                {/*    style={styles.container}*/}
-                {/*    contentContainerStyle={styles.contentContainer}*/}
-                {/*    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}*/}
-                {/*>*/}
-
-                {/*    <View style={styles.whiteBackground}>*/}
-                {/*        {trxList?.map((item, index) => {*/}
-                {/*            const isLastItem = index === trxList?.length - 1;*/}
-                {/*            const shouldShowBorder = trxList?.length <= 5 && isLastItem;*/}
-
-                {/*            return (*/}
-                {/*                <TouchableOpacity*/}
-                {/*                    key={item.trxId}*/}
-                {/*                    onPress={() => navigation.navigate('TRXDETAIL', { item })}*/}
-                {/*                    activeOpacity={0.7}*/}
-                {/*                >*/}
-                {/*                    <View style={[styles.transactionItem, shouldShowBorder && styles.lastTransactionItem]}>*/}
-                {/*                        <View style={styles.productRow}>*/}
-                {/*                            <Text style={styles.productName} numberOfLines={1}>*/}
-                {/*                                {UTILS.slice(item.productName, 14)}*/}
-                {/*                            </Text>*/}
-                {/*                            <View style={styles.amountWithArrow}>*/}
-                {/*                                <Text style={[styles.amount, item.amount < 0 && styles.amountNegative]}>*/}
-                {/*                                    {UTILS.KRW(item.amount)}*/}
-                {/*                                </Text>*/}
-                {/*                                <MaterialIcons name="arrow-forward-ios" size={12} color="#adadad" />*/}
-                {/*                            </View>*/}
-                {/*                        </View>*/}
-                {/*                        <Text style={styles.transactionDate}>*/}
-                {/*                            {moment(item.regDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')}*/}
-                {/*                        </Text>*/}
-                {/*                        <Text style={styles.transactionMethod}>{UTILS.convertMethod(item.method)}</Text>*/}
-                {/*                    </View>*/}
-                {/*                </TouchableOpacity>*/}
-                {/*            );*/}
-                {/*        })}*/}
-                {/*    </View>*/}
-                {/*</ScrollView>*/}
-
                 <FlatList
                     data={trxList}
                     keyExtractor={(item) => item.trxId.toString()}
@@ -385,7 +345,7 @@ const TrxListScreen = () => {
                             <Text style={styles.totalAmountLabel}>결제수단 내역</Text>
                         </View>
 
-                        <ScrollView>
+                        <ScrollView style={{paddingBottom: 15}}>
                             <View style={styles.detailRow}>
                                 <Text style={styles.methodText}>전체</Text>
                                 <Text style={[styles.methodAmount, {
