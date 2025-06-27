@@ -1,14 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    Platform,
-    SafeAreaView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import {ActivityIndicator, Dimensions, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/DefaultModal';
@@ -67,7 +58,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             return;
         }
 
-        if (!amount) {
+        if (!amount || Number(amount) === 0) {
             setMessage('결제금액을 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;

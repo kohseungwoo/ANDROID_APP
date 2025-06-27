@@ -12,7 +12,8 @@ global.E2U.INFO  = Log.INFO;
 global.E2U.WARN  = Log.WARN;
 global.E2U.ERROR = Log.ERROR;
 
-console.log(`ENV : ${global.E2U?.ENV}`);
+global.E2U.INFO(`ENV : ${global.E2U?.ENV}`);
+global.E2U.INFO(`VERSION : ${global.E2U?.APP_VERSION}`);
 global.E2U.INFO(`API_URL : ${global.E2U?.API_URL}`);
 global.E2U.INFO(`ADMIN_URL : ${global.E2U?.ADMIN_URL}`);
 

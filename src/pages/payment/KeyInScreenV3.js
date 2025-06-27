@@ -1,91 +1,129 @@
-import React, {useCallback, useState} from 'react';
-import {useFocusEffect} from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import ProductScreen from './keyIn/ProductScreen';
 import RegularScreen from './keyIn/RegularScreen';
+import LinkSmsPayScreen from '../linkpay/LinkSmsPayScreen';
+import LinkQrPayScreen from '../linkpay/LinkQrPayScreen';
 import styles from '../../assets/styles/HeaderSubStyle';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const KeyInScreenV3 = ({ formData, setFormData }) => {
+const KeyInScreenV3 = ({ formData, setFormData, param }) => {
     const insets = useSafeAreaInsets();
-    const [step, setStep] = useState('PRODUCT');
+    const [step, setStep] = useState('CARD_PRODUCT');
 
-    const resetFormProductData = () => {
-        setFormData({
-            productName: '',
-            amount: '',
-            buyerName: '',
-            phoneNo: '',
-            udf1: '',
-            cardType: 'personal',
-        });
+    const resetFormProductData = () => setFormData({
+        productName: '',
+        amount: '',
+        buyerName: '',
+        phoneNo: '',
+        udf1: '',
+        cardType: 'personal',
+    });
+
+    const resetFormRegularData = () => setFormData(prev => ({
+        ...prev,
+        cardType: 'personal',
+        personalCardNumber1: '',
+        personalCardNumber2: '',
+        personalCardNumber3: '',
+        personalCardNumber4: '',
+        corpInstallment: '',
+        personalExpiry: '',
+        personalPassword: '',
+        dob: '',
+        corpCardNumber1: '',
+        corpCardNumber2: '',
+        corpCardNumber3: '',
+        corpCardNumber4: '',
+        personalInstallment: '',
+        corpExpiry: '',
+        corpPassword: '',
+        brn: '',
+    }));
+
+    const resetFormLinkData = () => setFormData({
+        addType: 'link',
+        directMethod: '',
+        selectedMethod: '',
+        amount: 0,
+        installment: '00',
+        sellerMemo1: '',
+        sellerMemo2: '',
+    });
+
+    // Step configs
+    const stepConfigs = {
+        CARD_PRODUCT: {
+            title: '신용카드 수기결제',
+            Component: ProductScreen,
+            onRefresh: resetFormProductData,
+            onNext: () => setStep('CARD_REGULAR'),
+        },
+        CARD_REGULAR: {
+            title: '신용카드 수기결제',
+            Component: RegularScreen,
+            onRefresh: resetFormRegularData,
+            onNext: () => setStep('CARD_COMPLETE'),
+            onBack: () => setStep('CARD_PRODUCT'),
+        },
+        SMS_PRODUCT: {
+            title: 'SMS 결제',
+            Component: ProductScreen,
+            onRefresh: resetFormProductData,
+            onNext: () => setStep('SMS_PAYMENT'),
+        },
+        SMS_PAYMENT: {
+            title: 'SMS 결제',
+            Component: LinkSmsPayScreen,
+            onRefresh: resetFormLinkData,
+            onBack: () => setStep('SMS_PRODUCT'),
+        },
+        QR_PRODUCT: {
+            title: 'QR 결제',
+            Component: ProductScreen,
+            onRefresh: resetFormProductData,
+            onNext: () => setStep('QR_PAYMENT'),
+        },
+        QR_PAYMENT: {
+            title: 'QR 결제',
+            Component: LinkQrPayScreen,
+            onRefresh: resetFormLinkData,
+            onBack: () => setStep('QR_PRODUCT'),
+        },
     };
 
-    const resetFormRegularData = () => {
-        setFormData(prev => ({
-            ...prev,
-            cardType : 'personal',
-            personalCardNumber1: '',
-            personalCardNumber2: '',
-            personalCardNumber3: '',
-            personalCardNumber4: '',
-            corpInstallment: '',
-            personalExpiry: '',
-            personalPassword: '',
-            dob: '',
-            corpCardNumber1: '',
-            corpCardNumber2: '',
-            corpCardNumber3: '',
-            corpCardNumber4: '',
-            personalInstallment: '',
-            corpExpiry: '',
-            corpPassword: '',
-            brn: '',
-        }));
-    };
-
+    // Handle param change
     useFocusEffect(
         useCallback(() => {
-            setStep('PRODUCT');     // step 초기화
-            resetFormProductData();        // 데이터 초기화
-        }, [])
+            if (param === 'sms') setStep('SMS_PRODUCT');
+            else if (param === 'qr') setStep('QR_PRODUCT');
+            else {
+                setStep('CARD_PRODUCT');
+                resetFormProductData();
+            }
+        }, [param])
     );
 
-    const next = () => {
-        switch (step) {
-            case 'PRODUCT': setStep('REGULAR'); break;
-            case 'REGULAR': setStep('COMPLETE'); break;
-            default: console.warn('No next step from', step); break;
-        }
-    };
+    const current = stepConfigs[step];
+    if (!current) return null;
 
-    const prev = () => {
-        switch (step) {
-            case 'REGULAR' : setStep('PRODUCT'); break;
-            default:
-                console.warn('No previous step from', step);
-                break;
-        }
-    };
-
-    const renderHeader = (title, onRefresh) => (
-        <View style={[styles.header, {height: 60+insets.top, paddingTop:insets.top}]}>
-            {step === "REGULAR" && (
+    const Header = () => (
+        <View style={[styles.header, { height: 60 + insets.top, paddingTop: insets.top }]}>
+            {current.onBack && (
                 <TouchableOpacity
-                    style={[styles.backButton, {paddingTop:insets.top}]}
-                    onPress={() => setStep('PRODUCT')}
+                    style={[styles.backButton, { paddingTop: insets.top }]}
+                    onPress={current.onBack}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
                     <AntDesign name="arrowleft" size={20} color="#808080" />
                 </TouchableOpacity>
             )}
-            <Text style={styles.title}>{title}</Text>
-
+            <Text style={styles.title}>{current.title}</Text>
             <TouchableOpacity
-                style={[styles.refreshButton, {paddingTop:insets.top}]}
-                onPress={onRefresh}
+                style={[styles.refreshButton, { paddingTop: insets.top }]}
+                onPress={current.onRefresh}
                 hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
             >
                 <AntDesign name="reload1" size={20} color="#808080" />
@@ -93,39 +131,17 @@ const KeyInScreenV3 = ({ formData, setFormData }) => {
         </View>
     );
 
-
-
-    switch (step) {
-        case 'PRODUCT': {
-            return (
-            <>
-                <SafeAreaView style={{ flex: 1 }}>
-                    {renderHeader("신용카드 수기결제", () => resetFormProductData())}
-                    <ProductScreen
-                        formData={formData}
-                        setFormData={setFormData}
-                        onNext={next}
-                    />
-                </SafeAreaView>
-            </>
-            );
-        }
-        case 'REGULAR':{
-            return (
-                <SafeAreaView style={{ flex: 1 }}>
-                    {renderHeader("신용카드 수기결제", () => resetFormRegularData())}
-                    <RegularScreen
-                        formData={formData}
-                        setFormData={setFormData}
-                        onNext={next}
-                        onBack={prev}
-                    />
-                </SafeAreaView>
-            );
-        }
-        default:
-            return null;
-    }
+    return (
+        <SafeAreaView style={{ flex: 1 }}>
+            <Header />
+            <current.Component
+                formData={formData}
+                setFormData={setFormData}
+                onNext={current.onNext}
+                onBack={current.onBack}
+            />
+        </SafeAreaView>
+    );
 };
 
 export default KeyInScreenV3;

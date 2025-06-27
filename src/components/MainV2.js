@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {moveParamScreen, moveScreen} from './hooks/ScreenHooks';
+import {moveParamScreen, moveRootScreen, moveScreen} from './hooks/ScreenHooks';
 import Swiper from 'react-native-swiper';
 import UTILS from '../utils/Utils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인
@@ -96,24 +96,32 @@ const MainV2 = ({ setRefreshControlProps }) => {
         switch (type) {
             case 'CARD'     :
                 if(global.E2U?.method?.card?.includes("regular")){
-                    moveScreen(navigation, "PAYMENT"); break;
+                    moveParamScreen(navigation, "PAYMENT", {from: 'CARD'});
+                    break;
                 }else{
                     setMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다.`);
                     setAlertVisible(true);
                 }
             case 'TRXLIST'  :
                 moveScreen(navigation, "TRXLIST"); break;
-            case 'SMS':
-                if(global.E2U?.method?.add?.includes("link")){
-                }else{
-                    setMessage(`SMS 결제 서비스 '이용 불가' 가맹점 입니다.`);
-                    setAlertVisible(true);
+            case 'SMS' : case 'QR':
+                // 개발 환경 처리
+                if(global.E2U?.ENV === 'DEV'){
+                    if (!global.E2U.method){
+                        global.E2U.method = {};
+                    }
+
+                    if (Array.isArray(global.E2U.method.add) && global.E2U.method.add.length === 0){
+                        global.E2U.method.add = ['link', 'qr'];
+                    }
                 }
-                break;
-            case 'QR':
-                if(global.E2U?.method?.add?.includes("qr")){
+
+                if(type.toLowerCase() === "sms"){
+                    moveParamScreen(navigation, "PAYMENT", {from: 'SMS'});
+                }else if(type.toLowerCase() === "qr"){
+                    moveParamScreen(navigation, "PAYMENT", {from: 'QR'});
                 }else{
-                    setMessage(`QR 결제 서비스 '이용 불가' 가맹점 입니다.`);
+                    setMessage(`${type} 결제 서비스 '이용 불가' 가맹점 입니다.`);
                     setAlertVisible(true);
                 }
                 break;

@@ -4,7 +4,8 @@ const comma = (amount) => {
     if (!amount) return '0';
 
     const numeric = String(amount).replace(/[^0-9]/g, '');
-    return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const cleaned = String(Number(numeric));
+    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const KRW = (amount) => {
