@@ -3,7 +3,6 @@ import {ActivityIndicator, Image, SafeAreaView, Text, TextInput, TouchableOpacit
 import {useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/EasterSignStyle';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {moveScreen} from '../../components/hooks/ScreenHooks';
 
 const EasterEggSignScreen = () => {
     const navigation = useNavigation();
@@ -13,11 +12,6 @@ const EasterEggSignScreen = () => {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [openLinkVisible, setOpenLinkVisible] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
-    const [modalCallback, setModalCallback] = useState(() => () => {});
-    const [splashLoading, setSplashLoading] = useState(true);
 
     const handleLogin = () => {
         setIsLoading(true);
