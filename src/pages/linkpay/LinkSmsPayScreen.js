@@ -106,7 +106,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                     directMethod    : formData.selectedMethod,
                     displayMethod   : [],
                     amount          : formData.amount,
-                    expireAt        : parseInt(expireAt.format('YYYYMMDDHH'),10),
+                    expireAt        : expireAt.format('YYYYMMDDHH'),
                     products        : products,
                     customer        : customer,
                     sellerMemo1     : formData.sellerMemo1,
