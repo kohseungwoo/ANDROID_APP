@@ -43,15 +43,18 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
         brn: '',
     }));
 
-    const resetFormLinkData = () => setFormData({
+    const resetFormLinkData = () => setFormData(prev => ({
+        ...prev,
         addType: 'link',
         directMethod: '',
         selectedMethod: '',
+        selectedExpireAt : '',
         amount: 0,
         installment: '00',
         sellerMemo1: '',
         sellerMemo2: '',
-    });
+        linkUrl : '',
+    }));
 
     // Step configs
     const stepConfigs = {
@@ -97,11 +100,11 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
     // Handle param change
     useFocusEffect(
         useCallback(() => {
+            resetFormProductData();
             if (param === 'sms') setStep('SMS_PRODUCT');
             else if (param === 'qr') setStep('QR_PRODUCT');
             else {
                 setStep('CARD_PRODUCT');
-                resetFormProductData();
             }
         }, [param])
     );

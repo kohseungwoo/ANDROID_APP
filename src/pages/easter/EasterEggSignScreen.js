@@ -9,8 +9,8 @@ const EasterEggSignScreen = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('admin');
-    const [password, setPassword] = useState('e2u0907!');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);

@@ -16,6 +16,7 @@
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/stack": "^7.2.10",
     "@shopify/flash-list": "^1.8.0",
+    "dayjs": "^1.11.13",
     "lottie-ios": "4.5.0",
     "lottie-react-native": "^7.2.2",
     "moment": "^2.30.1",

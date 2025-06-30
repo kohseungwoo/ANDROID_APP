@@ -101,22 +101,20 @@ const RegularScreen = ({ formData, setFormData }) => {
             const result = await response.json();
             global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
 
-
-            if (result) {
+            if (result.code === '0000') {
+                setNointMessage(result);
+                setAlertVisible(true);
+            }else{
                 if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
                     setModalVisible(true);
-                }else if (result.code === '0802' ) {
+                }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
                 }else{
-                    setNointMessage(result);
+                    setMessage(`${result.description}`);
                     setAlertVisible(true);
                 }
-            }else{
-                setNointMessage('카드사 무이자 할부안내 조회에 실패했습니다.');
-                setAlertVisible(true);
-                setDefaultMessage(true);
             }
         }catch(err){
             global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);

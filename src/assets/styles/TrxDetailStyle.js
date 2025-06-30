@@ -115,7 +115,7 @@ export default StyleSheet.create({
     },
 
     receiptButton: {
-        backgroundColor: '#97aad1',
+        backgroundColor: '#2680eb',
     },
 
     actionButtonText: {

@@ -29,13 +29,15 @@ const PaymentScreenV3 = () => {
 
                 case 'sms':  case 'qr' :
                     setFormData({
-                        addType : 'link', // link, qr
+                        addType : '', // link, qr
                         directMethod: '',
                         selectedMethod : '',
+                        selectedExpireAt : '',
                         amount: 0,
                         installment: '00',
                         sellerMemo1: '',
                         sellerMemo2: '',
+                        linkUrl : '',
                     });
                 break;
             }

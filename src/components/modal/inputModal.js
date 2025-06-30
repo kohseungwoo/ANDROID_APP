@@ -101,7 +101,7 @@ const InputModal = ({ visible, onConfirm, onCancel, message }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-</View>
+            </View>
         </Modal>
     );
 };
