@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/MoreMenuStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -39,6 +39,10 @@ const menuItems = [
         color: '#000',
         iconComponent: Ionicons,
     },
+    {
+        label: '',
+        key: 'easter',
+    },
 ];
 
 const MoreMenuScreen = () => {
@@ -47,12 +51,31 @@ const MoreMenuScreen = () => {
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [message, setMessage] = useState('');
     const insets = useSafeAreaInsets();
+    const [clickCount, setClickCount] = useState(0);
+
+    useFocusEffect(
+        useCallback(() => {
+            // 화면 포커스 시 클릭 카운트 초기화
+            setClickCount(0);
+        }, [])
+    );
+
+    const handleLogoPress = useCallback(() => {
+        setClickCount(prev => {
+            const newCount = prev + 1;
+            if (newCount >= 5) {
+                navigation.navigate('EASTERSIGN');
+                return 0;
+            }
+            return newCount;
+        });
+    }, [navigation]);
 
     const handlePress = useCallback((item) => {
         switch (item.key) {
             case 'version':
                 setAlertVisible(true);
-                setMessage(`현재 앱 버전은 v${global.E2U.APP_VERSION}.0.0 입니다.`);
+                setMessage(`현재 앱 버전은 v${global.APP_VERSION}.0.0 입니다.`);
                 break;
             case 'contact': case 'notice': case 'faq':
                 moveParamScreen(navigation, "NOTICE", { tab: item.key });
@@ -91,7 +114,24 @@ const MoreMenuScreen = () => {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>설정 메뉴</Text>
 
-                    {menuItems.map((item) => {
+                    {menuItems.map((item, index) => {
+                        if (item.key === 'easter') {
+                            return (
+                                <TouchableOpacity
+                                    key={`easter-${index}`}
+                                    onPress={handleLogoPress}
+                                    style={{
+                                        height: 40,
+                                        justifyContent: 'left',
+                                        alignItems: 'left',
+                                    }}
+                                >
+                                <Text style={styles.menuLabel}>{item.label}</Text>
+                                    {/* 빈 영역. 텍스트 또는 디버깅용 요소를 추가해도 됨 */}
+                                </TouchableOpacity>
+                            );
+                        }
+
                         const Icon = item.iconComponent;
                         return (
                             <TouchableOpacity
@@ -99,7 +139,7 @@ const MoreMenuScreen = () => {
                                 style={styles.menuItem}
                                 onPress={() => handlePress(item)}
                             >
-                                <item.iconComponent
+                                <Icon
                                     name={item.icon}
                                     size={20}
                                     color={item.color}

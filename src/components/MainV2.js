@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {moveParamScreen, moveRootScreen, moveScreen} from './hooks/ScreenHooks';
+import {moveParamScreen, moveScreen} from './hooks/ScreenHooks';
 import Swiper from 'react-native-swiper';
 import UTILS from '../utils/Utils';
 import styles from '../assets/styles/MainV2Style'; // 스타일 파일 경로 확인

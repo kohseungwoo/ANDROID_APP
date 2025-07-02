@@ -5,12 +5,12 @@
 > react-native log-android
 
 # RN APP BUNDLE 생성 명령어 (구글 스토어에 업로드 하기 위함)
-> cd android > ./gradlew bundleRelease // release 모드
+> cd android > ./gradlew bundleRelease // 안드로이드 release 모드
 
 #  RN APK 생성 명령어
-> cd android > ./gradlew assembleDebug // debug 모드
+> cd android > ./gradlew assembleDebug // 안드로이드 debug 모드
 <br>
-> cd android > ./gradlew assembleRelease // release 모드
+> cd android > ./gradlew assembleRelease // 안드로이드 release 모드
 
 # RN APK 생성 전 openSSL 설치
 > https://slproweb.com/products/Win32OpenSSL.html

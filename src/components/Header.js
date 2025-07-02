@@ -7,22 +7,10 @@ import {useNavigation} from '@react-navigation/native';
 const Header = React.memo(() => {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
-    const [clickCount, setClickCount] = useState(0);
-
-    const handleLogoPress = useCallback(() => {
-        setClickCount(prev => {
-            const newCount = prev + 1;
-            if (newCount >= 5) {
-                navigation.navigate('EASTERSIGN');
-                return 0;
-            }
-            return newCount;
-        });
-    }, [navigation]);
 
     return (
         <View style={[styles.container, {paddingTop: insets.top, height: 60 + insets.top}]}>
-            <TouchableOpacity onPress={handleLogoPress}>
+            <TouchableOpacity onPress={() => navigation.navigate('MAIN')}>
                 <Image
                     source={require('../assets/images/logo.png')}
                     style={styles.logo}

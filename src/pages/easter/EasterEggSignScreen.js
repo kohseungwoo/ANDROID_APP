@@ -15,15 +15,15 @@ const EasterEggSignScreen = () => {
 
     const handleLogin = () => {
         setIsLoading(true);
-        if(!username || !password){
-            setErrorMessage('아이디 또는 패스워드를 입력해주시기 바랍니다.');
+        if(!password){
+            setErrorMessage('패스워드를 입력해주시기 바랍니다.');
             return;
         }
 
-        if (username === 'admin' && password.toLowerCase() === 'e2u0907!') {
+        if (password.toLowerCase() === '1600-4191') {
             navigation.navigate('EASTERMETHOD');
         } else {
-            setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
+            setErrorMessage('패스워드가 잘못되었습니다.');
         }
 
         setIsLoading(false);
@@ -52,18 +52,18 @@ const EasterEggSignScreen = () => {
                             {/*/>*/}
                         </View>
 
-                        <View style={styles.inputGroup}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="ID"
-                                maxLength={24}
-                                value={username}
-                                onChangeText={(text) => {
-                                    setUsername(text);
-                                    setErrorMessage('');
-                                }}
-                            />
-                        </View>
+                        {/*<View style={styles.inputGroup}>*/}
+                        {/*    <TextInput*/}
+                        {/*        style={styles.input}*/}
+                        {/*        placeholder="ID"*/}
+                        {/*        maxLength={24}*/}
+                        {/*        value={username}*/}
+                        {/*        onChangeText={(text) => {*/}
+                        {/*            setUsername(text);*/}
+                        {/*            setErrorMessage('');*/}
+                        {/*        }}*/}
+                        {/*    />*/}
+                        {/*</View>*/}
 
                         <View style={styles.inputGroup}>
                             <TextInput
