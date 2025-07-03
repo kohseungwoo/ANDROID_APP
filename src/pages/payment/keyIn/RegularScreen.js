@@ -522,6 +522,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                         style={styles.input}
                                         placeholder="MM/YY"
                                         maxLength={4}
+                                        keyboardType="number-pad"
+                                        returnKeyType="done"
                                         value={formData.personalExpiry}
                                         onChangeText={(text) => {
                                             const number = UTILS.onlyNumber(text);
@@ -566,6 +568,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                         style={styles.input}
                                         placeholder="주민번호 앞 6자리"
                                         maxLength={6}
+                                        keyboardType="number-pad"
+                                        returnKeyType="done"
                                         value={formData.dob}
                                         onChangeText={(text) =>
                                             setFormData({ ...formData, dob: UTILS.onlyNumber(text) })
@@ -589,6 +593,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                 <TextInput ref={cardCorpRef1}
                                            style={styles.cardInput}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            value ={formData.corpCardNumber1}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -713,6 +719,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    secureTextEntry
                                                    placeholder="* *"
                                                    maxLength={2}
+                                                   keyboardType="number-pad"
+                                                   returnKeyType="done"
                                                    value={formData.corpPassword}
                                                    onChangeText={(text) => {
                                                        const number = UTILS.onlyNumber(text);

@@ -218,6 +218,8 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                             <TextInput style={styles.input}
                                        placeholder="0"
                                        maxLength={13}
+                                       keyboardType="number-pad"
+                                       returnKeyType="done"
                                        value={formData.amount} onChangeText={(text) => {
                                         setFormData({
                                             ...formData,
@@ -251,6 +253,8 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                             <TextInput style={styles.input}
                                        placeholder="'-' 없이 입력하세요."
                                        maxLength={16}
+                                       keyboardType="number-pad"
+                                       returnKeyType="done"
                                        value={formData.phoneNo} onChangeText={(text) => {
                                         setFormData({
                                             ...formData,
