@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Platform, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation, useNavigationState} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../assets/styles/HeaderSubStyle';
@@ -25,7 +25,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
     const showReloadButton = !['DASHBOARD', 'MORE', 'NOTICE'].includes(currentRouteName?.toUpperCase());
 
     return (
-        <View style={[styles.header, {height : 60 + insets.top, paddingTop:insets.top}]}>
+        <View style={[styles.header, {height : 60 + insets.top, paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}>
             {showBackButton && (
                 <TouchableOpacity
                     style={[styles.backButton, {paddingTop:insets.top}]}
@@ -39,7 +39,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
             {showReloadButton && (
                 <TouchableOpacity
-                    style={[styles.refreshButton, {paddingTop:insets.top}]}
+                    style={[styles.refreshButton, {paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}
                     onPress={onRefresh}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
