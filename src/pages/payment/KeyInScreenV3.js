@@ -1,13 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ProductScreen from './keyIn/ProductScreen';
 import RegularScreen from './keyIn/RegularScreen';
 import LinkSmsPayScreen from '../linkpay/LinkSmsPayScreen';
 import LinkQrPayScreen from '../linkpay/LinkQrPayScreen';
 import styles from '../../assets/styles/HeaderSubStyle';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const KeyInScreenV3 = ({ formData, setFormData, param }) => {
     const insets = useSafeAreaInsets();
@@ -113,7 +113,8 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
     if (!current) return null;
 
     const Header = () => (
-        <View style={[styles.header, { height: 60 + insets.top, paddingTop: insets.top }]}>
+
+        <View style={[styles.header, Platform.OS === 'android' && { height: 60 + insets.top, paddingTop: insets.top }]}>
             {current.onBack && (
                 <TouchableOpacity
                     style={[styles.backButton, { paddingTop: insets.top }]}
