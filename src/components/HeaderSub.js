@@ -35,7 +35,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
             ]}>
             {showBackButton && (
                 <TouchableOpacity
-                    style={[styles.backButton, {paddingTop:insets.top}]}
+                    style={[styles.backButton, {paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 })}]}
                     onPress={() => navigation.goBack()}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
@@ -46,11 +46,7 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
             {showReloadButton && (
                 <TouchableOpacity
-                    style={[styles.refreshButton, {
-                        height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
-                        paddingTop: insets.top,
-                        ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
-                    }]}
+                    style={[styles.refreshButton, {paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 })}]}
                     onPress={onRefresh}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
