@@ -134,7 +134,7 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
             <Text style={styles.title}>{current.title}</Text>
             <TouchableOpacity
                 style={[styles.refreshButton, {
-                    height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                    height: (Platform.OS === 'ios' ? 40 : 20) + insets.top,
                     paddingTop: insets.top,
                     ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
                 }]}

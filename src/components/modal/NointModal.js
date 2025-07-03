@@ -40,6 +40,7 @@ const NointModal = ({ visible, message, onConfirm }) => {
                             contentWidth={width}
                             source={{ html: message }}
                             tagsStyles={tagsStyles}
+                            ignoredDomTags={['font']}
                         />
                     </ScrollView>
                     <View style={styles.buttonRow}>
