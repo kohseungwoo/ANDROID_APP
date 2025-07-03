@@ -95,6 +95,7 @@ const RegularScreen = ({ formData, setFormData }) => {
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/noint/latest`, {
                 method: 'GET',
                 headers: {
+                    'Authorization': global.E2U?.key,
                     'VERSION'  : global.E2U?.APP_VERSION,
                 },
             }, global.E2U?.NETWORK_TIMEOUT);
@@ -235,7 +236,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                     'Content-Type' : global.E2U?.CONTENT_TYPE_JSON,
                 },
                 body: JSON.stringify({
-                    amount        : formData.amount,
+                    amount        : Number(formData.amount.replace(/,/g, "")),
                     method        : 'card',
                     type          : 'regular',
                     number        : cardNumber,
@@ -250,7 +251,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                     phoneNo       : formData.phoneNo,
                     productName   : formData.productName,
                     qty           : 1,
-                    price         : formData.amount,
+                    price         : Number(formData.amount.replace(/,/g, "")),
                 }),
             }, global.E2U?.NETWORK_TIMEOUT);
 
