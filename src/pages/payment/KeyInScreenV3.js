@@ -114,7 +114,14 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
 
     const Header = () => (
 
-        <View style={[styles.header, { height: 60 + insets.top, paddingTop: insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}>
+        <View style={[
+                styles.header,
+                {
+                    height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                    paddingTop: insets.top,
+                    ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
+                },
+            ]}>
             {current.onBack && (
                 <TouchableOpacity
                     style={[styles.backButton, { paddingTop: insets.top }]}
@@ -126,7 +133,14 @@ const KeyInScreenV3 = ({ formData, setFormData, param }) => {
             )}
             <Text style={styles.title}>{current.title}</Text>
             <TouchableOpacity
-                style={[styles.refreshButton, { paddingTop: insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}
+                style={[
+                    styles.header,
+                    {
+                        height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                        paddingTop: insets.top,
+                        ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
+                    },
+                ]}
                 onPress={current.onRefresh}
                 hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
             >

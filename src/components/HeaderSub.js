@@ -25,7 +25,14 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
     const showReloadButton = !['DASHBOARD', 'MORE', 'NOTICE'].includes(currentRouteName?.toUpperCase());
 
     return (
-        <View style={[styles.header, {height : 60 + insets.top, paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}>
+        <View style={[
+                styles.header,
+                {
+                    height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                    paddingTop: insets.top,
+                    ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
+                },
+            ]}>
             {showBackButton && (
                 <TouchableOpacity
                     style={[styles.backButton, {paddingTop:insets.top}]}
@@ -39,7 +46,14 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
             {showReloadButton && (
                 <TouchableOpacity
-                    style={[styles.refreshButton, {paddingTop:insets.top, ...(Platform.OS === 'ios' && { paddingBottom: 20 }), }]}
+                    style={[
+                        styles.header,
+                        {
+                            height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                            paddingTop: insets.top,
+                            ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
+                        },
+                    ]}
                     onPress={onRefresh}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
