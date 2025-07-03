@@ -46,14 +46,11 @@ const HeaderSub = React.memo(({ title, onRefresh }) => {
 
             {showReloadButton && (
                 <TouchableOpacity
-                    style={[
-                        styles.header,
-                        {
-                            height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
-                            paddingTop: insets.top,
-                            ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
-                        },
-                    ]}
+                    style={[styles.refreshButton, {
+                        height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
+                        paddingTop: insets.top,
+                        ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
+                    }]}
                     onPress={onRefresh}
                     hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 >
