@@ -4,10 +4,15 @@
 #  로그보기 <br>
 > react-native log-android
 
-# RN APP BUNDLE 생성 명령어 (구글 스토어에 업로드 하기 위함)
-> cd android > ./gradlew bundleRelease // release 모드
+# RN APP BUNDLE 생성 명령어 
+### (구글 스토어에 업로드 하기 위함)
+### path : {project}/android/app/build/outputs/apk
+> cd android > ./gradlew bundleRelease // release 모드 
 
-#  RN APK 생성 명령어 (> {project}/android/app/build/outputs/apk)
+
+#  RN APK 생성 명령어 
+### path : {project}/android/app/build/outputs/apk
+
 > cd android > ./gradlew assembleDebug // debug 모드 (로컬환경)
 <br>
 > cd android > ./gradlew assembleRelease // release 모드 (안드로이드 환경)
@@ -15,10 +20,13 @@
 # RN APK 생성 전 openSSL 설치
 > https://slproweb.com/products/Win32OpenSSL.html
 
-# RN APK 생성 전 gradle.properties 설정
-> STORE_FILE=build/outputs/e2utb-key.keystore // keyStore 정보 관리
+# RN APK 생성 전 gradle.properties 설정 
+> STORE_FILE=build/outputs/e2utb-key.keystore // keyStore 정보 관리 (키생성방법 : https://yd-developer.tistory.com/20)
+> ex.JKS)  keytool -genkey -v -keystore C:\workspace\2.TB\TB_ANDROID_APP\android\app\build\outputs\e2utb-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias e2utb-releaseKey -storetype PKCS12 
+> ex.KEYSTORE)  keytool -genkey -v -keystore C:\workspace\2.TB\TB_ANDROID_APP\android\app\build\outputs\e2utb-key.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias e2utb-releaseKey -storetype PKCS12
+
 <br> STORE_PASSWORD=etou_1qa2ws
-<br> KEY_ALIAS=release-key
+<br> KEY_ALIAS=e2utb-releaseKey
 <br> KEY_PASSWORD=etou_1qa2ws
 
 # .\app\build.gradle

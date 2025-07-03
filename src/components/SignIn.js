@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Image, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../assets/styles/SignInStyle';
 import RNBootSplash from 'react-native-bootsplash';
@@ -15,8 +15,8 @@ const SignIn = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('demo_kovan');
-    const [password, setPassword] = useState('12345');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
