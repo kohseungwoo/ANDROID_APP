@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Text, TouchableOpacity, View, ScrollView, useWindowDimensions} from 'react-native';
+import {Modal, ScrollView, Text, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import styles from '../../assets/styles/NotintModalStyle';
 import RenderHTML from 'react-native-render-html';
 
@@ -23,7 +23,7 @@ const tagsStyles = {
     }
 };
 
-const NointModal = ({ visible, message, messageStyle, onConfirm }) => {
+const NointModal = ({ visible, message, onConfirm }) => {
     const { width } = useWindowDimensions();
 
     return (

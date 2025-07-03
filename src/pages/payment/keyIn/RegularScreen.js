@@ -89,11 +89,12 @@ const RegularScreen = ({ formData, setFormData }) => {
 
     const getInstallment = async () => {
         setLoading(true);
+        setNointMessage('카드사 무이자 할부안내 정보 조회에 실패하였습니다. '); // 초기화
+
         try{
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/noint/latest`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': global.E2U?.key,
                     'VERSION'  : global.E2U?.APP_VERSION,
                 },
             }, global.E2U?.NETWORK_TIMEOUT);
@@ -101,10 +102,7 @@ const RegularScreen = ({ formData, setFormData }) => {
             const result = await response.json();
             global.E2U?.INFO(`무이자 조회 API 응답 \n ${JSON.stringify(result)}`);
 
-            if (result.code === '0000') {
-                setNointMessage(result);
-                setAlertVisible(true);
-            }else{
+            if (result.code) {
                 if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
                     setModalCallback(() => handleExit);
@@ -112,9 +110,12 @@ const RegularScreen = ({ formData, setFormData }) => {
                 }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
                 }else{
-                    setMessage(`${result.description}`);
+                    setNointMessage(`${result.description}`);
                     setAlertVisible(true);
                 }
+            }else{ // 성공의 경우 code 값을 주지 않음
+                setNointMessage(result);
+                setAlertVisible(true);
             }
         }catch(err){
             global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);

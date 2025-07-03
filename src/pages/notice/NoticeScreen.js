@@ -84,6 +84,10 @@ const NoticeScreen = () => {
         }
 
         try {
+            // 초기화
+            setNoticeList([]);
+            setFaqList([]);
+
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/${tabKey}/range`, {
                 method: 'POST',
                 headers: {

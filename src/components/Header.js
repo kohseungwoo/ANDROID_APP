@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {Image, TouchableOpacity, View} from 'react-native';
+import {Image, Platform, TouchableOpacity, View} from 'react-native';
 import styles from '../assets/styles/HeaderStyle';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
@@ -9,7 +9,13 @@ const Header = React.memo(() => {
     const navigation = useNavigation();
 
     return (
-        <View style={[styles.container, {paddingTop: insets.top, height: 60 + insets.top}]}>
+        <View style={[
+                styles.container,
+                Platform.OS === 'android' && {
+                    paddingTop: insets.top,
+                    height: 60 + insets.top,
+                },
+            ]}>
             <TouchableOpacity onPress={() => navigation.navigate('MAIN')}>
                 <Image
                     source={require('../assets/images/logo.png')}
