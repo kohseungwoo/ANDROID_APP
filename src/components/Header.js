@@ -11,9 +11,10 @@ const Header = React.memo(() => {
     return (
         <View style={[
                 styles.container,
-                Platform.OS === 'android' && {
+                {
+                    height: (Platform.OS === 'ios' ? 40 : 60) + insets.top,
                     paddingTop: insets.top,
-                    height: 60 + insets.top,
+                    ...(Platform.OS === 'ios' && { paddingBottom: 20 }),
                 },
             ]}>
             <TouchableOpacity onPress={() => navigation.navigate('MAIN')}>
