@@ -87,7 +87,7 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                             width: screenWidth * 0.8,
                             backgroundColor: 'white',
                             borderRadius: 10,
-                            padding: 20,
+                            padding: 15,
                             alignItems: 'center',
                         }}
                     >
@@ -96,8 +96,8 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                             <Image
                                 source={{ uri: qrLink }}
                                 style={{
-                                    width: screenWidth * 0.65,
-                                    height: screenWidth * 0.65,
+                                    width: screenWidth * 0.7,
+                                    height: screenWidth * 0.5,
                                 }}
                                 resizeMode="contain"
                             />
@@ -106,8 +106,8 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                         {/* 버튼들 */}
                         <TouchableOpacity
                             style={{
-                                marginTop: 10,
-                                width: '100%',
+                                marginTop: 5,
+                                width: '90%',
                                 backgroundColor: '#2680eb',
                                 paddingVertical: 12,
                                 borderRadius: 6,
@@ -119,7 +119,7 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                             <Text
                                 style={{
                                     color: '#fff',
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: 'bold',
                                     textAlign: 'center',
                                 }}
@@ -130,8 +130,8 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
 
                         <TouchableOpacity
                             style={{
-                                marginTop: 20,
-                                width: '100%',
+                                marginTop: 14,
+                                width: '90%',
                                 backgroundColor: '#ddd',
                                 paddingVertical: 12,
                                 borderRadius: 6,
@@ -141,7 +141,7 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                             <Text
                                 style={{
                                     color: '#333',
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: 'bold',
                                     textAlign: 'center',
                                 }}
