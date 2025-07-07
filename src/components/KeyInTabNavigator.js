@@ -29,7 +29,7 @@ const KeyInTabNavigator = ({ formData, setFormData }) => {
         switch (step) {
             case 'PRODUCT': setStep('REGULAR'); break;
             case 'REGULAR': setStep('COMPLETE'); break;
-            default: console.warn('No next step from', step); break;
+            default: console.info('No next step from', step); break;
         }
     };
 
@@ -37,7 +37,7 @@ const KeyInTabNavigator = ({ formData, setFormData }) => {
         switch (step) {
             case 'REGULAR' : setStep('PRODUCT'); break;
             default:
-                console.warn('No previous step from', step);
+                console.info('No previous step from', step);
                 break;
         }
     };

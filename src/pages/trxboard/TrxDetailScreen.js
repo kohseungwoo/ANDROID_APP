@@ -78,7 +78,7 @@ const TrxDetailScreen = () => {
                     }
                 }
             }catch(err){
-                global.E2U?.WARN(`본사 정보 조회 API 요청 실패 \n ${err}`);
+                global.E2U?.INFO(`본사 정보 조회 API 요청 실패 \n ${err}`);
 
                 if (err.message === 'Request timed out') {
                     setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -148,7 +148,7 @@ const TrxDetailScreen = () => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`취소 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`취소 API 요청 실패 \n ${err}`);
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setAlertVisible(true);
@@ -185,7 +185,7 @@ const TrxDetailScreen = () => {
                     setDefaultMessage(true);
                 }
             }).catch((err) =>
-                global.E2U?.WARN(`SMS 연결 실패 \n ${err}`,
+                global.E2U?.INFO(`SMS 연결 실패 \n ${err}`,
                 setInputVisible(false),
                 setMessage(`전표 전송에 실패하였습니다.`),
                 setDefaultMessage(true),

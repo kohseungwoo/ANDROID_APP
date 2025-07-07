@@ -1,5 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../assets/styles/SignInStyle';
 import RNBootSplash from 'react-native-bootsplash';
@@ -9,14 +20,15 @@ import OpenStoreLink from './OpenStoreLink';
 import UpdateInfoModal from './modal/UpdateInfoModal';
 import ConfirmOkModal from './modal/ConfirmOkModal';
 import {fetchWithTimeout} from '../components/Fetch';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import usePortraitLock from './hooks/UnlockHooks';
 
 const SignIn = () => {
+    usePortraitLock();
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('demo_kovan');
+    const [password, setPassword] = useState('12345');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
@@ -24,6 +36,7 @@ const SignIn = () => {
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
     const [splashLoading, setSplashLoading] = useState(true);
+    const scrollViewRef = useRef(null);
 
     // 앱 시작 시 자동 로그인 시도
     useEffect(() => {
@@ -48,11 +61,11 @@ const SignIn = () => {
 
                     if (result.code === '0000') {
                         handlerMove(result);
-                    }else if (result.code === '0802'){
+                    }else if (result.code === '0802') {
                         setOpenLinkVisible(true);
                     }
                 } catch (err) {
-                    global.E2U?.WARN('[시스템 오류] 자동 로그인 실패 \n' + err);
+                    global.E2U?.INFO('[시스템 오류] 자동 로그인 실패 \n' + err);
 
                     if (err.message === 'Request timed out') {
                         setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -104,8 +117,10 @@ const SignIn = () => {
                 await Keychain.setGenericPassword(username, result.data?.key || '');
                 handlerMove(result);
             }else{
-                if (result.code === '0804') { // 보안 정책 위반으로 요청이 차단되었습니다.
-                    setErrorMessage(`${result.description}`);
+                if (result.code === '0900') {
+                    setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
+                }else if (result.code === '0806'){ // 가맹점, 앱, 앱다이렉트 의 상태값 N 의 경우
+                    setErrorMessage('접근이 불가능한 계정입니다.');
                 }else if (result.code === '0009'){
                     await Keychain.setGenericPassword(username, result.data?.key || ''); // 구 버전의 경우 modal 문구 처리 후 로그인
 
@@ -114,12 +129,12 @@ const SignIn = () => {
                     setModalVisible(true);
                 }else if (result.code === '0802'){
                     setOpenLinkVisible(true);
-                } else{
-                    setErrorMessage('아이디 또는 패스워드가 잘못되었습니다.');
+                }else{
+                    setErrorMessage(`${result.description}`);
                 }
             }
         } catch (err) {
-            global.E2U?.WARN('[시스템 오류] 로그인 실패 \n' + err);
+            global.E2U?.INFO('[시스템 오류] 로그인 실패 \n' + err);
             if (err.message === 'Request timed out') {
                 setModalMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setModalVisible(true);
@@ -150,7 +165,6 @@ const SignIn = () => {
         global.E2U.appId    = result?.data?.appId    || '';
         global.E2U.nick     = result?.data?.nick     || '';
         global.E2U.method   = result?.data?.method   || {};
-
         navigation.reset({
             index: 0,
             routes: [
@@ -194,88 +208,97 @@ const SignIn = () => {
                 message={modalMessage}
             />
 
-            <KeyboardAwareScrollView
+            <KeyboardAvoidingView
                 style={styles.page}
-                contentContainerStyle={styles.scrollContainer}
-                enableOnAndroid={true} // Android에서 스크롤 처리 허용
-                enableAutomaticScroll={true} // 포커스 시 자동 스크롤
-                extraScrollHeight={80}
-                keyboardShouldPersistTaps="handled"
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
             >
-                <SafeAreaView style={{width: '100%'}}>
-                    <View style={styles.layoutContainer}>
-                        <View style={styles.layoutTitleContainer}>
-                            <Text style={styles.bgText}>Sign In</Text>
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <SafeAreaView style={{ flex: 1, width: '100%' }}>
+                        <View style={styles.layoutContainer}>
+                            <View style={styles.layoutTitleContainer}>
+                                <Text style={styles.bgText}>Sign In</Text>
+                            </View>
+
+                            <View style={styles.loginContainer}>
+                                <View style={styles.logoContainer}>
+                                    <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="ID"
+                                        maxLength={24}
+                                        value={username}
+                                        onChangeText={(text) => {
+                                            setUsername(text);
+                                            setErrorMessage('');
+                                        }}
+                                        onFocus={() => {
+                                            scrollViewRef.current?.scrollTo({ y: 40, animated: true });
+                                        }}
+                                    />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Password"
+                                        maxLength={30}
+                                        secureTextEntry={!showPassword}
+                                        value={password}
+                                        onChangeText={(text) => {
+                                            setPassword(text);
+                                            setErrorMessage('');
+                                        }}
+                                        onFocus={() => {
+                                            scrollViewRef.current?.scrollTo({ y: 100, animated: true });
+                                        }}
+                                    />
+                                    {password.length > 0 && (
+                                        <TouchableOpacity
+                                            style={styles.eyeIconContainer}
+                                            onPress={() => setShowPassword(!showPassword)}
+                                        >
+                                            <Image
+                                                source={
+                                                    showPassword
+                                                        ? require('../assets/images/eye-open.png')
+                                                        : require('../assets/images/eye-closed.png')
+                                                }
+                                                style={styles.eyeIcon}
+                                            />
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+
+                                <View style={styles.errorContainer}>
+                                    {errorMessage ? (
+                                        <Text style={styles.errorMessage}>{errorMessage}</Text>
+                                    ) : null}
+                                </View>
+
+                                <TouchableOpacity
+                                    style={[styles.loginBtn, isLoading && styles.loginBtnLoading]}
+                                    onPress={handleLogin}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <ActivityIndicator color="#fff" />
+                                    ) : (
+                                        <Text style={styles.loginBtnText}>로그인</Text>
+                                    )}
+                                </TouchableOpacity>
+                            </View>
                         </View>
-
-                        <View style={styles.loginContainer}>
-                            <View style={styles.logoContainer}>
-                                <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="ID"
-                                    maxLength={24}
-                                    value={username}
-                                    onChangeText={(text) => {
-                                        setUsername(text);
-                                        setErrorMessage('');
-                                    }}
-                                />
-                            </View>
-
-                            <View style={styles.inputGroup}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Password"
-                                    maxLength={30}
-                                    secureTextEntry={!showPassword}
-                                    value={password}
-                                    onChangeText={(text) => {
-                                        setPassword(text);
-                                        setErrorMessage('');
-                                    }}
-                                />
-                                {password.length > 0 && (
-                                    <TouchableOpacity
-                                        style={styles.eyeIconContainer}
-                                        onPress={() => setShowPassword(!showPassword)}
-                                    >
-                                        <Image
-                                            source={
-                                                showPassword
-                                                    ? require('../assets/images/eye-open.png')
-                                                    : require('../assets/images/eye-closed.png')
-                                            }
-                                            style={styles.eyeIcon}
-                                        />
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-
-                            <View style={styles.errorContainer}>
-                                {errorMessage ? (
-                                    <Text style={styles.errorMessage}>{errorMessage}</Text>
-                                ) : null}
-                            </View>
-
-                            <TouchableOpacity
-                                style={[styles.loginBtn, isLoading && styles.loginBtnLoading]}
-                                onPress={handleLogin}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <ActivityIndicator color="#fff" />
-                                ) : (
-                                    <Text style={styles.loginBtnText}>로그인</Text>
-                                )}
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </SafeAreaView>
-            </KeyboardAwareScrollView>
+                    </SafeAreaView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </>
     );
 };

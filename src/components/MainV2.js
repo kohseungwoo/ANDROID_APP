@@ -95,13 +95,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
     const handlePaymentPress = (type) => {
         switch (type) {
             case 'CARD'     :
-                if(global.E2U?.method?.card?.includes("regular")){
-                    moveParamScreen(navigation, "PAYMENT", {from: 'CARD'});
-                    break;
-                }else{
-                    setMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다.`);
-                    setAlertVisible(true);
-                }
+                moveParamScreen(navigation, "PAYMENT", {from: 'CARD'}); break;
             case 'TRXLIST'  :
                 moveScreen(navigation, "TRXLIST"); break;
             case 'SMS' : case 'QR':
@@ -134,9 +128,6 @@ const MainV2 = ({ setRefreshControlProps }) => {
 
     const handlePress = useCallback((item) => {
         switch (item.key) {
-            case 'version':
-                Alert.alert('버전 정보', '현재 앱 버전은 v1.0.0 입니다.');
-                break;
             case 'contact': case 'notice': case 'faq':
                 moveParamScreen(navigation, "NOTICE", { tab: item.key });
                 break;
@@ -203,7 +194,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
             setDailyAmount(0);
             setMonthlyAmount(0);
 
-            global.E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`대시보드 API 요청 실패 \n ${err}`);
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                 setAlertVisible(true);
@@ -239,7 +230,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
                         setTransactions(totalMonth.data?.result);
                     }
                 } catch (err) {
-                    global.E2U?.WARN(`대시보드 API 요청 실패 \n ${err}`);
+                    global.E2U?.INFO(`대시보드 API 요청 실패 \n ${err}`);
                     if (err.message === 'Request timed out') {
                         setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
                         setAlertVisible(true);

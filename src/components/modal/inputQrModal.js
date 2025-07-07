@@ -38,7 +38,7 @@ const InputQrModal = ({ visible, onCancel, qrLink }) => {
                     setDefaultMessage(true);
                 }
             }).catch((err) =>
-            global.E2U?.WARN(`SMS 연결 실패 \n ${err}`,
+            global.E2U?.INFO(`SMS 연결 실패 \n ${err}`,
                 setInputVisible(false),
                 setMessage(`전표 전송에 실패하였습니다.`),
                 setDefaultMessage(true),

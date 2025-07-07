@@ -1,5 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, Dimensions, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../../../assets/styles/RegularStyle';
 import NointModal from '../../../components/modal/NointModal';
@@ -13,7 +23,6 @@ import OpenStoreLink from '../../../components/OpenStoreLink';
 import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const RegularScreen = ({ formData, setFormData }) => {
     const navigation = useNavigation();
@@ -54,6 +63,7 @@ const RegularScreen = ({ formData, setFormData }) => {
     const [installment, setInstallment] = useState([]);
 
     const scrollRef = useRef(null);
+    const scrollViewRef = useRef(null);
 
     useEffect(() => {
         if (formData?.installment) {
@@ -119,7 +129,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                 setAlertVisible(true);
             }
         }catch(err){
-            global.E2U?.WARN(`무이자 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`무이자 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setNointMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -139,20 +149,22 @@ const RegularScreen = ({ formData, setFormData }) => {
     };
 
     const paymentBtn = async () => {
-        // formData.personalCardNumber1 = '';
-        // formData.personalCardNumber2 = '';
-        // formData.personalCardNumber3 = '';
-        // formData.personalCardNumber4 = '';
-        // formData.personalExpiry = '';
-        // formData.personalPassword = '';
-        // formData.dob = '';
+        formData.personalCardNumber1 = '9490';
+        formData.personalCardNumber2 = '9402';
+        formData.personalCardNumber3 = '1292';
+        formData.personalCardNumber4 = '9009';
+        formData.personalExpiry = '0529';
+        formData.personalPassword = '00';
+        formData.dob = '950101';
 
         const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
 
         let cardNumber, expiry, installment, pin, auth;
         if(cardType === 'personal'){
-           if (!personalCardNumber1 || !personalCardNumber2 || !personalCardNumber3 || !personalCardNumber4) {
+            const cardNumbers = [personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4];
+            const isInvalidCardInput = cardNumbers.some(num => !num || num.length !== 4);
+            if (isInvalidCardInput) {
                setValidMessage('카드번호를 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
@@ -162,19 +174,20 @@ const RegularScreen = ({ formData, setFormData }) => {
                formData.personalInstallment = 0;
            }
 
-           if (!personalExpiry) {
+           if (!personalExpiry || personalExpiry.length !== 4) {
                setValidMessage('유효기간을 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
            }
 
-           if (!personalPassword) {
+
+           if (!personalPassword || personalPassword.length !== 2){
                setValidMessage('비밀번호를 올바르게 입력해주세요..');
                setValidVisible(true);
                return;
            }
 
-           if (!dob) {
+           if (!dob || dob.length !== 6){
                setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
@@ -183,10 +196,12 @@ const RegularScreen = ({ formData, setFormData }) => {
             cardNumber  = personalCardNumber1 + personalCardNumber2 + personalCardNumber3 + personalCardNumber4;
             expiry      = personalExpiry;
             installment = personalInstallment;
-            pin      = personalPassword;
+            pin         = personalPassword;
             auth        = dob;
         }else if(cardType === 'corporate'){
-           if (!corpCardNumber1 || !corpCardNumber2 || !corpCardNumber3 || !corpCardNumber4) {
+            const cardNumbers = [corpCardNumber1, corpCardNumber2, corpCardNumber3, corpCardNumber4];
+            const isInvalidCardInput = cardNumbers.some(num => !num || num.length !== 4);
+            if (isInvalidCardInput) {
                setValidMessage('카드번호를 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
@@ -196,19 +211,19 @@ const RegularScreen = ({ formData, setFormData }) => {
                formData.corpInstallment = 0;
            }
 
-           if (!corpExpiry) {
+           if (!corpExpiry || corpExpiry.length !== 4) {
                setValidMessage('유효기간을 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
            }
 
-           if (!corpPassword) {
+           if (!corpPassword || corpPassword.length !== 2){
                setValidMessage('비밀번호를 올바르게 입력해주세요..');
                setValidVisible(true);
                return;
            }
 
-           if (!brn) {
+           if (!brn || brn.length !== 6){
                setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
                setValidVisible(true);
                return;
@@ -217,7 +232,7 @@ const RegularScreen = ({ formData, setFormData }) => {
             cardNumber  = corpCardNumber1 + corpCardNumber2 + corpCardNumber3 + corpCardNumber4;
             expiry      = corpExpiry;
             installment = corpInstallment;
-            pin      = corpPassword;
+            pin         = corpPassword;
             auth        = brn;
        }else{
            setValidMessage('정의되지 않은 입력이 확인되었습니다.');
@@ -240,7 +255,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                     method        : 'card',
                     type          : 'regular',
                     number        : cardNumber,
-                    expiry        : expiry,
+                    expiry        : convertMMYYtoYYMM(expiry),
                     installment   : installment,
                     pin           : pin,
                     dob           : auth,
@@ -275,7 +290,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`결제 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`결제 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -324,10 +339,21 @@ const RegularScreen = ({ formData, setFormData }) => {
 
     function handleTrxList(){
         trxDetailRef.current = false; // 초기화
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'TRXLIST' }],
-        });
+
+        setLoading(true);
+        setTimeout(() => {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'TRXLIST' }],
+            });
+            setLoading(false);
+        }, 2000);
+
+    }
+
+    function convertMMYYtoYYMM(expiry) {
+        const match = expiry.match(/^(\d{2})(\d{2})$/);
+        return match ? `${match[2]}${match[1]}` : expiry;
     }
 
     return (
@@ -359,15 +385,18 @@ const RegularScreen = ({ formData, setFormData }) => {
                 onConfirm={handleOpenLinkConfirm}
             />
 
-            <KeyboardAwareScrollView
+            <KeyboardAvoidingView
                 style={styles.container}
-                contentContainerStyle={styles.contentContainer}
-                enableOnAndroid={true} // Android에서 스크롤 처리 허용
-                enableAutomaticScroll={true} // 포커스 시 자동 스크롤
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 ref={scrollRef}
-                extraScrollHeight={80}
-                keyboardShouldPersistTaps="handled"
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
             >
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={styles.contentContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+
                 <View style={styles.header}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="card-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
@@ -420,6 +449,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                     ref={cardPersRef1}
                                     style={styles.cardInput}
                                     maxLength={4}
+                                    keyboardType="number-pad"
+                                    returnKeyType="done"
                                     value={formData.personalCardNumber1}
                                     onChangeText={(text) => {
                                         const number = UTILS.onlyNumber(text);
@@ -428,10 +459,15 @@ const RegularScreen = ({ formData, setFormData }) => {
                                             cardPersRef2.current?.focus();
                                         }
                                     }}
+                                    onFocus={() => {
+                                        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                    }}
                                 />
                                 <TextInput ref={cardPersRef2}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            secureTextEntry
                                            value={formData.personalCardNumber2}
                                            onChangeText={(text) => {
@@ -441,10 +477,15 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    cardPersRef3.current?.focus();
                                                }
                                            }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                           }}
                                 />
                                 <TextInput ref={cardPersRef3}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            secureTextEntry
                                            value={formData.personalCardNumber3}
                                            onChangeText={(text) => {
@@ -454,10 +495,15 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    cardPersRef4.current?.focus();
                                                }
                                            }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                           }}
                                 />
                                 <TextInput ref={cardPersRef4}
                                            style={styles.cardInput}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            value={formData.personalCardNumber4}
                                            onChangeText={(text) => {
                                                const number = UTILS.onlyNumber(text);
@@ -465,6 +511,9 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                if (number.length === 4) {
                                                    expiryPersRef.current?.focus();
                                                }
+                                           }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
                                            }}
                                 />
                             </View>
@@ -532,6 +581,9 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                 pwdPersRef.current?.focus();
                                             }
                                         }}
+                                        onFocus={() => {
+                                            scrollViewRef.current?.scrollTo({ y: 150, animated: true });
+                                        }}
                                     />
                                 </View>
 
@@ -544,16 +596,18 @@ const RegularScreen = ({ formData, setFormData }) => {
                                             secureTextEntry
                                             placeholder="* *"
                                             maxLength={2}
+                                            keyboardType="number-pad"
+                                            returnKeyType="done"
                                             value={formData.personalPassword}
                                             onChangeText={(text) => {
                                                 const number = UTILS.onlyNumber(text);
                                                 setFormData({ ...formData, personalPassword: number });
                                                 if (number.length === 2) {
-                                                    setTimeout(() => {
-                                                        scrollRef.current?.scrollToFocusedInput(dobRef.current, 200);
-                                                        dobRef.current?.focus();
-                                                    }, 100);
+                                                    dobRef.current?.focus();
                                                 }
+                                            }}
+                                            onFocus={() => {
+                                                scrollViewRef.current?.scrollTo({ y: 150, animated: true });
                                             }}
                                         />
                                     </View>
@@ -574,6 +628,9 @@ const RegularScreen = ({ formData, setFormData }) => {
                                         onChangeText={(text) =>
                                             setFormData({ ...formData, dob: UTILS.onlyNumber(text) })
                                         }
+                                        onFocus={() => {
+                                            scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                        }}
                                     />
                                 </>
                             )}
@@ -603,11 +660,16 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    cardCorpRef2.current?.focus();
                                                }
                                            }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                           }}
                                 />
 
                                 <TextInput ref={cardCorpRef2}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            secureTextEntry
                                            value ={formData.corpCardNumber2}
                                            onChangeText={(text) => {
@@ -617,11 +679,16 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    cardCorpRef3.current?.focus();
                                                }
                                            }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                           }}
                                 />
 
                                 <TextInput ref={cardCorpRef3}
                                            style={[styles.cardInput, { backgroundColor: '#fafafa' }]}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            secureTextEntry
                                            value ={formData.corpCardNumber3}
                                            onChangeText={(text) => {
@@ -631,17 +698,25 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    cardCorpRef4.current?.focus();
                                                }
                                            }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                           }}
                                 />
 
                                 <TextInput ref={cardCorpRef4}
                                            style={styles.cardInput}
                                            maxLength={4}
+                                           keyboardType="number-pad"
+                                           returnKeyType="done"
                                            value ={formData.corpCardNumber4}
                                            onChangeText={(text) => {
                                                setFormData({
                                                    ...formData,
                                                    corpCardNumber4: UTILS.onlyNumber(text),
                                                });
+                                           }}
+                                           onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 0, animated: true });
                                            }}
                                 />
                             </View>
@@ -688,7 +763,9 @@ const RegularScreen = ({ formData, setFormData }) => {
                                         borderRadius: 0,        // 드롭다운 목록의 둥근 테두리
                                         backgroundColor:'#fafafa'
                                     }}
-
+                                    onFocus={() => {
+                                        scrollViewRef.current?.scrollTo({ y: 100, animated: true });
+                                    }}
                                 />
                             {/*</View>*/}
 
@@ -700,6 +777,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                style={styles.input}
                                                placeholder="MM/YY"
                                                maxLength={4}
+                                               keyboardType="number-pad"
+                                               returnKeyType="done"
                                                value={formData.corpExpiry}
                                                onChangeText={(text) => {
                                                    const number = UTILS.onlyNumber(text);
@@ -707,6 +786,9 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    if (number.length === 4) {
                                                        pwdCorpRef.current?.focus();
                                                    }
+                                               }}
+                                               onFocus={() => {
+                                                   scrollViewRef.current?.scrollTo({ y: 150, animated: true });
                                                }}
                                     />
                                 </View>
@@ -726,11 +808,11 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                        const number = UTILS.onlyNumber(text);
                                                        setFormData({ ...formData, corpPassword: number });
                                                        if (number.length === 2) {
-                                                           setTimeout(() => {
-                                                               scrollRef.current?.scrollToFocusedInput(brnRef.current, 200);
-                                                               brnRef.current?.focus();
-                                                           }, 100);
+                                                           brnRef.current?.focus();
                                                        }
+                                                   }}
+                                                   onFocus={() => {
+                                                       scrollViewRef.current?.scrollTo({ y: 150, animated: true });
                                                    }}
                                         />
                                     </View>
@@ -745,11 +827,16 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                style={styles.input}
                                                placeholder="사업자번호 10자리"
                                                maxLength={10}
+                                               keyboardType="number-pad"
+                                               returnKeyType="done"
                                                value={formData.brn}
                                                onChangeText={(text) => setFormData({
                                                    ...formData,
-                                                   brn: UTILS.onlyNumber(text),
-                                               })
+                                                   brn: UTILS.onlyNumber(text)})
+                                               }
+                                               onFocus={() => {
+                                               scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                           }
                                         }
                                     />
                                 </>
@@ -765,7 +852,8 @@ const RegularScreen = ({ formData, setFormData }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </KeyboardAwareScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
             {loading && (
                 <View style={styles.loadingOverlay}>
                     <ActivityIndicator size="large" color="#808080" />

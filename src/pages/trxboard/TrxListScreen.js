@@ -140,7 +140,7 @@ const TrxListScreen = () => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`거래 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`거래 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');

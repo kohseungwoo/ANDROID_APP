@@ -1,5 +1,16 @@
-import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, Dimensions, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import styles from '../../../assets/styles/ProductStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ErrorModal from '../../../components/modal/DefaultModal';
@@ -11,7 +22,6 @@ import ConfirmOkModal from '../../../components/modal/ConfirmOkModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {Logout} from '../../../components/Logout';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ProductScreen = ({ formData, setFormData, onNext }) => {
     const navigation = useNavigation();
@@ -26,11 +36,14 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     const [message, setMessage] = useState('');
     const [defaultMessage, setDefaultMessage] = useState(false);
 
+    const scrollViewRef = useRef(null);
+
+
 
     useFocusEffect(
         useCallback(() => {
             if(!global.E2U?.method?.card?.includes("regular")){
-                global.E2U?.WARN(global.E2U?.method?.card);
+                global.E2U?.INFO(global.E2U?.method?.card);
                 setModalMessage(`카드 결제 서비스 '이용 불가' 가맹점 입니다. \n 메인으로 이동합니다.`);
                 setModalCallback(() => () => {
                     moveScreen(navigation, "MAIN");
@@ -45,11 +58,11 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     }
 
     const confirmBtn = async () =>{
-        // formData.cardType = 'personal'; // 고정
-        // formData.productName = formData.productName || 'test';
-        // formData.amount = formData.amount || '51004';
-        // formData.buyerName = formData.buyerName || '홍길동';
-        // formData.phoneNo = formData.phoneNo || '01000000000';
+        formData.cardType = 'personal'; // 고정
+        formData.productName = formData.productName || 'test';
+        formData.amount = formData.amount || '51004';
+        formData.buyerName = formData.buyerName || '홍길동';
+        formData.phoneNo = formData.phoneNo || '01000000000';
 
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {
@@ -71,7 +84,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
         }
 
         if (!phoneNo) {
-            setMessage('휴대폰을 올바르게 입력해주세요.');
+            setMessage('구매자 연락처를 올바르게 입력해주세요.');
             setAlertVisible(true);
             return;
         }
@@ -116,7 +129,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`카드 결제 정보 조회 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`카드 결제 정보 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -169,125 +182,101 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             />
 
 
-            <KeyboardAwareScrollView
-              style={styles.container}
-              contentContainerStyle={styles.contentContainer}
-              enableOnAndroid={true} // Android에서 스크롤 처리 허용
-              enableAutomaticScroll={true} // 포커스 시 자동 스크롤
-              extraScrollHeight={80}
-              keyboardShouldPersistTaps="handled"
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
             >
-                <SafeAreaView style={{width: '100%'}}>
-                    {/*<ScrollView*/}
-                    {/*    style={styles.container}*/}
-                    {/*    contentContainerStyle={styles.contentContainer}*/}
-                    {/*    refreshControl={*/}
-                    {/*        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />*/}
-                    {/*    }*/}
-                    {/*>*/}
-                        {/* 헤더 및 입력 필드들 */}
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={styles.contentContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <SafeAreaView style={{ width: '100%' }}>
                         <View style={styles.header}>
-                            <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
+                            <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop: 14, marginRight: 6 }} />
                             <Text style={styles.title}>결제정보</Text>
                         </View>
                         <View style={styles.separator} />
 
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>상품명</Text>
-                            <TextInput style={styles.input}
-                                       placeholder="상품명을 입력하세요."
-                                       maxLength={64}
-                                       value={formData.productName}
-                                       onChangeText={(text) => {
-                                           // 입력 중엔 필터링 하지 않음
-                                           setFormData({
-                                               ...formData,
-                                               productName: text,
-                                           });
-                                       }}
-                                       onEndEditing={(e) => {
-                                           // 입력이 끝났을 때만 필터 적용
-                                           setFormData({
-                                               ...formData,
-                                               productName: UTILS.removeSpecial(e.nativeEvent.text),
-                                           });
-                                        }}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="상품명을 입력하세요."
+                                maxLength={64}
+                                value={formData.productName}
+                                onChangeText={(text) => {
+                                    setFormData({ ...formData, productName: text });
+                                }}
+                                onEndEditing={(e) => {
+                                    setFormData({ ...formData, productName: UTILS.removeSpecial(e.nativeEvent.text) });
+                                }}
+                                onFocus={() => {
+                                    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                                }}
                             />
 
                             <Text style={styles.label}>결제금액</Text>
-                            <TextInput style={styles.input}
-                                       placeholder="0"
-                                       maxLength={13}
-                                       keyboardType="number-pad"
-                                       returnKeyType="done"
-                                       value={formData.amount} onChangeText={(text) => {
-                                        setFormData({
-                                            ...formData,
-                                            amount: UTILS.comma(text),
-                                        });
-                                    }}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="0"
+                                maxLength={13}
+                                keyboardType="number-pad"
+                                returnKeyType="done"
+                                value={formData.amount}
+                                onChangeText={(text) => {
+                                    setFormData({ ...formData, amount: UTILS.comma(text) });
+                                }}
+                                onFocus={() => {
+                                    scrollViewRef.current?.scrollTo({ y: 30, animated: true });
+                                }}
                             />
 
                             <Text style={styles.label}>구매자명</Text>
-                            <TextInput style={styles.input}
-                                       placeholder="구매자명을 입력하세요."
-                                       maxLength={12}
-                                       value={formData.buyerName}
-                                       onChangeText={(text) => {
-                                           // 입력 중엔 필터링 하지 않음
-                                           setFormData({
-                                               ...formData,
-                                               buyerName: text,
-                                           });
-                                       }}
-                                       onEndEditing={(e) => {
-                                           // 입력이 끝났을 때만 필터 적용
-                                           setFormData({
-                                               ...formData,
-                                               buyerName: UTILS.removeSpecial(e.nativeEvent.text),
-                                           });
-                                        }}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="구매자명을 입력하세요."
+                                maxLength={12}
+                                value={formData.buyerName}
+                                onChangeText={(text) => {
+                                    setFormData({ ...formData, buyerName: text });
+                                }}
+                                onEndEditing={(e) => {
+                                    setFormData({ ...formData, buyerName: UTILS.removeSpecial(e.nativeEvent.text) });
+                                }}
+                                onFocus={() => {
+                                    scrollViewRef.current?.scrollTo({ y: 120, animated: true });
+                                }}
                             />
 
                             <Text style={styles.label}>구매자 연락처</Text>
-                            <TextInput style={styles.input}
-                                       placeholder="'-' 없이 입력하세요."
-                                       maxLength={16}
-                                       keyboardType="number-pad"
-                                       returnKeyType="done"
-                                       value={formData.phoneNo} onChangeText={(text) => {
-                                        setFormData({
-                                            ...formData,
-                                            phoneNo: UTILS.onlyNumber(text),
-                                        });
-                                    }}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="'-' 없이 입력하세요."
+                                maxLength={16}
+                                keyboardType="number-pad"
+                                returnKeyType="done"
+                                value={formData.phoneNo}
+                                onChangeText={(text) => {
+                                    setFormData({ ...formData, phoneNo: UTILS.onlyNumber(text) });
+                                }}
+                                onFocus={() => {
+                                    scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                }}
                             />
-
-                           {/* <View style={styles.optionalLabelRow}>*/}
-                           {/*     <Text style={styles.label}>메모</Text>*/}
-                           {/*     <Text style={styles.optionalText}>(선택)</Text>*/}
-                           {/* </View>*/}
-                           {/* <TextInput style={styles.input}*/}
-                           {/*            maxLength={200}*/}
-                           {/*            value={formData.udf1} onChangeText={(text) => {*/}
-                           {/*                setFormData({*/}
-                           {/*                 ...formData,*/}
-                           {/*                 udf1: text,*/}
-                           {/*             });*/}
-                           {/*         }}*/}
-                           {/*/>*/}
                         </View>
 
-                        <View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>
-                            <View style={[styles.footerContainer, {top : screenHeight-(screenHeight-insets.bottom)}]}>
+                        <View style={{ paddingTop: insets.bottom === 0 ? 70 : insets.bottom }}>
+                            <View style={[styles.footerContainer, { top: screenHeight - (screenHeight - insets.bottom) }]}>
                                 <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                                     <Text style={styles.footerButton}>다음</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    {/*</ScrollView>*/}
-                </SafeAreaView>
-            </KeyboardAwareScrollView>
+                    </SafeAreaView>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             {loading && (
                 <View style={styles.loadingOverlay}>

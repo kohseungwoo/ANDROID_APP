@@ -135,7 +135,7 @@ const LinkQrPayScreen = ({ formData, setFormData }) => {
                 }
             }
         }catch(err){
-            global.E2U?.WARN(`링크 생성 API 요청 실패 \n ${err}`);
+            global.E2U?.INFO(`링크 생성 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
                 setMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
@@ -178,7 +178,7 @@ const LinkQrPayScreen = ({ formData, setFormData }) => {
                     setDefaultMessage(true);
                 }
             }).catch((err) =>
-            global.E2U?.WARN(`SMS 연결 실패 \n ${err}`,
+            global.E2U?.INFO(`SMS 연결 실패 \n ${err}`,
                 setInputVisible(false),
                 setMessage(`전표 전송에 실패하였습니다.`),
                 setDefaultMessage(true),

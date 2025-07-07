@@ -1,8 +1,18 @@
-import React, {useState} from 'react';
-import {ActivityIndicator, Image, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import styles from '../../assets/styles/EasterSignStyle';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const EasterEggSignScreen = () => {
     const navigation = useNavigation();
@@ -13,6 +23,8 @@ const EasterEggSignScreen = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+    const scrollViewRef = useRef(null);
+
     const handleLogin = () => {
         setIsLoading(true);
         if(!password){
@@ -20,7 +32,7 @@ const EasterEggSignScreen = () => {
             return;
         }
 
-        if (password.toLowerCase() === '1600-4191') {
+        if (password.toLowerCase() === '16004191') {
             navigation.navigate('EASTERMETHOD');
         } else {
             setErrorMessage('패스워드가 잘못되었습니다.');
@@ -30,14 +42,16 @@ const EasterEggSignScreen = () => {
     };
 
     return (
-        <KeyboardAwareScrollView
+        <KeyboardAvoidingView
             style={styles.page}
-            contentContainerStyle={styles.scrollContainer}
-            enableOnAndroid={true}
-            enableAutomaticScroll={true}
-            extraScrollHeight={80}
-            keyboardShouldPersistTaps="handled"
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
         >
+            <ScrollView
+                ref={scrollViewRef}
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
+            >
             <SafeAreaView style={{ width: '100%' }}>
                 <View style={styles.layoutContainer}>
                     <View style={styles.layoutTitleContainer}>
@@ -75,6 +89,9 @@ const EasterEggSignScreen = () => {
                                 onChangeText={(text) => {
                                     setPassword(text);
                                     setErrorMessage('');
+                                }}
+                                onFocus={() => {
+                                    scrollViewRef.current?.scrollTo({ y: 40, animated: true });
                                 }}
                             />
                             {password.length > 0 && (
@@ -126,7 +143,8 @@ const EasterEggSignScreen = () => {
                     </View>
                 </View>
             </SafeAreaView>
-        </KeyboardAwareScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
