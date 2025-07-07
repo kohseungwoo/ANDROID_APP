@@ -1,6 +1,13 @@
+# 운영 배포 방법
+## 안드로이드
+> 1. src\components\Config.js > ENV 환경 'PROD' 변경
+> 2. cd android > ./gradlew bundleRelease 실행
+> 3. android > app > build > outputs > bundle > release > app-release.abb 파일 확인 
+> 4. 구글플레이콘솔 로그인 > 앱 클릭 > 테스트 및 출시 > 프로덕션 > app-release.abb 파일 업로드 
+
 #  안드로이드 실행명령어
 > npx react-native run-android
-> 
+
 #  로그보기 <br>
 > react-native log-android
 
