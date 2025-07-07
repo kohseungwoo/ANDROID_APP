@@ -98,6 +98,7 @@ const SignIn = () => {
                 return;
             }
 
+            console.log(`global.E2U?.APP_VERSION :${global.E2U?.APP_VERSION}`)
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/auth/login`, {
                 method: 'POST',
                 headers: {
