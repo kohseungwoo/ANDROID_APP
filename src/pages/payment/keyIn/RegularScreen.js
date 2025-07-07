@@ -389,7 +389,6 @@ const RegularScreen = ({ formData, setFormData }) => {
                 style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 ref={scrollRef}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
             >
                 <ScrollView
                     ref={scrollViewRef}

@@ -211,7 +211,6 @@ const SignIn = () => {
             <KeyboardAvoidingView
                 style={styles.page}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
             >
                 <ScrollView
                     ref={scrollViewRef}
