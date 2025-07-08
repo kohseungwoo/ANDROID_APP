@@ -75,7 +75,7 @@ const MoreMenuScreen = () => {
         switch (item.key) {
             case 'version':
                 setAlertVisible(true);
-                setMessage(`현재 앱 버전은 v${global.APP_VERSION}.0.0 입니다.`);
+                setMessage(`현재 앱 버전은 v${global.E2U?.APP_VERSION}.0.0 입니다.`);
                 break;
             case 'contact': case 'notice': case 'faq':
                 moveParamScreen(navigation, "NOTICE", { tab: item.key });

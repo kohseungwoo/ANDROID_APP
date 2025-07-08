@@ -263,7 +263,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                                     setFormData({ ...formData, phoneNo: UTILS.onlyNumber(text) });
                                 }}
                                 onFocus={() => {
-                                    scrollViewRef.current?.scrollTo({ y: 100, animated: true });
+                                    scrollViewRef.current?.scrollTo({ y: 150, animated: true });
                                 }}
                             />
                         </View>

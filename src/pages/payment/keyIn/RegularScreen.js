@@ -632,7 +632,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                             setFormData({ ...formData, dob: UTILS.onlyNumber(text) })
                                         }
                                         onFocus={() => {
-                                            scrollViewRef.current?.scrollTo({ y: 120, animated: true });
+                                            scrollViewRef.current?.scrollTo({ y: 160, animated: true });
                                         }}
                                     />
                                 </>
@@ -839,7 +839,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    brn: UTILS.onlyNumber(text)})
                                                }
                                                onFocus={() => {
-                                               scrollViewRef.current?.scrollTo({ y: 120, animated: true });
+                                               scrollViewRef.current?.scrollTo({ y: 160, animated: true });
                                            }
                                         }
                                     />

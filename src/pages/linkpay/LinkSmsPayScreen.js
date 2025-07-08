@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 import styles from '../../assets/styles/ProductStyle';
 import DropDownPicker from 'react-native-dropdown-picker';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import UTILS from '../../utils/Utils';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {fetchWithTimeout} from '../../components/Fetch';
@@ -43,6 +42,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
     const [defaultMessage, setDefaultMessage] = useState(false);
     const [inputVisible, setInputVisible] = useState(false);
     const [loading, setLoading] = useState(false);
+    const scrollViewRef = useRef(null);
 
     const [displayMethod, setDisplayMethod] = useState([
         { label: '신용카드(수기)', value: 'card_dom' },
@@ -210,14 +210,15 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
             />
 
 
-            <KeyboardAwareScrollView
+            <KeyboardAvoidingView
                 style={styles.container}
-                contentContainerStyle={styles.contentContainer}
-                enableOnAndroid={true} // Android에서 스크롤 처리 허용
-                enableAutomaticScroll={true} // 포커스 시 자동 스크롤
-                extraScrollHeight={80}
-                keyboardShouldPersistTaps="handled"
+                behavior={'padding'}
             >
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={styles.contentContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
                 <SafeAreaView style={{width: '100%'}}>
                     <View style={styles.header}>
                         <Ionicons name="cart-outline" size={24} color="#2680eb" style={{ marginTop:14, marginRight: 6 }} />
@@ -335,6 +336,10 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                                            sellerMemo1: UTILS.removeSpecial(e.nativeEvent.text),
                                        });
                                    }}
+
+                                   onFocus={() => {
+                                       scrollViewRef.current?.scrollTo({ y: 120, animated: true });
+                                   }}
                         />
 
                         <Text style={styles.label}>판매자 메모</Text>
@@ -355,6 +360,10 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                                            ...formData,
                                            sellerMemo2: UTILS.removeSpecial(e.nativeEvent.text),
                                        });
+                                   }}
+
+                                   onFocus={() => {
+                                       scrollViewRef.current?.scrollTo({ y: 160, animated: true });
                                    }}
                         />
 
@@ -385,7 +394,8 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                         </View>
                     </View>
                 </SafeAreaView>
-            </KeyboardAwareScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             {loading && (
                 <View style={styles.loadingOverlay}>
