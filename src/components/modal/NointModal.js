@@ -25,6 +25,10 @@ const tagsStyles = {
 
 const NointModal = ({ visible, message, onConfirm }) => {
     const { width } = useWindowDimensions();
+    let htmlMessage = message;
+    if(htmlMessage){
+        htmlMessage = message.replace(/\n/g, '<br />');
+    }
 
     return (
         <Modal
@@ -38,7 +42,7 @@ const NointModal = ({ visible, message, onConfirm }) => {
                         {/*<Text style={styles.message}>{message}</Text>*/}
                         <RenderHTML
                             contentWidth={width}
-                            source={{ html: message }}
+                            source={{ html: htmlMessage }}
                             tagsStyles={tagsStyles}
                             ignoredDomTags={['font']}
                         />

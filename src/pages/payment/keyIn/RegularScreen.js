@@ -23,6 +23,7 @@ import OpenStoreLink from '../../../components/OpenStoreLink';
 import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {moveScreen} from '../../../components/hooks/ScreenHooks';
 
 const RegularScreen = ({ formData, setFormData }) => {
     const navigation = useNavigation();
@@ -132,8 +133,11 @@ const RegularScreen = ({ formData, setFormData }) => {
             global.E2U?.INFO(`무이자 조회 API 요청 실패 \n ${err}`);
 
             if (err.message === 'Request timed out') {
-                setNointMessage('요청이 타임아웃되었습니다. \n 잠시 후 재시도하시기 바랍니다.');
+                setNointMessage(`요청이 타임아웃되었습니다. \n 결제내역 페이지에서 확인해주시기 바랍니다.`);
                 setAlertVisible(true);
+                setTimeout(()=> {
+                    moveScreen(navigation, "TRXLIST");
+                }, 2000);
 
             }else if (err.message === 'Network request failed') {
                 setNointMessage('네트워크 연결상태를 확인해주시기 바랍니다.');
@@ -149,13 +153,13 @@ const RegularScreen = ({ formData, setFormData }) => {
     };
 
     const paymentBtn = async () => {
-        // formData.personalCardNumber1 = '';
-        // formData.personalCardNumber2 = '';
-        // formData.personalCardNumber3 = '';
-        // formData.personalCardNumber4 = '';
-        // formData.personalExpiry = '';
-        // formData.personalPassword = '';
-        // formData.dob = '';
+        formData.personalCardNumber1 = '9490';
+        formData.personalCardNumber2 = '9402';
+        formData.personalCardNumber3 = '1292';
+        formData.personalCardNumber4 = '9009';
+        formData.personalExpiry = '0529';
+        formData.personalPassword = '00';
+        formData.dob = '950101';
 
         const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
@@ -387,7 +391,7 @@ const RegularScreen = ({ formData, setFormData }) => {
 
             <KeyboardAvoidingView
                 style={styles.container}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior={'padding'}
                 ref={scrollRef}
             >
                 <ScrollView
@@ -581,7 +585,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                             }
                                         }}
                                         onFocus={() => {
-                                            scrollViewRef.current?.scrollTo({ y: 150, animated: true });
+                                            scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                         }}
                                     />
                                 </View>
@@ -606,7 +610,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                 }
                                             }}
                                             onFocus={() => {
-                                                scrollViewRef.current?.scrollTo({ y: 150, animated: true });
+                                                scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                             }}
                                         />
                                     </View>
@@ -628,7 +632,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                             setFormData({ ...formData, dob: UTILS.onlyNumber(text) })
                                         }
                                         onFocus={() => {
-                                            scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                            scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                         }}
                                     />
                                 </>
@@ -709,10 +713,11 @@ const RegularScreen = ({ formData, setFormData }) => {
                                            returnKeyType="done"
                                            value ={formData.corpCardNumber4}
                                            onChangeText={(text) => {
-                                               setFormData({
-                                                   ...formData,
-                                                   corpCardNumber4: UTILS.onlyNumber(text),
-                                               });
+                                               const number = UTILS.onlyNumber(text);
+                                               setFormData({ ...formData, corpCardNumber4: number });
+                                               if (number.length === 4) {
+                                                   expiryCorpRef.current?.focus();
+                                               }
                                            }}
                                            onFocus={() => {
                                                scrollViewRef.current?.scrollTo({ y: 0, animated: true });
@@ -787,7 +792,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    }
                                                }}
                                                onFocus={() => {
-                                                   scrollViewRef.current?.scrollTo({ y: 150, animated: true });
+                                                   scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                                }}
                                     />
                                 </View>
@@ -811,7 +816,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                        }
                                                    }}
                                                    onFocus={() => {
-                                                       scrollViewRef.current?.scrollTo({ y: 150, animated: true });
+                                                       scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                                    }}
                                         />
                                     </View>
@@ -834,7 +839,7 @@ const RegularScreen = ({ formData, setFormData }) => {
                                                    brn: UTILS.onlyNumber(text)})
                                                }
                                                onFocus={() => {
-                                               scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                               scrollViewRef.current?.scrollTo({ y: 120, animated: true });
                                            }
                                         }
                                     />

@@ -27,8 +27,8 @@ const SignIn = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('demo_kovan');
+    const [password, setPassword] = useState('12345');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
@@ -210,7 +210,7 @@ const SignIn = () => {
 
             <KeyboardAvoidingView
                 style={styles.page}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior={'padding'}
             >
                 <ScrollView
                     ref={scrollViewRef}

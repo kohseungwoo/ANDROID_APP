@@ -37,6 +37,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     const [defaultMessage, setDefaultMessage] = useState(false);
 
     const scrollViewRef = useRef(null);
+    const footerRef = useRef(null);
 
 
 
@@ -58,11 +59,11 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
     }
 
     const confirmBtn = async () =>{
-        // formData.cardType = 'personal'; // 고정
-        // formData.productName = formData.productName || 'test';
-        // formData.amount = formData.amount || '51004';
-        // formData.buyerName = formData.buyerName || '홍길동';
-        // formData.phoneNo = formData.phoneNo || '01000000000';
+        formData.cardType = 'personal'; // 고정
+        formData.productName = formData.productName || 'test';
+        formData.amount = formData.amount || '51004';
+        formData.buyerName = formData.buyerName || '홍길동';
+        formData.phoneNo = formData.phoneNo || '01000000000';
 
         const { productName, amount, buyerName, phoneNo } = formData;
         if (!productName) {
@@ -184,7 +185,8 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
 
             <KeyboardAvoidingView
                 style={styles.container}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior={'padding'}
+                keyboardVerticalOffset={0}
             >
                 <ScrollView
                     ref={scrollViewRef}
@@ -228,7 +230,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                                     setFormData({ ...formData, amount: UTILS.comma(text) });
                                 }}
                                 onFocus={() => {
-                                    scrollViewRef.current?.scrollTo({ y: 30, animated: true });
+                                    scrollViewRef.current?.scrollTo({ y: 40, animated: true });
                                 }}
                             />
 
@@ -261,12 +263,12 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                                     setFormData({ ...formData, phoneNo: UTILS.onlyNumber(text) });
                                 }}
                                 onFocus={() => {
-                                    scrollViewRef.current?.scrollTo({ y: 2000, animated: true });
+                                    scrollViewRef.current?.scrollTo({ y: 100, animated: true });
                                 }}
                             />
                         </View>
 
-                        <View style={{ paddingTop: insets.bottom === 0 ? 70 : insets.bottom }}>
+                        <View style={{ paddingTop: insets.bottom === 0 ? 70 : insets.bottom }} ref={footerRef}>
                             <View style={[styles.footerContainer, { top: screenHeight - (screenHeight - insets.bottom) }]}>
                                 <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                                     <Text style={styles.footerButton}>다음</Text>

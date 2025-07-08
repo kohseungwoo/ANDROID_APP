@@ -6,7 +6,7 @@ const usePortraitLock = () => {
     useEffect(() => {
         Orientation.lockToPortrait(); // 세로 고정
         return () => {
-            Orientation.unlockAllOrientations(); // 해제
+            // Orientation.unlockAllOrientations(); // 해제
         };
     }, []);
 };
