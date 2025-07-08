@@ -78,17 +78,17 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
             return;
         }
 
-        if (!buyerName) {
-            setMessage('구매자명을 올바르게 입력해주세요.');
-            setAlertVisible(true);
-            return;
-        }
-
-        if (!phoneNo) {
-            setMessage('구매자 연락처를 올바르게 입력해주세요.');
-            setAlertVisible(true);
-            return;
-        }
+        // if (!buyerName) {
+        //     setMessage('구매자명을 올바르게 입력해주세요.');
+        //     setAlertVisible(true);
+        //     return;
+        // }
+        //
+        // if (!phoneNo) {
+        //     setMessage('구매자 연락처를 올바르게 입력해주세요.');
+        //     setAlertVisible(true);
+        //     return;
+        // }
 
         try{
             setLoading(true);

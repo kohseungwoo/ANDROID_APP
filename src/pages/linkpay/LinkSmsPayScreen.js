@@ -88,7 +88,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
             const products = [{
                 name     : formData.productName,
                 qty      : 1,
-                price    : formData.amount,
+                price    : Number(formData.amount.replace(/,/g, "")),
             }];
 
             const daysToAdd = parseInt(formData.selectedExpireAt, 10);
@@ -105,7 +105,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                     addType         : 'link',
                     directMethod    : formData.selectedMethod,
                     displayMethod   : [],
-                    amount          : formData.amount,
+                    amount          : Number(formData.amount.replace(/,/g, "")),
                     expireAt        : expireAt.format('YYYYMMDDHH'),
                     products        : products,
                     customer        : customer,
