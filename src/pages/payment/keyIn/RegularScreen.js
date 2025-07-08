@@ -3,7 +3,6 @@ import {
     ActivityIndicator,
     Dimensions,
     KeyboardAvoidingView,
-    Platform,
     ScrollView,
     Text,
     TextInput,
@@ -153,13 +152,13 @@ const RegularScreen = ({ formData, setFormData }) => {
     };
 
     const paymentBtn = async () => {
-        formData.personalCardNumber1 = '9490';
-        formData.personalCardNumber2 = '9402';
-        formData.personalCardNumber3 = '1292';
-        formData.personalCardNumber4 = '9009';
-        formData.personalExpiry = '0529';
-        formData.personalPassword = '00';
-        formData.dob = '950101';
+        // formData.personalCardNumber1 = '';
+        // formData.personalCardNumber2 = '';
+        // formData.personalCardNumber3 = '';
+        // formData.personalCardNumber4 = '';
+        // formData.personalExpiry = '';
+        // formData.personalPassword = '';
+        // formData.dob = '';
 
         const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
