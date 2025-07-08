@@ -7,7 +7,7 @@ export default StyleSheet.create({
     },
     scrollContainer: {
         flexGrow: 1,
-        paddingTop:'40%',
+        paddingTop:'50%',
         paddingVertical: 50,
         alignItems: 'center',
     },
