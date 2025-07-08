@@ -43,6 +43,7 @@ const RegularScreen = ({ formData, setFormData }) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [loading, setLoading] = useState(false);
+    let hasHandledNavigation = false;
 
     const cardPersRef1 = useRef(null);
     const cardPersRef2 = useRef(null);
@@ -276,9 +277,13 @@ const RegularScreen = ({ formData, setFormData }) => {
             const result = await response.json();
             global.E2U?.INFO(`결제 API 응답 \n ${JSON.stringify(result)}`);
             if (result.code === '0000') {
-                setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
+                setModalMessage('정상적으로 처리되었습니다. \n 결제 내역으로 이동합니다.');
                 setModalCallback(() => handleTrxList);
                 setModalVisible(true);
+
+                setTimeout(() => {
+                    handleTrxList();
+                }, 2000);
             }else{
                 if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
@@ -341,6 +346,10 @@ const RegularScreen = ({ formData, setFormData }) => {
     }
 
     function handleTrxList(){
+        setModalVisible(false);
+        if (hasHandledNavigation) return;
+        hasHandledNavigation = true;
+
         trxDetailRef.current = false; // 초기화
 
         setLoading(true);

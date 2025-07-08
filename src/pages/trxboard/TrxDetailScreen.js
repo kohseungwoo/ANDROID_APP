@@ -9,8 +9,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import UTILS from '../../utils/Utils';
+import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
+import UTILS, {trxDetailRef} from '../../utils/Utils';
 import styles from '../../assets/styles/TrxDetailStyle';
 import moment from 'moment';
 import {Logout} from '../../components/Logout';
@@ -21,6 +21,7 @@ import OpenStoreLink from '../../components/OpenStoreLink';
 import UpdateInfoModal from '../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../components/Fetch';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import ConfirmModal2 from '../../components/modal/ConfirmModal2';
 
 const TrxDetailScreen = () => {
     const navigation = useNavigation();
@@ -31,8 +32,11 @@ const TrxDetailScreen = () => {
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
     const [inputVisible, setInputVisible] = useState(false);
+    const [rfdVisible, setRfdVisible] = useState(false);
     const [openLinkVisible, setOpenLinkVisible] = useState(() => () => {});
     const [loading, setLoading] = useState(false);
+    const [refundVisible, setRefundVisible] = useState(false);
+    let hasHandledNavigation = false;
 
     const route = useRoute();
     const [companyName , setCompanyName] = useState('(주)이투유');
@@ -104,13 +108,8 @@ const TrxDetailScreen = () => {
         setOpenLinkVisible(false);
     };
 
-    const refundBtn = async () => {
-        if(global.E2U?.roleType !== 'MANAGER'){
-            setModalMessage(`'일반' 권한은 취소 요청이 불가능합니다. \n 확인 후 재시도 해주시기 바랍니다.`);
-            setModalVisible(true);
-            return;
-        }
-
+    const refundConn = async () => {
+        setRfdVisible(false);
         try{
             setLoading(true);
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/api/refund`, {
@@ -131,9 +130,13 @@ const TrxDetailScreen = () => {
             global.E2U?.INFO(`취소 요청 API 응답 \n ${JSON.stringify(result)}`);
 
             if (result.code === '0000') {
-                setModalMessage('정상적으로 처리되었습니다. \n 거래 내역으로 이동합니다.');
+                setModalMessage('정상적으로 취소되었습니다. \n 결제 내역으로 이동합니다.');
                 setModalCallback(() => handleTrxList);
                 setModalVisible(true);
+
+                setTimeout(() => {
+                    handleTrxList();
+                }, 2000);
             }else{
                 if (result.code === '0805' || result.code === '0803' ) {
                     setModalMessage('세션이 만료되었습니다.\n다시 로그인해주세요.');
@@ -167,6 +170,16 @@ const TrxDetailScreen = () => {
         }
     };
 
+    const refundBtn = async () => {
+        if(global.E2U?.roleType !== 'MANAGER'){
+            setModalMessage(`'일반' 권한은 취소 요청이 불가능합니다. \n 확인 후 재시도 해주시기 바랍니다.`);
+            setModalVisible(true);
+            return;
+        }
+
+        setRfdVisible(true);
+    };
+
     const receiptBtn = (phoneNumber)=> {
         const msg = `${global.E2U?.ADMIN_URL}/trx/receipt/${item.trxId}`;
         const url =
@@ -197,8 +210,15 @@ const TrxDetailScreen = () => {
     }
 
     function handleTrxList(){
+        setModalVisible(false);
+        if (hasHandledNavigation) return;
+        hasHandledNavigation = true;
+
         UTILS.trxDetailRef.current = false; // 초기화
-        navigation.goBack();
+        setLoading(true);
+        setTimeout(() => {
+            navigation.goBack();
+        }, 2000);
     }
 
     return (
@@ -217,6 +237,13 @@ const TrxDetailScreen = () => {
                     setModalVisible(false);
                 }}
                 message={modalMessage}
+            />
+
+            <ConfirmModal2
+                visible={rfdVisible}
+                onCancel={() => setRfdVisible(false)}
+                onConfirm={refundConn}
+                message={'취소 요청을 진행하시겠습니까?'}
             />
 
             <UpdateInfoModal
