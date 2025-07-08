@@ -338,7 +338,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                                    }}
 
                                    onFocus={() => {
-                                       scrollViewRef.current?.scrollTo({ y: 120, animated: true });
+                                       scrollViewRef.current?.scrollTo({ y: 140, animated: true });
                                    }}
                         />
 
