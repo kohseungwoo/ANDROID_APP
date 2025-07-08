@@ -1,9 +1,9 @@
 import {
     ActivityIndicator,
-    Dimensions,
+    Dimensions, KeyboardAvoidingView,
     Linking,
     Platform,
-    SafeAreaView,
+    SafeAreaView, ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
