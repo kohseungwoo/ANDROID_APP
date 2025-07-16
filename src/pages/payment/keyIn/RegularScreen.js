@@ -163,7 +163,7 @@ const RegularScreen = ({ formData, setFormData }) => {
         // formData.personalPassword = '';
         // formData.dob = '';
 
-        const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
+        const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob, authType
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
 
         if(cardType === 'personal'){
@@ -185,17 +185,18 @@ const RegularScreen = ({ formData, setFormData }) => {
                return;
            }
 
+           if(authType === 'CEPB'){
+               if (!personalPassword || personalPassword.length !== 2){
+                   setValidMessage('비밀번호를 올바르게 입력해주세요..');
+                   setValidVisible(true);
+                   return;
+               }
 
-           if (!personalPassword || personalPassword.length !== 2){
-               setValidMessage('비밀번호를 올바르게 입력해주세요..');
-               setValidVisible(true);
-               return;
-           }
-
-           if (!dob || dob.length !== 6){
-               setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
-               setValidVisible(true);
-               return;
+               if (!dob || dob.length !== 6){
+                   setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
+                   setValidVisible(true);
+                   return;
+               }
            }
         }else if(cardType === 'corporate'){
             const cardNumbers = [corpCardNumber1, corpCardNumber2, corpCardNumber3, corpCardNumber4];
@@ -216,16 +217,18 @@ const RegularScreen = ({ formData, setFormData }) => {
                return;
            }
 
-           if (!corpPassword || corpPassword.length !== 2){
-               setValidMessage('비밀번호를 올바르게 입력해주세요..');
-               setValidVisible(true);
-               return;
-           }
+           if(authType === 'CEPB'){
+               if (!corpPassword || corpPassword.length !== 2){
+                   setValidMessage('비밀번호를 올바르게 입력해주세요..');
+                   setValidVisible(true);
+                   return;
+               }
 
-           if (!brn || brn.length !== 6){
-               setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
-               setValidVisible(true);
-               return;
+               if (!brn || brn.length !== 6){
+                   setValidMessage('본인확인 번호를 올바르게 입력해주세요.');
+                   setValidVisible(true);
+                   return;
+               }
            }
        }else{
            setValidMessage('정의되지 않은 입력이 확인되었습니다.');
