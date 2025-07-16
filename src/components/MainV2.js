@@ -478,7 +478,7 @@ const MainV2 = ({ setRefreshControlProps }) => {
                                                 <Text
                                                     style={[
                                                         styles.transactionAmount,
-                                                        item.trxType !== 'authorized' && styles.cancelAmount,
+                                                        ['refund', 'void'].includes(item.trxType) && styles.cancelAmount,
                                                     ]}
                                                 >
                                                     {UTILS.KRW(item.amount)}

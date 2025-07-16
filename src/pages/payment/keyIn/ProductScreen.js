@@ -268,7 +268,7 @@ const ProductScreen = ({ formData, setFormData, onNext }) => {
                             />
                         </View>
 
-                        <View style={{ paddingTop: insets.bottom === 0 ? 70 : insets.bottom }} ref={footerRef}>
+                        <View ref={footerRef}>
                             <View style={[styles.footerContainer, { top: screenHeight - (screenHeight - insets.bottom) }]}>
                                 <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                                     <Text style={styles.footerButton}>다음</Text>

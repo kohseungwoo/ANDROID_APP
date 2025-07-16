@@ -23,6 +23,7 @@ import UpdateInfoModal from '../../../components/modal/UpdateInfoModal';
 import {fetchWithTimeout} from '../../../components/Fetch';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {moveScreen} from '../../../components/hooks/ScreenHooks';
+import ConfirmModal2 from '../../../components/modal/ConfirmModal2';
 
 const RegularScreen = ({ formData, setFormData }) => {
     const navigation = useNavigation();
@@ -38,6 +39,7 @@ const RegularScreen = ({ formData, setFormData }) => {
     const [modalMessage, setModalMessage] = useState('');
     const [modalCallback, setModalCallback] = useState(() => () => {});
     const [openLinkVisible, setOpenLinkVisible] = useState(false);
+    const [payVisible, setPayVisible] = useState(false);
 
     const [nointText, setNointMessage] = useState('');
     const [open, setOpen] = useState(false);
@@ -164,7 +166,6 @@ const RegularScreen = ({ formData, setFormData }) => {
         const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
             ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
 
-        let cardNumber, expiry, installment, pin, auth;
         if(cardType === 'personal'){
             const cardNumbers = [personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4];
             const isInvalidCardInput = cardNumbers.some(num => !num || num.length !== 4);
@@ -196,12 +197,6 @@ const RegularScreen = ({ formData, setFormData }) => {
                setValidVisible(true);
                return;
            }
-
-            cardNumber  = personalCardNumber1 + personalCardNumber2 + personalCardNumber3 + personalCardNumber4;
-            expiry      = personalExpiry;
-            installment = personalInstallment;
-            pin         = personalPassword;
-            auth        = dob;
         }else if(cardType === 'corporate'){
             const cardNumbers = [corpCardNumber1, corpCardNumber2, corpCardNumber3, corpCardNumber4];
             const isInvalidCardInput = cardNumbers.some(num => !num || num.length !== 4);
@@ -232,21 +227,41 @@ const RegularScreen = ({ formData, setFormData }) => {
                setValidVisible(true);
                return;
            }
-
-            cardNumber  = corpCardNumber1 + corpCardNumber2 + corpCardNumber3 + corpCardNumber4;
-            expiry      = corpExpiry;
-            installment = corpInstallment;
-            pin         = corpPassword;
-            auth        = brn;
        }else{
            setValidMessage('정의되지 않은 입력이 확인되었습니다.');
            setValidVisible(true);
            return;
        }
 
+        setPayVisible(true);
+    };
+
+    const payConn = async () => {
+        setPayVisible(false);
 
         try{
             setLoading(true);
+
+            const { cardType, personalCardNumber1, personalCardNumber2, personalCardNumber3, personalCardNumber4, personalInstallment ,personalExpiry ,personalPassword ,dob
+                ,corpCardNumber1 ,corpCardNumber2 ,corpCardNumber3 ,corpCardNumber4 ,corpInstallment ,corpExpiry ,corpPassword ,brn } = formData;
+
+            let cardNumber, expiry, installment, pin, auth;
+            if(cardType === 'personal'){
+                cardNumber  = personalCardNumber1 + personalCardNumber2 + personalCardNumber3 + personalCardNumber4;
+                expiry      = personalExpiry;
+                installment = personalInstallment;
+                pin         = personalPassword;
+                auth        = dob;
+            }else if(cardType === 'corporate'){
+                cardNumber  = corpCardNumber1 + corpCardNumber2 + corpCardNumber3 + corpCardNumber4;
+                expiry      = corpExpiry;
+                installment = corpInstallment;
+                pin         = corpPassword;
+                auth        = brn;
+            }else{
+                return;
+            }
+
             const response = await fetchWithTimeout(`${global.E2U?.API_URL}/v2/api/pay`, {
                 method: 'POST',
                 headers: {
@@ -316,7 +331,7 @@ const RegularScreen = ({ formData, setFormData }) => {
         }finally{
             setLoading(false);
         }
-    };
+    }
 
     const resetCardForm = () => {
         setOpen(false);
@@ -390,6 +405,13 @@ const RegularScreen = ({ formData, setFormData }) => {
                     setModalVisible(false);
                 }}
                 message={modalMessage}
+            />
+
+            <ConfirmModal2
+                visible={payVisible}
+                onCancel={() => setPayVisible(false)}
+                onConfirm={payConn}
+                message={'결제 요청을 진행하시겠습니까?'}
             />
 
             <UpdateInfoModal
@@ -857,13 +879,13 @@ const RegularScreen = ({ formData, setFormData }) => {
                     )}
                 </View>
 
-                <View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>
+                {/*<View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>*/}
                     <View style={[styles.footerContainer, {top : screenHeight-(screenHeight-insets.bottom)}]}>
                         <TouchableOpacity style={styles.fullWidthTouchable} onPress={paymentBtn}>
                             <Text style={styles.footerButton}>결제하기</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                {/*</View>*/}
                 </ScrollView>
             </KeyboardAvoidingView>
             {loading && (

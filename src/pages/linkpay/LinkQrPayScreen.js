@@ -381,13 +381,13 @@ const LinkQrPayScreen = ({ formData, setFormData }) => {
                         />
                     </View>
 
-                    <View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>
+                    {/*<View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>*/}
                         <View style={[styles.footerContainer, {top : screenHeight-(screenHeight-insets.bottom)}]}>
                             <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                                 <Text style={styles.footerButton}>QR 생성</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    {/*</View>*/}
                 </SafeAreaView>
             </ScrollView>
             </KeyboardAvoidingView>

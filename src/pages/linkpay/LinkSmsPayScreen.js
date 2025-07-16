@@ -368,7 +368,7 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                         />
 
                         {formData.linkUrl && formData.linkUrl !== '' && (
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, marginBottom: -50 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, marginBottom: 0 }}>
                                 <Text style={{ flex: 1, color: '#000', fontSize: 14 }}>{`링크 : ${formData.linkUrl}`}</Text>
                                 <TouchableOpacity
                                     onPress={() => setInputVisible(true)}
@@ -386,13 +386,13 @@ const LinkSmsPayScreen = ({ formData, setFormData }) => {
                         )}
                     </View>
 
-                    <View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>
+                    {/*<View style={{paddingTop: insets.bottom === 0 ? 70 : insets.bottom}}>*/}
                         <View style={[styles.footerContainer, {top : screenHeight-(screenHeight-insets.bottom)}]}>
                             <TouchableOpacity style={styles.fullWidthTouchable} onPress={confirmBtn}>
                                 <Text style={styles.footerButton}>링크 생성</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    {/*</View>*/}
                 </SafeAreaView>
                 </ScrollView>
             </KeyboardAvoidingView>
